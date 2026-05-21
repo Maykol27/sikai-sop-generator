@@ -33,11 +33,15 @@ export async function GET(req: NextRequest) {
       )
     }
 
-    // 2. Update their own profile to have 10 credits
+    // 2. Upsert their profile to have 10 credits (inserts if missing, updates if exists)
     const { error: updateError } = await supabase
       .from('profiles')
-      .update({ credits: 10 })
-      .eq('id', user.id)
+      .upsert({ 
+        id: user.id, 
+        email: user.email || '', 
+        credits: 10,
+        updated_at: new Date().toISOString()
+      })
 
     if (updateError) {
       return NextResponse.json({ error: updateError.message }, { status: 500 })
