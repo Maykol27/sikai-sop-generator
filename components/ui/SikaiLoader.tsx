@@ -1,9 +1,12 @@
-
 import React from 'react';
 
-export const SikaiLoader = () => {
+interface SikaiLoaderProps {
+    text?: string;
+}
+
+export const SikaiLoader = ({ text = "Iniciando Generador..." }: SikaiLoaderProps) => {
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#0a0a0a]">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]">
             <div className="relative flex flex-col items-center">
                 {/* Logo Container with Glow */}
                 <div className="relative w-24 h-24 mb-8">
@@ -25,10 +28,11 @@ export const SikaiLoader = () => {
                         <div className="h-full bg-gradient-to-r from-blue-600 to-[#26d8c4] w-1/2 animate-[shimmer_1.5s_infinite_linear]"></div>
                     </div>
                     <span className="text-xs font-mono text-gray-500 uppercase tracking-widest animate-pulse">
-                        Iniciando Generador...
+                        {text}
                     </span>
                 </div>
             </div>
         </div>
     );
 };
+

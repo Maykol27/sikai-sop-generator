@@ -153,12 +153,15 @@ export default function LoginPage() {
             <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-[#26d8c4]/8 rounded-full blur-[120px] pointer-events-none" />
 
             {/* Logo / Brand */}
-            <div className="mb-6 flex flex-col items-center gap-1 relative z-10">
-                <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center">
-                        <span className="text-white font-black text-sm">S</span>
+            <div className="mb-6 flex flex-col items-center relative z-10 select-none">
+                <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-[18px] bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_15px_rgba(26,136,255,0.45)]">
+                        <span className="text-white font-bold text-xl leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
                     </div>
-                    <span className="text-white font-bold text-lg tracking-tight">SIKAI SOP Generator</span>
+                    <div className="flex flex-col leading-none">
+                        <span className="font-bold text-lg text-white tracking-tight" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
+                        <span className="text-[9px] text-[#26d8c4] tracking-[0.18em] uppercase font-bold mt-1.5" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
+                    </div>
                 </div>
             </div>
 

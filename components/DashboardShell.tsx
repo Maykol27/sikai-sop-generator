@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { LogOut, Coins, Sun, Moon, FileText } from 'lucide-react';
 import { SplashScreen } from '@/components/SplashScreen';
+import { WelcomeTutorialModal } from '@/components/WelcomeTutorialModal';
 import { useTheme } from '@/contexts/ThemeContext';
 
 interface DashboardShellProps {
@@ -29,6 +30,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
   return (
     <>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
+      <WelcomeTutorialModal />
 
       <div className="min-h-screen relative overflow-x-hidden">
         {/* Background Blobs */}
@@ -39,14 +41,14 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
           {/* Header / Navbar */}
           <header className="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between mb-8 sticky top-2 sm:top-4 z-50">
             {/* Left: Logo + Brand */}
-            <Link href="/dashboard" className="flex items-center gap-3 group">
-              {/* SVG Logo Mark - scales perfectly unlike .ico */}
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_12px_rgba(26,136,255,0.4)] group-hover:shadow-[0_0_20px_rgba(38,216,196,0.5)] transition-all flex-shrink-0">
-                <span className="text-white font-black text-base leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
+            <Link href="/dashboard" className="flex items-center gap-3 group select-none">
+              {/* Premium SIKAI Squircle Icon */}
+              <div className="w-11 h-11 rounded-[18px] bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_15px_rgba(26,136,255,0.45)] group-hover:shadow-[0_0_25px_rgba(38,216,196,0.6)] transition-all duration-300 flex-shrink-0">
+                <span className="text-white font-bold text-xl leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="font-bold text-sm text-gray-900 dark:text-white" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
-                <span className="text-[9px] text-[#1a88ff] dark:text-[#26d8c4] tracking-widest uppercase font-bold" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
+                <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
+                <span className="text-[9px] text-[#26d8c4] tracking-[0.18em] uppercase font-bold mt-1.5" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
               </div>
             </Link>
 
