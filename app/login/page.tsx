@@ -149,9 +149,10 @@ export default function LoginPage() {
 
     return (
         <div className="min-h-screen w-full bg-[#09101d] flex flex-col items-center justify-center p-4 relative overflow-hidden">
-            {/* Background blobs */}
-            <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] bg-[#1a88ff]/8 rounded-full blur-[120px] pointer-events-none" />
-            <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-[#26d8c4]/8 rounded-full blur-[120px] pointer-events-none" />
+            {/* Background blobs - SIKAI Finance Nebula Effect */}
+            <div className="absolute bg-blob bg-blob-primary w-[30rem] h-[30rem] -top-20 -left-20 pointer-events-none" style={{ animationDelay: '0s' }} />
+            <div className="absolute bg-blob bg-blob-cyan w-[40rem] h-[40rem] top-1/4 -right-20 pointer-events-none" style={{ animationDelay: '-5s' }} />
+            <div className="absolute bg-blob bg-blob-dark-blue w-[25rem] h-[25rem] bottom-0 left-1/3 pointer-events-none" style={{ animationDelay: '-10s' }} />
 
             {/* Logo / Brand */}
             <div className="mb-6 flex flex-col items-center relative z-10 select-none">

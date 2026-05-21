@@ -67,9 +67,10 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
       <WelcomeTutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
 
       <div className="min-h-screen relative overflow-x-hidden bg-[#09101d] dark:bg-[#09101d] light:bg-[#f0f6fc] text-foreground transition-colors duration-300">
-        {/* Background Blobs */}
-        <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-blob bg-blob-primary pointer-events-none" />
-        <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-blob bg-blob-cyan pointer-events-none" style={{ animationDelay: '5s' }} />
+        {/* Background Blobs - SIKAI Finance Nebula Effect */}
+        <div className="fixed bg-blob bg-blob-primary w-[30rem] h-[30rem] -top-20 -left-20 pointer-events-none" style={{ animationDelay: '0s' }} />
+        <div className="fixed bg-blob bg-blob-cyan w-[40rem] h-[40rem] top-1/4 -right-20 pointer-events-none" style={{ animationDelay: '-5s' }} />
+        <div className="fixed bg-blob bg-blob-dark-blue w-[25rem] h-[25rem] bottom-0 left-1/3 pointer-events-none" style={{ animationDelay: '-10s' }} />
 
         {/* Flagship Fixed edge-to-edge Navbar */}
         <header className="fixed top-0 left-0 right-0 h-16 z-50 border-b border-black/5 dark:border-white/10 bg-[#09101d]/85 dark:bg-[#09101d]/85 light:bg-[#ffffff]/85 backdrop-blur-md transition-all duration-300">
