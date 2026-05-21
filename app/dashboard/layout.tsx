@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { LogOut, Coins } from 'lucide-react'
 import DashboardShell from '@/components/DashboardShell'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardLayout({
   children,
 }: {

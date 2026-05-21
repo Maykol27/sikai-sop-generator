@@ -1,14 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/utils/supabase/client'
 import { CheckCircle, AlertCircle, ShoppingCart } from 'lucide-react'
 
-// Use standard supabase-js on the client for this simple insert
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-)
+const supabase = createClient()
 
 export default function BillingClient({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false)
