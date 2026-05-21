@@ -6,6 +6,7 @@ import { LogOut, Coins, Sun, Moon, FileText, ClipboardList, Eye } from 'lucide-r
 import { SplashScreen } from '@/components/SplashScreen';
 import { WelcomeTutorialModal } from '@/components/WelcomeTutorialModal';
 import { useTheme } from '@/contexts/ThemeContext';
+import { createClient } from '@/utils/supabase/client';
 
 interface DashboardShellProps {
   children: React.ReactNode;
@@ -19,6 +20,55 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
   const [showSplash, setShowSplash] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [liveCredits, setLiveCredits] = useState(credits);
+
+  useEffect(() => {
+    setLiveCredits(credits);
+  }, [credits]);
+
+  useEffect(() => {
+    if (!userId) return;
+    
+    const supabase = createClient();
+    
+    // Fetch credits directly from the client to bypass Next.js layout cache
+    const fetchCredits = async () => {
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('credits')
+        .eq('id', userId)
+        .single();
+      
+      if (data) {
+        setLiveCredits(data.credits);
+      }
+    };
+    
+    fetchCredits();
+
+    // Subscribe to real-time changes to the profile
+    const channel = supabase
+      .channel(`profile-updates-${userId}`)
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'profiles',
+          filter: `id=eq.${userId}`,
+        },
+        (payload) => {
+          if (payload.new && typeof payload.new.credits === 'number') {
+            setLiveCredits(payload.new.credits);
+          }
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [userId]);
 
   useEffect(() => {
     // Show splash only on first login per session
@@ -109,7 +159,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
               {/* Credits Badge */}
               <Link href="/dashboard/billing" className="flex items-center gap-1.5 bg-[#1a88ff]/10 hover:bg-[#1a88ff]/20 transition-colors px-3 py-1.5 rounded-full border border-[#1a88ff]/30 shadow-sm">
                 <Coins className="w-3.5 h-3.5 text-[#1a88ff]" />
-                <span className="text-xs font-bold text-gray-800 dark:text-[#e0e6ed]">{credits}</span>
+                <span className="text-xs font-bold text-gray-800 dark:text-[#e0e6ed]">{liveCredits}</span>
                 <span className="hidden sm:inline text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider">créditos</span>
               </Link>
 
@@ -150,7 +200,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
                       <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{fullName}</p>
                       <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500 dark:text-gray-400">
                         <Coins className="w-3 h-3 text-[#1a88ff]" />
-                        <span>{credits} créditos disponibles</span>
+                        <span>{liveCredits} créditos disponibles</span>
                       </div>
                     </div>
 
