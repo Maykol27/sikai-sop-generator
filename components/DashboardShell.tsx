@@ -66,7 +66,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
       <WelcomeTutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
 
-      <div className="min-h-screen relative overflow-x-hidden bg-[#09101d] dark:bg-[#09101d] light:bg-[#f0f6fc] text-foreground transition-colors duration-300">
+      <div className="min-h-screen relative overflow-x-hidden text-foreground transition-colors duration-300">
         {/* Background Blobs - SIKAI Finance Nebula Effect */}
         <div className="fixed bg-blob bg-blob-primary w-[30rem] h-[30rem] -top-20 -left-20 pointer-events-none" style={{ animationDelay: '0s' }} />
         <div className="fixed bg-blob bg-blob-cyan w-[40rem] h-[40rem] top-1/4 -right-20 pointer-events-none" style={{ animationDelay: '-5s' }} />

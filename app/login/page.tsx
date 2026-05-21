@@ -148,7 +148,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-[#09101d] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen w-full flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background blobs - SIKAI Finance Nebula Effect */}
             <div className="absolute bg-blob bg-blob-primary w-[30rem] h-[30rem] -top-20 -left-20 pointer-events-none" style={{ animationDelay: '0s' }} />
             <div className="absolute bg-blob bg-blob-cyan w-[40rem] h-[40rem] top-1/4 -right-20 pointer-events-none" style={{ animationDelay: '-5s' }} />
