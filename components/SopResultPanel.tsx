@@ -3,7 +3,26 @@
 import { useState, useEffect } from 'react'
 import ReactMarkdown from 'react-markdown'
 import mermaid from 'mermaid'
-import { Check, Copy, Download, Share2 } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { 
+  Check, 
+  Copy, 
+  Download, 
+  Target, 
+  Compass, 
+  Users, 
+  Wrench, 
+  Milestone, 
+  FileText, 
+  AlertTriangle, 
+  Zap, 
+  ChevronDown, 
+  Cpu, 
+  Sparkles,
+  Award,
+  Layers,
+  Info
+} from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 
 type TabType = 'sop' | 'flow' | 'boost'
@@ -17,13 +36,291 @@ interface SopResultPanelProps {
   }
 }
 
+// ── Types for parsed content ──
+interface Section {
+  title: string
+  content: string
+}
+
+interface Step {
+  title: string
+  number: number
+  accion?: string
+  herramienta?: string
+  descripcion?: string
+  rawContent: string
+}
+
+interface BoostRecommendation {
+  number: number
+  title: string
+  cuelloBotella?: string
+  mejora?: string
+  details?: string
+  rawContent: string
+}
+
+// ── Parsers ──
+function parseMarkdownSections(markdown: string): Section[] {
+  if (!markdown) return []
+  const lines = markdown.split('\n')
+  const sections: Section[] = []
+  let currentTitle = ''
+  let currentContent: string[] = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed) {
+      if (currentTitle) currentContent.push(line)
+      continue
+    }
+
+    // Match main headings like "1. Objetivo", "### 2. Alcance", "## 3. Roles y Responsabilidades"
+    const isHeading = trimmed.startsWith('#') || 
+                      (/^(?:\*\*?\s*)?\d+\.\s+[A-ZÁÉÍÓÚ]/i.test(trimmed) && !/^\d+\.\d+/.test(trimmed))
+
+    if (isHeading) {
+      if (currentTitle || currentContent.length > 0) {
+        sections.push({
+          title: currentTitle || 'Resumen',
+          content: currentContent.join('\n').trim()
+        })
+      }
+      
+      let cleanTitle = trimmed
+        .replace(/^#+\s*/, '')
+        .replace(/^\*\*?/, '')
+        .replace(/\*\*?$/, '')
+        .replace(/^\d+\.\s*/, '')
+        .trim()
+      
+      currentTitle = cleanTitle
+      currentContent = []
+    } else {
+      currentContent.push(line)
+    }
+  }
+
+  if (currentTitle || currentContent.length > 0) {
+    sections.push({
+      title: currentTitle || 'Resumen',
+      content: currentContent.join('\n').trim()
+    })
+  }
+
+  // Filter out any empty sections
+  return sections.filter(s => s.title && s.content)
+}
+
+function parseSteps(content: string): Step[] {
+  if (!content) return []
+  const steps: Step[] = []
+  const lines = content.split('\n')
+  
+  let currentStep: Partial<Step> | null = null
+  let currentRawLines: string[] = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    // Match "Paso 1: ...", "**Paso 2:** ...", "### Paso 3: ...", "Paso 1. Confirmación de Cierre de Oportunidad"
+    const stepMatch = trimmed.match(/^(?:#+\s+|\*\*?)?Paso\s+(\d+)\s*[\.:]?\s*(.*?)(?:\*\*?)?$/i)
+    
+    if (stepMatch) {
+      if (currentStep) {
+        currentStep.rawContent = currentRawLines.join('\n').trim()
+        parseStepFields(currentStep, currentRawLines)
+        steps.push(currentStep as Step)
+      }
+      
+      currentStep = {
+        number: parseInt(stepMatch[1], 10),
+        title: stepMatch[2].trim(),
+      }
+      currentRawLines = []
+    } else {
+      if (currentStep) {
+        currentRawLines.push(line)
+      }
+    }
+  }
+
+  if (currentStep) {
+    currentStep.rawContent = currentRawLines.join('\n').trim()
+    parseStepFields(currentStep, currentRawLines)
+    steps.push(currentStep as Step)
+  }
+
+  return steps
+}
+
+function parseStepFields(step: Partial<Step>, lines: string[]) {
+  let currentField: 'accion' | 'herramienta' | 'descripcion' | null = null
+  let fieldValues = { accion: '', herramienta: '', descripcion: '' }
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed) continue
+
+    // Support both formats: "1.1. Acción: Text" or "**Acción**: Text" or "Acción: Text"
+    const accionMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Acci[oó]n(?:\*\*?)?\s*:\s*(.*)$/i)
+    const herramientaMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Herramienta(?:\*\*?)?\s*:\s*(.*)$/i)
+    const descripcionMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Descripci[oó]n(?:\*\*?)?\s*:\s*(.*)$/i)
+
+    if (accionMatch) {
+      currentField = 'accion'
+      fieldValues.accion = accionMatch[1].trim()
+    } else if (herramientaMatch) {
+      currentField = 'herramienta'
+      fieldValues.herramienta = herramientaMatch[1].trim()
+    } else if (descripcionMatch) {
+      currentField = 'descripcion'
+      fieldValues.descripcion = descripcionMatch[1].trim()
+    } else if (currentField) {
+      fieldValues[currentField] += ' ' + trimmed
+    }
+  }
+
+  if (fieldValues.accion) step.accion = fieldValues.accion
+  if (fieldValues.herramienta) step.herramienta = fieldValues.herramienta
+  if (fieldValues.descripcion) step.descripcion = fieldValues.descripcion
+}
+
+function parseBoostRecommendations(boostText: string): { intro: string, recommendations: BoostRecommendation[] } {
+  if (!boostText) return { intro: '', recommendations: [] }
+  const lines = boostText.split('\n')
+  const recommendations: BoostRecommendation[] = []
+  let introLines: string[] = []
+  let currentRec: Partial<BoostRecommendation> | null = null
+  let currentRawLines: string[] = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    // Match "1. Recolección Proactiva de Información Tributaria..."
+    const recMatch = trimmed.match(/^(?:\*\*?\s*)?(\d+)\.\s+(.*?)(?:\*\*?)?$/)
+    
+    if (recMatch && !/^\d+\.\d+/.test(trimmed)) {
+      if (currentRec) {
+        currentRec.rawContent = currentRawLines.join('\n').trim()
+        parseBoostFields(currentRec, currentRawLines)
+        recommendations.push(currentRec as BoostRecommendation)
+      }
+      
+      currentRec = {
+        number: parseInt(recMatch[1], 10),
+        title: recMatch[2].replace(/^\*\*?/, '').replace(/\*\*?$/, '').trim()
+      }
+      currentRawLines = []
+    } else {
+      if (currentRec) {
+        currentRawLines.push(line)
+      } else {
+        introLines.push(line)
+      }
+    }
+  }
+
+  if (currentRec) {
+    currentRec.rawContent = currentRawLines.join('\n').trim()
+    parseBoostFields(currentRec, currentRawLines)
+    recommendations.push(currentRec as BoostRecommendation)
+  }
+
+  return {
+    intro: introLines.join('\n').trim(),
+    recommendations
+  }
+}
+
+function parseBoostFields(rec: Partial<BoostRecommendation>, lines: string[]) {
+  const text = lines.join(' ').trim()
+  const cuelloMatch = text.match(/Cuello\s+de\s+botella\s*:\s*(.*?)(?=(?:Mejora\s*:|$))/i)
+  const mejoraMatch = text.match(/Mejora\s*:\s*(.*?)(?=(?:Cuello\s+de\s+botella\s*:|$))/i)
+
+  if (cuelloMatch) rec.cuelloBotella = cuelloMatch[1].trim()
+  if (mejoraMatch) rec.mejora = mejoraMatch[1].trim()
+
+  rec.details = lines.filter(l => {
+    const trimmed = l.trim()
+    return !trimmed.toLowerCase().includes('cuello de botella') && !trimmed.toLowerCase().includes('mejora:')
+  }).join('\n').trim()
+}
+
+// ── Mermaid Syntax Sanitizer (Ensures 100% bug-free rendering) ──
+function sanitizeMermaidCode(code: string): string {
+  if (!code) return ''
+  let sanitized = code.trim()
+
+  // Remove markdown block wraps if present
+  sanitized = sanitized.replace(/^```mermaid\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '')
+
+  const delimiterPairs = [
+    { open: '([', close: '])', openEsc: '\\(\\[', closeEsc: '\\]\\)' },
+    { open: '[(', close: ')]', openEsc: '\\[\\(', closeEsc: '\\)\\]' },
+    { open: '[[', close: ']]', openEsc: '\\[\\[', closeEsc: '\\]\\]' },
+    { open: '((', close: '))', openEsc: '\\(\\(', closeEsc: '\\)\\)' },
+    { open: '{{', close: '}}', openEsc: '\\{\\{', closeEsc: '\\}\\}' },
+    { open: '[/', close: '/]', openEsc: '\\[\\/', closeEsc: '\\/\\]' },
+    { open: '[\\', close: '\\]', openEsc: '\\[\\\\', closeEsc: '\\\\\\]' },
+    { open: '[', close: ']', openEsc: '\\[', closeEsc: '\\]' },
+    { open: '(', close: ')', openEsc: '\\(', closeEsc: '\\)' },
+    { open: '{', close: '}', openEsc: '\\{', closeEsc: '\\}' },
+    { open: '>', close: ']', openEsc: '>', closeEsc: '\\]' },
+  ]
+
+  for (const pair of delimiterPairs) {
+    const regex = new RegExp(`([a-zA-Z0-9_-]+)\\s*${pair.openEsc}\\s*(.*?)\\s*${pair.closeEsc}`, 'g')
+    sanitized = sanitized.replace(regex, (match, nodeId, content) => {
+      let cleanContent = content.trim()
+      if (!cleanContent) return match
+      
+      const isWrapped = (cleanContent.startsWith('"') && cleanContent.endsWith('"')) || 
+                        (cleanContent.startsWith('\\"') && cleanContent.endsWith('\\"'))
+      
+      if (!isWrapped) {
+        cleanContent = cleanContent.replace(/"/g, '\\"')
+        return `${nodeId}${pair.open}"${cleanContent}"${pair.close}`
+      }
+      return match
+    })
+  }
+
+  return sanitized
+}
+
+// ── Icons for sections ──
+function getSectionIcon(title: string) {
+  const t = title.toLowerCase()
+  if (t.includes('objetivo')) return <Target className="w-5 h-5 text-[#1a88ff] drop-shadow-[0_0_8px_var(--primary-glow)]" />
+  if (t.includes('alcance')) return <Compass className="w-5 h-5 text-[#26d8c4] drop-shadow-[0_0_8px_var(--cyan-glow)]" />
+  if (t.includes('rol') || t.includes('responsabilidad')) return <Users className="w-5 h-5 text-indigo-400 drop-shadow-[0_0_8px_rgba(129,140,248,0.5)]" />
+  if (t.includes('herramienta')) return <Wrench className="w-5 h-5 text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]" />
+  if (t.includes('paso') || t.includes('procedimiento')) return <Milestone className="w-5 h-5 text-emerald-400 drop-shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
+  return <FileText className="w-5 h-5 text-purple-400" />
+}
+
 export default function SopResultPanel({ sop }: SopResultPanelProps) {
   const [activeTab, setActiveTab] = useState<TabType>('sop')
   const [copied, setCopied] = useState(false)
   const { theme } = useTheme()
 
+  // Expandable sections state for SOP (First is open by default)
+  const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 0: true })
+
+  // Expandable sections state for Boost Recommendations
+  const [expandedBoost, setExpandedBoost] = useState<Record<number, boolean>>({ 0: true })
+
+  // Clean and parse the markdown SOP content
+  const sopSections = parseMarkdownSections(sop.markdown_content)
+  const hasMultipleSections = sopSections.length > 1
+
+  // Parse Boost Recommendations
+  const { intro: boostIntro, recommendations: boostRecommendations } = parseBoostRecommendations(sop.boost_strategy)
+
+  // Sanitized Mermaid Code
+  const sanitizedFlowCode = sanitizeMermaidCode(sop.mermaid_code)
+
   useEffect(() => {
-    if (activeTab === 'flow' && sop.mermaid_code) {
+    if (activeTab === 'flow' && sanitizedFlowCode) {
       mermaid.initialize({ 
         startOnLoad: true, 
         theme: theme === 'dark' ? 'dark' : 'default',
@@ -31,28 +328,32 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           primaryColor: '#1a88ff',
           primaryTextColor: '#fff',
           primaryBorderColor: '#26d8c4',
-          lineColor: '#e0e6ed',
+          lineColor: '#26d8c4',
           secondaryColor: '#26d8c4',
           tertiaryColor: '#16181d'
         } : {
           primaryColor: '#1a88ff',
           primaryTextColor: '#333',
           primaryBorderColor: '#26d8c4',
-          lineColor: '#555',
+          lineColor: '#1a88ff',
           secondaryColor: '#26d8c4',
           tertiaryColor: '#faf6fd'
         }
       })
       setTimeout(() => {
-        mermaid.contentLoaded()
+        try {
+          mermaid.contentLoaded()
+        } catch (e) {
+          console.error("Mermaid live render error caught:", e)
+        }
       }, 100)
     }
-  }, [activeTab, sop.mermaid_code, theme])
+  }, [activeTab, sanitizedFlowCode, theme])
 
   const copyToClipboard = () => {
     let contentToCopy = ''
     if (activeTab === 'sop') contentToCopy = sop.markdown_content
-    if (activeTab === 'flow') contentToCopy = sop.mermaid_code
+    if (activeTab === 'flow') contentToCopy = sanitizedFlowCode
     if (activeTab === 'boost') contentToCopy = sop.boost_strategy
 
     navigator.clipboard.writeText(contentToCopy)
@@ -60,17 +361,40 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
     setTimeout(() => setCopied(false), 2000)
   }
 
+  const toggleSection = (idx: number) => {
+    setExpandedSections(prev => ({ ...prev, [idx]: !prev[idx] }))
+  }
+
+  const toggleBoost = (idx: number) => {
+    setExpandedBoost(prev => ({ ...prev, [idx]: !prev[idx] }))
+  }
+
   return (
-    <div className="glass-card flex flex-col h-full min-h-[600px]">
+    <div className="glass-card flex flex-col h-full min-h-[600px] border border-black/10 dark:border-white/10 shadow-2xl relative">
+      {/* Glow Effects in background */}
+      <div className="absolute top-0 right-0 w-80 h-80 bg-blob bg-blob-primary -mr-40 -mt-40 opacity-15 pointer-events-none" />
+      <div className="absolute bottom-0 left-0 w-80 h-80 bg-blob bg-blob-cyan -ml-40 -mb-40 opacity-15 pointer-events-none" />
+
       {/* Header & Tabs */}
-      <div className="border-b border-black/10 dark:border-white/10 p-4">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-glow">{sop.title}</h2>
-        <div className="flex items-center gap-4 border-b border-black/10 dark:border-white/10 pb-[-1px]">
+      <div className="border-b border-black/10 dark:border-white/10 p-6 z-10">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-glow flex items-center gap-2">
+            <Award className="w-6 h-6 text-[#1a88ff]" />
+            {sop.title}
+          </h2>
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1a88ff]/10 text-[#1a88ff] border border-[#1a88ff]/20">
+            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+            AI Optimizado
+          </span>
+        </div>
+
+        {/* Tab Buttons */}
+        <div className="flex items-center gap-2 bg-black/10 dark:bg-black/45 p-1 rounded-xl w-fit border border-black/5 dark:border-white/5">
           <button
             onClick={() => setActiveTab('sop')}
-            className={`pb-3 font-medium transition-all ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide transition-all cursor-pointer ${
               activeTab === 'sop' 
-                ? 'text-[#1a88ff] border-b-2 border-[#1a88ff]' 
+                ? 'bg-gradient-to-r from-[#1a88ff] to-[#1a88ff]/80 text-white shadow-lg' 
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
             }`}
           >
@@ -78,9 +402,9 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           </button>
           <button
             onClick={() => setActiveTab('flow')}
-            className={`pb-3 font-medium transition-all ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide transition-all cursor-pointer ${
               activeTab === 'flow' 
-                ? 'text-[#26d8c4] border-b-2 border-[#26d8c4]' 
+                ? 'bg-gradient-to-r from-[#26d8c4] to-[#26d8c4]/80 text-white shadow-lg' 
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
             }`}
           >
@@ -88,9 +412,9 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           </button>
           <button
             onClick={() => setActiveTab('boost')}
-            className={`pb-3 font-medium transition-all ${
+            className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide transition-all cursor-pointer ${
               activeTab === 'boost' 
-                ? 'text-purple-600 dark:text-purple-400' 
+                ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg' 
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
             }`}
           >
@@ -100,38 +424,201 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 p-6 overflow-y-auto">
+      <div className="flex-1 p-6 overflow-y-auto z-10 print-expanded">
+        
+        {/* ── TAB 1: SIKAI SOP (Accordions & Timeline) ── */}
         {activeTab === 'sop' && (
-          <div className="prose dark:prose-invert prose-blue max-w-none">
-            <ReactMarkdown>{sop.markdown_content}</ReactMarkdown>
+          <div className="space-y-4">
+            {hasMultipleSections ? (
+              sopSections.map((section, idx) => {
+                const isExpanded = !!expandedSections[idx]
+                const isStepByStep = section.title.toLowerCase().includes('paso') || section.title.toLowerCase().includes('procedimiento')
+                const steps = isStepByStep ? parseSteps(section.content) : []
+
+                return (
+                  <div 
+                    key={idx} 
+                    className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-[#1a88ff]/30 shadow-sm"
+                  >
+                    {/* Header trigger */}
+                    <button
+                      onClick={() => toggleSection(idx)}
+                      className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3.5">
+                        <div className="p-2 rounded-xl bg-black/5 dark:bg-white/5 border border-black/5 dark:border-white/10 flex items-center justify-center">
+                          {getSectionIcon(section.title)}
+                        </div>
+                        <span className="text-lg font-bold tracking-tight">{section.title}</span>
+                      </div>
+                      <motion.div
+                        animate={{ rotate: isExpanded ? 180 : 0 }}
+                        transition={{ duration: 0.25, ease: 'easeInOut' }}
+                      >
+                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                      </motion.div>
+                    </button>
+
+                    {/* Expandable content */}
+                    <AnimatePresence initial={false}>
+                      {isExpanded && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                          <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 text-gray-700 dark:text-gray-300">
+                            {isStepByStep && steps.length > 0 ? (
+                              <SopStepsTimeline steps={steps} />
+                            ) : (
+                              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed">
+                                <ReactMarkdown>{section.content}</ReactMarkdown>
+                              </div>
+                            )}
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                )
+              })
+            ) : (
+              // Fallback to standard Markdown rendering if parsing yielded nothing
+              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
+                <ReactMarkdown>{sop.markdown_content}</ReactMarkdown>
+              </div>
+            )}
           </div>
         )}
 
+        {/* ── TAB 2: SIKAI Flow (Mermaid Live Chart) ── */}
         {activeTab === 'flow' && (
-          <div className="flex items-center justify-center min-h-[400px] bg-black/5 dark:bg-[#09101d] rounded-xl border border-black/5 dark:border-white/5 p-4">
-            <pre className="mermaid">
-              {sop.mermaid_code}
-            </pre>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 p-3 bg-blue-500/5 rounded-xl border border-blue-500/10 text-sm text-blue-600 dark:text-blue-400 font-medium">
+              <Info className="w-4 h-4" />
+              Diagrama interactivo sincronizado en tiempo real. Si detectas fallas, exporta tu SOP a PDF para visualizar el reporte completo.
+            </div>
+            
+            <div className="flex items-center justify-center min-h-[450px] bg-black/5 dark:bg-[#09101d] rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner overflow-x-auto">
+              <div className="w-full max-w-4xl flex justify-center">
+                <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}`}>
+                  {sanitizedFlowCode}
+                </pre>
+              </div>
+            </div>
           </div>
         )}
 
+        {/* ── TAB 3: SIKAI Boost (Premium Recommendations & Bottlenecks) ── */}
         {activeTab === 'boost' && (
-          <div className="prose dark:prose-invert prose-purple max-w-none">
-            <ReactMarkdown>{sop.boost_strategy}</ReactMarkdown>
+          <div className="space-y-6">
+            {boostIntro && (
+              <div className="p-5 glass rounded-2xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-purple-500/5 to-transparent">
+                <ReactMarkdown>{boostIntro}</ReactMarkdown>
+              </div>
+            )}
+
+            {boostRecommendations.length > 0 ? (
+              <div className="space-y-4">
+                {boostRecommendations.map((rec, idx) => {
+                  const isExpanded = !!expandedBoost[idx]
+
+                  return (
+                    <div 
+                      key={idx} 
+                      className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-purple-500/30 shadow-sm"
+                    >
+                      <button
+                        onClick={() => toggleBoost(idx)}
+                        className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
+                      >
+                        <div className="flex items-center gap-3.5">
+                          <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
+                            {rec.number}
+                          </div>
+                          <span className="text-lg font-bold tracking-tight text-purple-900 dark:text-purple-300">{rec.title}</span>
+                        </div>
+                        <motion.div
+                          animate={{ rotate: isExpanded ? 180 : 0 }}
+                          transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        >
+                          <ChevronDown className="w-5 h-5 text-gray-400" />
+                        </motion.div>
+                      </button>
+
+                      <AnimatePresence initial={false}>
+                        {isExpanded && (
+                          <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                          >
+                            <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 space-y-4">
+                              
+                              {/* Cuello de botella & Mejora Grid */}
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {rec.cuelloBotella && (
+                                  <div className="bg-red-500/5 dark:bg-red-500/[0.02] rounded-xl p-4 border border-red-500/10 dark:border-red-500/[0.05]">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-red-500 flex items-center gap-1.5 mb-1.5 font-headline">
+                                      <AlertTriangle className="w-4 h-4" />
+                                      Cuello de Botella
+                                    </span>
+                                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                      {rec.cuelloBotella}
+                                    </p>
+                                  </div>
+                                )}
+
+                                {rec.mejora && (
+                                  <div className="bg-[#26d8c4]/5 dark:bg-[#26d8c4]/[0.02] rounded-xl p-4 border border-[#26d8c4]/10 dark:border-[#26d8c4]/[0.05]">
+                                    <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] flex items-center gap-1.5 mb-1.5 font-headline">
+                                      <Zap className="w-4 h-4" />
+                                      Mejora Propuesta
+                                    </span>
+                                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                      {rec.mejora}
+                                    </p>
+                                  </div>
+                                )}
+                              </div>
+
+                              {/* Details text */}
+                              {rec.details && (
+                                <div className="prose dark:prose-invert prose-purple max-w-none text-gray-700 dark:text-gray-300 bg-black/5 dark:bg-white/[0.01] p-5 rounded-xl border border-black/5 dark:border-white/[0.03] leading-relaxed">
+                                  <ReactMarkdown>{rec.details}</ReactMarkdown>
+                                </div>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
+                    </div>
+                  )
+                })}
+              </div>
+            ) : (
+              // Fallback to standard Markdown if recommendations couldn't be split
+              <div className="prose dark:prose-invert prose-purple max-w-none p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
+                <ReactMarkdown>{sop.boost_strategy}</ReactMarkdown>
+              </div>
+            )}
           </div>
         )}
+
       </div>
 
       {/* Footer Actions */}
-      <div className="border-t border-black/10 dark:border-white/10 p-4 flex items-center justify-between bg-black/5 dark:bg-black/20">
-        <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
-          Generado automáticamente por SIKAI SOP Generator AI
+      <div className="border-t border-black/10 dark:border-white/10 p-5 flex flex-col sm:flex-row items-center justify-between gap-4 bg-black/5 dark:bg-black/25 z-10 rounded-b-2xl">
+        <div className="text-sm text-gray-500 dark:text-gray-400 font-medium text-center sm:text-left">
+          Generado automáticamente por <span className="text-[#1a88ff] font-bold">SIKAI SOP Generator AI</span>
         </div>
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-full sm:w-auto justify-end">
           <button
             type="button"
             onClick={copyToClipboard}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white font-medium transition-colors border border-black/10 dark:border-white/10"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold transition-all border border-black/10 dark:border-white/10 text-sm cursor-pointer animate-hover"
           >
             {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
             {copied ? 'Copiado' : 'Copiar Texto'}
@@ -139,12 +626,90 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] text-white font-bold transition-all shadow-[0_0_15px_rgba(26,136,255,0.4)] hover:shadow-[0_0_25px_rgba(38,216,196,0.6)]"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] text-white font-bold transition-all text-sm shadow-[0_0_15px_rgba(26,136,255,0.3)] hover:shadow-[0_0_25px_rgba(38,216,196,0.5)] cursor-pointer animate-hover"
           >
             <Download className="w-4 h-4" /> Exportar PDF
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+// ── Vertical Step-by-Step Timeline Component ──
+interface SopStepsTimelineProps {
+  steps: Step[]
+}
+
+function SopStepsTimeline({ steps }: SopStepsTimelineProps) {
+  if (!steps || steps.length === 0) return null
+
+  return (
+    <div className="relative pl-6 sm:pl-8 border-l-2 border-black/10 dark:border-white/10 space-y-8 py-2 ml-4">
+      {steps.map((step, idx) => {
+        return (
+          <div key={idx} className="relative group">
+            {/* Timeline connector circle node */}
+            <div className="absolute -left-[41px] sm:-left-[49px] top-1.5 flex items-center justify-center w-8 h-8 rounded-full bg-[#16181d] border-2 border-[#1a88ff] group-hover:border-[#26d8c4] text-white font-bold text-sm shadow-[0_0_10px_rgba(26,136,255,0.2)] transition-all duration-300 z-20">
+              {step.number}
+            </div>
+
+            {/* Step panel */}
+            <div className="glass-card hover:border-[#1a88ff]/40 p-5 rounded-2xl border border-black/5 dark:border-white/5 transition-all duration-300 bg-gradient-to-br from-black/[0.01] to-transparent dark:from-white/[0.01] dark:to-transparent">
+              <h4 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2 leading-snug">
+                {step.title}
+              </h4>
+
+              <div className="grid grid-cols-1 gap-4">
+                
+                {/* Action box */}
+                {step.accion && (
+                  <div className="bg-black/5 dark:bg-white/[0.02] rounded-xl p-4 border border-black/5 dark:border-white/[0.04]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#1a88ff] block mb-1 font-headline">
+                      Acción
+                    </span>
+                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                      {step.accion}
+                    </p>
+                  </div>
+                )}
+
+                {/* Tool box */}
+                {step.herramienta && (
+                  <div className="bg-black/5 dark:bg-white/[0.02] rounded-xl p-4 border border-black/5 dark:border-white/[0.04]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] block mb-1.5 font-headline">
+                      Herramienta
+                    </span>
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-[#26d8c4]/10 text-[#26d8c4] border border-[#26d8c4]/20">
+                      <Cpu className="w-3.5 h-3.5" />
+                      {step.herramienta}
+                    </span>
+                  </div>
+                )}
+
+                {/* Description box */}
+                {step.descripcion && (
+                  <div className="bg-black/5 dark:bg-white/[0.01] rounded-xl p-4 border border-black/5 dark:border-white/[0.03]">
+                    <span className="text-xs font-bold uppercase tracking-wider text-gray-400 block mb-1.5 font-headline">
+                      Descripción
+                    </span>
+                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-body">
+                      {step.descripcion}
+                    </p>
+                  </div>
+                )}
+
+                {/* Fallback if parse missed specific tags */}
+                {!step.accion && !step.herramienta && !step.descripcion && step.rawContent && (
+                  <div className="prose dark:prose-invert prose-sm max-w-none text-gray-700 dark:text-gray-300">
+                    <ReactMarkdown>{step.rawContent}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })}
     </div>
   )
 }
