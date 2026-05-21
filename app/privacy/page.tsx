@@ -19,7 +19,7 @@ export default function PrivacyPolicyPage() {
                         <section className="space-y-3">
                             <h2 className="text-lg font-headline font-semibold text-[#1a88ff]">1. Objetivo y Alcance</h2>
                             <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
-                                En nombre de SIKAI CX y SIKAI SOP Generator ("La Aplicación", "Nosotros"), nos comprometemos a proteger y respetar su privacidad. Esta política describe cómo recopilamos, utilizamos, almacenamos y protegemos sus datos personales en estricto cumplimiento de las leyes de Habeas Data y protección de datos aplicables en Colombia y Latinoamérica.
+                                En nombre de SIKAI SOP Generator ("La Aplicación", "Nosotros"), nos comprometemos a proteger y respetar su privacidad. Esta política describe cómo recopilamos, utilizamos, almacenamos y protegemos sus datos personales en estricto cumplimiento de las leyes de Habeas Data y protección de datos aplicables en Colombia y Latinoamérica.
                             </p>
                         </section>
 
@@ -52,7 +52,7 @@ export default function PrivacyPolicyPage() {
                         <section className="space-y-3">
                             <h2 className="text-lg font-headline font-semibold text-[#1a88ff]">4. Autorización del Titular</h2>
                             <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
-                                Al marcar la casilla de aceptación durante el registro, el Usuario autoriza de manera previa, expresa e informada a SIKAI CX para que recolecte, almacene, use y procese sus datos personales de acuerdo con lo establecido en la presente política.
+                                Al marcar la casilla de aceptación durante el registro, el Usuario autoriza de manera previa, expresa e informada a SIKAI SOP Generator para que recolecte, almacene, use y procese sus datos personales de acuerdo con lo establecido en la presente política.
                             </p>
                         </section>
 
@@ -69,13 +69,13 @@ export default function PrivacyPolicyPage() {
                         <section className="space-y-3">
                             <h2 className="text-lg font-headline font-semibold text-[#1a88ff]">6. Seguridad de la Información</h2>
                             <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm">
-                                SIKAI CX utiliza infraestructura protegida con Autenticación de Múltiples Factores (MFA) y encriptación Row-Level Security (RLS) en sus bases de datos (Supabase) para asegurar que nadie más que usted pueda visualizar o manipular sus datos y documentación.
+                                SIKAI SOP Generator utiliza infraestructura protegida con Autenticación de Múltiples Factores (MFA) y encriptación Row-Level Security (RLS) en sus bases de datos (Supabase) para asegurar que nadie más que usted pueda visualizar o manipular sus datos y documentación.
                             </p>
                         </section>
 
                         <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-black/10 dark:border-white/10">
                             <p className="text-xs text-gray-500 dark:text-gray-400">
-                                © {new Date().getFullYear()} SIKAI CX · Todos los derechos reservados
+                                © {new Date().getFullYear()} SIKAI SOP Generator · Todos los derechos reservados
                             </p>
                             <Link href="/login" className="text-sm text-[#1a88ff] hover:text-[#26d8c4] transition-colors font-medium underline underline-offset-2">
                                 Volver al inicio de sesión

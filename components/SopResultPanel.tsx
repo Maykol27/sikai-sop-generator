@@ -124,8 +124,8 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
       {/* Footer Actions */}
       <div className="border-t border-black/10 dark:border-white/10 p-4 flex items-center justify-between bg-black/5 dark:bg-black/20">
-        <div className="text-sm text-gray-500 dark:text-gray-400">
-          Generado automáticamente por SIKAI CX AI
+        <div className="text-sm text-gray-500 dark:text-gray-400 font-medium">
+          Generado automáticamente por SIKAI SOP Generator AI
         </div>
         <div className="flex gap-3">
           <button

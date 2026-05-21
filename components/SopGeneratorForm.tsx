@@ -157,29 +157,32 @@ export default function SopGeneratorForm() {
 
   return (
     <div className="glass-card p-6 md:p-8 max-w-4xl mx-auto">
-      <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mb-8">
-        <button
-          type="button"
-          onClick={() => setMode('manual')}
-          className={`px-6 py-3 rounded-xl font-bold transition-all ${
-            mode === 'manual' 
-              ? 'bg-[#1a88ff]/20 border border-[#1a88ff] text-[#1a88ff] shadow-[0_0_15px_rgba(26,136,255,0.3)]' 
-              : 'bg-transparent border border-black/10 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
-          }`}
-        >
-          Formulario Manual
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode('voice')}
-          className={`px-6 py-3 rounded-xl font-bold transition-all flex items-center gap-2 ${
-            mode === 'voice' 
-              ? 'bg-[#26d8c4]/20 border border-[#26d8c4] text-[#26d8c4] shadow-[0_0_15px_rgba(38,216,196,0.3)]' 
-              : 'bg-transparent border border-black/10 dark:border-white/10 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
-          }`}
-        >
-          <Mic className="w-5 h-5" /> SIKAI Voice
-        </button>
+      {/* Dynamic Segmented Pill Control */}
+      <div className="flex justify-center mb-8">
+        <div className="inline-flex p-1 bg-black/10 dark:bg-black/40 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/10 w-full max-w-md shadow-inner">
+          <button
+            type="button"
+            onClick={() => setMode('manual')}
+            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 text-center ${
+              mode === 'manual' 
+                ? 'bg-gradient-to-r from-[#1a88ff] to-[#1a88ff]/80 text-white shadow-[0_4px_12px_rgba(26,136,255,0.25)]' 
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+            }`}
+          >
+            Formulario Manual
+          </button>
+          <button
+            type="button"
+            onClick={() => setMode('voice')}
+            className={`flex-1 py-3 px-4 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 text-center ${
+              mode === 'voice' 
+                ? 'bg-gradient-to-r from-[#26d8c4] to-[#26d8c4]/80 text-black shadow-[0_4px_12px_rgba(38,216,196,0.25)]' 
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+            }`}
+          >
+            <Mic className="w-4 h-4" /> SIKAI Voice
+          </button>
+        </div>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
@@ -205,11 +208,11 @@ export default function SopGeneratorForm() {
               </p>
             </div>
             {globalVoiceText && (
-              <div className="w-full mt-8 p-4 rounded-xl bg-black/5 dark:bg-black/30 border border-black/10 dark:border-white/10">
-                <h4 className="text-[#26d8c4] font-bold mb-2 flex items-center gap-2">
+              <div className="w-full mt-8 p-5 rounded-2xl bg-black/5 dark:bg-black/35 border border-black/10 dark:border-white/10">
+                <h4 className="text-[#26d8c4] font-bold mb-3 flex items-center gap-2 text-sm uppercase tracking-wider">
                   <Zap className="w-4 h-4" /> Transcripción en vivo
                 </h4>
-                <p className="text-gray-800 dark:text-gray-300 whitespace-pre-wrap min-h-[100px] max-h-[300px] overflow-y-auto">
+                <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap min-h-[120px] max-h-[300px] overflow-y-auto leading-relaxed">
                   {globalVoiceText}
                 </p>
               </div>
@@ -219,7 +222,9 @@ export default function SopGeneratorForm() {
           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Título del Proceso</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+                  Título del Proceso
+                </label>
                 <input 
                   required
                   type="text" 
@@ -230,7 +235,9 @@ export default function SopGeneratorForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Roles y Responsables</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+                  Roles y Responsables
+                </label>
                 <input 
                   required
                   type="text"
@@ -243,19 +250,23 @@ export default function SopGeneratorForm() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Objetivo Principal</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+                Objetivo Principal
+              </label>
               <textarea 
                 required
                 value={objective}
                 onChange={e => setObjective(e.target.value)}
-                className="sikai-input min-h-[80px]"
+                className="sikai-input min-h-[90px]"
                 placeholder="¿Qué se busca lograr al finalizar este proceso?"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Herramientas o Software (Opcional)</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+                  Herramientas o Software (Opcional)
+                </label>
                 <input 
                   type="text"
                   value={tools}
@@ -265,7 +276,9 @@ export default function SopGeneratorForm() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cuellos de botella (Opcional)</label>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-2">
+                  Cuellos de botella (Opcional)
+                </label>
                 <input 
                   type="text" 
                   value={bottlenecks}
@@ -276,34 +289,39 @@ export default function SopGeneratorForm() {
               </div>
             </div>
 
-            <div className="space-y-4 pt-4 border-t border-black/10 dark:border-white/10">
-              <div className="flex items-center justify-between">
-                <h4 className="text-lg font-bold text-gray-900 dark:text-white">Pasos del Proceso</h4>
-                <span className="text-sm text-gray-600 dark:text-gray-400">{steps.length} / 10 pasos</span>
+            <div className="space-y-4 pt-6 border-t border-black/10 dark:border-white/10">
+              <div className="flex items-center justify-between mb-2">
+                <h4 className="text-base font-bold uppercase tracking-wider text-gray-800 dark:text-gray-300">
+                  Pasos del Proceso
+                </h4>
+                <span className="text-xs font-bold text-gray-500 dark:text-gray-400">{steps.length} / 10 pasos</span>
               </div>
               
               {steps.map((step, index) => (
-                <div key={step.id} className="flex items-start gap-3 relative">
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[#1a88ff]/20 text-[#1a88ff] flex items-center justify-center font-bold mt-1">
+                <div key={step.id} className="flex items-start gap-4 relative group">
+                  <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-[#1a88ff]/10 border border-[#1a88ff]/20 text-[#1a88ff] flex items-center justify-center font-bold mt-1 shadow-sm font-headline">
                     {index + 1}
                   </div>
-                  <textarea
-                    required
-                    value={step.text}
-                    onChange={(e) => handleStepChange(step.id, e.target.value)}
-                    maxLength={500}
-                    className="sikai-input min-h-[80px]"
-                    placeholder="Describe este paso brevemente..."
-                  />
-                  {steps.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeStep(step.id)}
-                      className="absolute right-3 top-3 text-gray-500 hover:text-red-400 transition-colors"
-                    >
-                      <Trash2 className="w-5 h-5" />
-                    </button>
-                  )}
+                  <div className="flex-grow relative w-full">
+                    <textarea
+                      required
+                      value={step.text}
+                      onChange={(e) => handleStepChange(step.id, e.target.value)}
+                      maxLength={500}
+                      className="sikai-input min-h-[90px] pr-12"
+                      placeholder="Describe este paso de manera clara y concisa..."
+                    />
+                    {steps.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeStep(step.id)}
+                        className="absolute right-3.5 top-3.5 p-2 rounded-lg bg-black/15 dark:bg-white/5 border border-black/10 dark:border-white/5 text-gray-400 hover:text-red-500 hover:bg-red-500/10 transition-all opacity-0 group-hover:opacity-100 focus:opacity-100"
+                        title="Eliminar paso"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
               
@@ -311,9 +329,10 @@ export default function SopGeneratorForm() {
                 <button
                   type="button"
                   onClick={addStep}
-                  className="flex items-center gap-2 text-[#1a88ff] font-medium hover:text-white transition-colors"
+                  className="w-full py-4 border-2 border-dashed border-[#1a88ff]/20 hover:border-[#1a88ff]/50 rounded-xl text-[#1a88ff] hover:bg-[#1a88ff]/5 flex items-center justify-center gap-2 font-bold transition-all duration-300 group"
                 >
-                  <Plus className="w-4 h-4" /> Añadir otro paso
+                  <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                  Añadir otro paso ({steps.length}/10)
                 </button>
               )}
             </div>
@@ -321,16 +340,16 @@ export default function SopGeneratorForm() {
         )}
 
         {error && (
-          <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/50 text-red-400">
+          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 font-medium">
             {error}
           </div>
         )}
 
-        <div className="pt-8">
+        <div className="pt-6">
           <button
             type="submit"
             disabled={isGenerating || (mode === 'voice' && !globalVoiceText)}
-            className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] hover:shadow-[0_0_25px_rgba(26,136,255,0.6)] disabled:opacity-50 disabled:cursor-not-allowed transition-all transform hover:-translate-y-1"
+            className="w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-xl font-bold text-white bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] hover:shadow-[0_0_30px_rgba(26,136,255,0.4)] focus:ring-2 focus:ring-[#1a88ff]/40 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none transition-all duration-300 transform hover:-translate-y-0.5"
           >
             {isGenerating ? (
               <span className="flex items-center gap-2 animate-pulse">

@@ -37,26 +37,26 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
 
         <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-6 min-h-screen flex flex-col">
           {/* Header / Navbar */}
-          <header className="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between mb-8 sticky top-4 z-50">
+          <header className="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between mb-8 sticky top-2 sm:top-4 z-50">
             {/* Left: Logo + Brand */}
             <Link href="/dashboard" className="flex items-center gap-3 group">
               {/* SVG Logo Mark - scales perfectly unlike .ico */}
               <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_12px_rgba(26,136,255,0.4)] group-hover:shadow-[0_0_20px_rgba(38,216,196,0.5)] transition-all flex-shrink-0">
-                <span className="text-white font-black text-base leading-none" style={{ fontFamily: 'Poppins, sans-serif' }}>S</span>
+                <span className="text-white font-black text-base leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
               </div>
               <div className="flex flex-col leading-none">
-                <span className="font-bold text-sm text-white" style={{ fontFamily: 'Poppins, sans-serif' }}>SIKAI</span>
-                <span className="text-[10px] text-[#26d8c4] tracking-widest uppercase" style={{ fontFamily: 'Source Code Pro, monospace' }}>SOP Generator</span>
+                <span className="font-bold text-sm text-gray-900 dark:text-white" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
+                <span className="text-[9px] text-[#1a88ff] dark:text-[#26d8c4] tracking-widest uppercase font-bold" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
               </div>
             </Link>
 
             {/* Center: Nav Links */}
             <nav className="hidden md:flex items-center gap-6">
-              <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
+              <Link href="/dashboard" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1.5 font-medium">
                 <FileText className="w-4 h-4" />
                 Mis SOPs
               </Link>
-              <Link href="/dashboard/billing" className="text-sm text-gray-400 hover:text-white transition-colors flex items-center gap-1.5">
+              <Link href="/dashboard/billing" className="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors flex items-center gap-1.5 font-medium">
                 <Coins className="w-4 h-4" />
                 Créditos
               </Link>
@@ -65,16 +65,16 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
             {/* Right: Credits + Theme + Signout */}
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Credits Badge */}
-              <Link href="/dashboard/billing" className="flex items-center gap-1.5 bg-[#1a88ff]/10 hover:bg-[#1a88ff]/20 transition-colors px-3 py-1.5 rounded-full border border-[#1a88ff]/30">
-                <Coins className="w-3.5 h-3.5 text-[#26d8c4]" />
-                <span className="text-xs font-bold text-[#e0e6ed]">{credits}</span>
-                <span className="hidden sm:inline text-xs text-gray-400">créditos</span>
+              <Link href="/dashboard/billing" className="flex items-center gap-1.5 bg-[#1a88ff]/10 hover:bg-[#1a88ff]/20 transition-colors px-3 py-1.5 rounded-full border border-[#1a88ff]/30 shadow-sm">
+                <Coins className="w-3.5 h-3.5 text-[#1a88ff] dark:text-[#26d8c4]" />
+                <span className="text-xs font-bold text-gray-800 dark:text-[#e0e6ed]">{credits}</span>
+                <span className="hidden sm:inline text-xs text-gray-500 dark:text-gray-400 font-medium">créditos</span>
               </Link>
 
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full glass hover:border-[#1a88ff]/40 transition-all"
+                className="p-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-[#1a88ff]/40 dark:hover:border-[#26d8c4]/40 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-gray-400 hover:text-gray-900 dark:hover:text-white"
                 title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
               >
                 {theme === 'dark'
@@ -87,7 +87,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
               <form action="/auth/signout" method="post">
                 <button
                   type="submit"
-                  className="p-2 rounded-full glass hover:border-red-500/40 transition-all group"
+                  className="p-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-red-500/40 hover:bg-red-500/5 dark:hover:bg-red-500/10 transition-all group"
                   title="Cerrar sesión"
                 >
                   <LogOut className="w-4 h-4 text-gray-400 group-hover:text-red-400 transition-colors" />
@@ -102,10 +102,10 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
           </main>
 
           {/* Footer */}
-          <footer className="mt-12 pt-6 border-t border-white/5 text-center">
-            <p className="text-xs text-gray-600 font-body">
-              © {new Date().getFullYear()} SIKAI CX · Todos los derechos reservados ·{' '}
-              <Link href="/privacy" className="hover:text-[#1a88ff] transition-colors underline underline-offset-2">
+          <footer className="mt-12 pt-6 border-t border-black/5 dark:border-white/5 text-center">
+            <p className="text-xs text-gray-600 dark:text-gray-400 font-body">
+              © {new Date().getFullYear()} SIKAI SOP Generator · Todos los derechos reservados ·{' '}
+              <Link href="/privacy" className="hover:text-[#1a88ff] dark:hover:text-[#26d8c4] transition-colors underline underline-offset-2 font-medium">
                 Política de Tratamiento de Datos
               </Link>
             </p>
