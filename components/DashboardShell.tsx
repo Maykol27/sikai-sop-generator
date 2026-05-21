@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { LogOut, Coins, Sun, Moon, FileText } from 'lucide-react';
+import { LogOut, Coins, Sun, Moon, FileText, ClipboardList, Eye } from 'lucide-react';
 import { SplashScreen } from '@/components/SplashScreen';
 import { WelcomeTutorialModal } from '@/components/WelcomeTutorialModal';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -17,6 +17,8 @@ interface DashboardShellProps {
 export default function DashboardShell({ children, credits, fullName, userId }: DashboardShellProps) {
   const { theme, toggleTheme } = useTheme();
   const [showSplash, setShowSplash] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     // Show splash only on first login per session
@@ -25,30 +27,67 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
       setShowSplash(true);
       sessionStorage.setItem('sikai-splash-shown', 'true');
     }
+
+    // Auto-show tutorial if they haven't seen it yet
+    const hasSeenTutorial = localStorage.getItem('sikai_sop_tutorial_seen');
+    if (!hasSeenTutorial) {
+      const timer = setTimeout(() => {
+        setShowTutorial(true);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
   }, []);
+
+  // Click outside handler for profile dropdown
+  useEffect(() => {
+    if (!showDropdown) return;
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (!target.closest('.user-dropdown-container')) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, [showDropdown]);
+
+  // Extract initials from user full name
+  const getInitials = (name: string) => {
+    if (!name) return 'U';
+    const parts = name.trim().split(/\s+/);
+    if (parts.length >= 2) {
+      return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+    }
+    return parts[0][0].toUpperCase();
+  };
 
   return (
     <>
       {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
-      <WelcomeTutorialModal />
+      <WelcomeTutorialModal isOpen={showTutorial} onClose={() => setShowTutorial(false)} />
 
-      <div className="min-h-screen relative overflow-x-hidden">
+      <div className="min-h-screen relative overflow-x-hidden bg-[#09101d] dark:bg-[#09101d] light:bg-[#f0f6fc] text-foreground transition-colors duration-300">
         {/* Background Blobs */}
         <div className="fixed top-0 left-0 w-[500px] h-[500px] bg-blob bg-blob-primary pointer-events-none" />
         <div className="fixed bottom-0 right-0 w-[400px] h-[400px] bg-blob bg-blob-cyan pointer-events-none" style={{ animationDelay: '5s' }} />
 
-        <div className="px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto py-6 min-h-screen flex flex-col">
-          {/* Header / Navbar */}
-          <header className="glass rounded-2xl px-4 sm:px-6 py-3 flex items-center justify-between mb-8 sticky top-2 sm:top-4 z-50">
+        {/* Flagship Fixed edge-to-edge Navbar */}
+        <header className="fixed top-0 left-0 right-0 h-16 z-50 border-b border-black/5 dark:border-white/10 bg-[#09101d]/85 dark:bg-[#09101d]/85 light:bg-[#ffffff]/85 backdrop-blur-md transition-all duration-300">
+          <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             {/* Left: Logo + Brand */}
             <Link href="/dashboard" className="flex items-center gap-3 group select-none">
-              {/* Premium SIKAI Squircle Icon */}
-              <div className="w-11 h-11 rounded-[18px] bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_15px_rgba(26,136,255,0.45)] group-hover:shadow-[0_0_25px_rgba(38,216,196,0.6)] transition-all duration-300 flex-shrink-0">
-                <span className="text-white font-bold text-xl leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
+              {/* SIKAI Process/SOP outline icon - Styled exactly like SIKAI Finance */}
+              <div className="w-9 h-9 rounded-xl border border-[#1a88ff]/30 bg-[#1a88ff]/10 flex items-center justify-center shadow-[0_0_12px_rgba(26,136,255,0.15)] group-hover:shadow-[0_0_20px_rgba(26,136,255,0.35)] group-hover:border-[#1a88ff]/60 transition-all duration-300 flex-shrink-0">
+                <ClipboardList className="w-5 h-5 text-[#1a88ff] stroke-[1.75]" />
               </div>
               <div className="flex flex-col leading-none">
-                <span className="font-bold text-lg text-gray-900 dark:text-white tracking-tight" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
-                <span className="text-[9px] text-[#26d8c4] tracking-[0.18em] uppercase font-bold mt-1.5" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
+                <div className="flex items-center gap-1.5 font-bold text-base tracking-tight font-headline">
+                  <span className="text-gray-900 dark:text-white">SIKAI</span>
+                  <span className="text-[#1a88ff]">SOP GENERATOR</span>
+                </div>
+                <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-1">
+                  Hola, {fullName.split(' ')[0]} 👋
+                </span>
               </div>
             </Link>
 
@@ -64,41 +103,97 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
               </Link>
             </nav>
 
-            {/* Right: Credits + Theme + Signout */}
+            {/* Right: Credits, Eye, Theme, Dropdown Avatar */}
             <div className="flex items-center gap-2 sm:gap-3">
               {/* Credits Badge */}
               <Link href="/dashboard/billing" className="flex items-center gap-1.5 bg-[#1a88ff]/10 hover:bg-[#1a88ff]/20 transition-colors px-3 py-1.5 rounded-full border border-[#1a88ff]/30 shadow-sm">
-                <Coins className="w-3.5 h-3.5 text-[#1a88ff] dark:text-[#26d8c4]" />
+                <Coins className="w-3.5 h-3.5 text-[#1a88ff]" />
                 <span className="text-xs font-bold text-gray-800 dark:text-[#e0e6ed]">{credits}</span>
-                <span className="hidden sm:inline text-xs text-gray-500 dark:text-gray-400 font-medium">créditos</span>
+                <span className="hidden sm:inline text-[10px] text-gray-500 dark:text-gray-400 font-semibold uppercase tracking-wider">créditos</span>
               </Link>
+
+              {/* Eye Button (Tutorial Trigger) */}
+              <button
+                onClick={() => setShowTutorial(true)}
+                className="w-9 h-9 flex items-center justify-center rounded-full border border-black/10 dark:border-white/10 hover:border-[#1a88ff]/40 dark:hover:border-[#26d8c4]/40 bg-black/5 dark:bg-white/5 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all active:scale-95"
+                title="Ver instructivo de SOPs de alta calidad"
+              >
+                <Eye className="w-4.5 h-4.5" />
+              </button>
 
               {/* Theme Toggle */}
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-[#1a88ff]/40 dark:hover:border-[#26d8c4]/40 hover:bg-black/5 dark:hover:bg-white/5 transition-all text-gray-400 hover:text-gray-900 dark:hover:text-white"
+                className="w-9 h-9 flex items-center justify-center rounded-full border border-black/10 dark:border-white/10 hover:border-[#1a88ff]/40 dark:hover:border-[#26d8c4]/40 bg-black/5 dark:bg-white/5 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-all active:scale-95"
                 title={theme === 'dark' ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
               >
                 {theme === 'dark'
-                  ? <Sun className="w-4 h-4 text-[#26d8c4]" />
-                  : <Moon className="w-4 h-4 text-[#1a88ff]" />
+                  ? <Sun className="w-4.5 h-4.5 text-[#26d8c4]" />
+                  : <Moon className="w-4.5 h-4.5 text-[#1a88ff]" />
                 }
               </button>
 
-              {/* Sign Out */}
-              <form action="/auth/signout" method="post">
+              {/* Interactive User Dropdown */}
+              <div className="relative user-dropdown-container">
                 <button
-                  type="submit"
-                  className="p-2 rounded-xl border border-black/10 dark:border-white/10 hover:border-red-500/40 hover:bg-red-500/5 dark:hover:bg-red-500/10 transition-all group"
-                  title="Cerrar sesión"
+                  onClick={() => setShowDropdown(!showDropdown)}
+                  className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center text-white font-bold text-sm shadow-[0_0_12px_rgba(26,136,255,0.4)] hover:shadow-[0_0_20px_rgba(38,216,196,0.6)] hover:scale-105 active:scale-95 transition-all duration-300"
                 >
-                  <LogOut className="w-4 h-4 text-gray-400 group-hover:text-red-400 transition-colors" />
+                  {getInitials(fullName)}
                 </button>
-              </form>
-            </div>
-          </header>
 
-          {/* Main Content */}
+                {showDropdown && (
+                  <div className="absolute right-0 mt-3 w-56 glass rounded-2xl p-2 shadow-2xl border border-black/10 dark:border-white/10 animate-in fade-in slide-in-from-top-3 duration-200 z-50">
+                    {/* Header */}
+                    <div className="px-3 py-2 border-b border-black/5 dark:border-white/5 mb-1">
+                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{fullName}</p>
+                      <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500 dark:text-gray-400">
+                        <Coins className="w-3 h-3 text-[#1a88ff]" />
+                        <span>{credits} créditos disponibles</span>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="space-y-0.5">
+                      <button
+                        onClick={() => {
+                          setShowDropdown(false);
+                          setShowTutorial(true);
+                        }}
+                        className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 transition-colors"
+                      >
+                        <Eye className="w-3.5 h-3.5 text-gray-400" />
+                        Ver Instructivo
+                      </button>
+
+                      <Link
+                        href="/dashboard/billing"
+                        onClick={() => setShowDropdown(false)}
+                        className="w-full px-3 py-2 rounded-xl text-left text-xs font-medium text-gray-700 dark:text-gray-300 hover:bg-black/5 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 transition-colors"
+                      >
+                        <Coins className="w-3.5 h-3.5 text-gray-400" />
+                        Comprar Créditos
+                      </Link>
+
+                      <form action="/auth/signout" method="post" className="w-full mt-1 border-t border-black/5 dark:border-white/5 pt-1">
+                        <button
+                          type="submit"
+                          className="w-full px-3 py-2 rounded-xl text-left text-xs font-bold text-red-500 hover:bg-red-500/5 dark:hover:bg-red-500/10 flex items-center gap-2 transition-colors"
+                        >
+                          <LogOut className="w-3.5 h-3.5 text-red-500" />
+                          Cerrar Sesión
+                        </button>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content Container (Margin top to clear fixed header) */}
+        <div className="pt-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto min-h-screen flex flex-col pb-8 relative z-10">
           <main className="flex-1">
             {children}
           </main>

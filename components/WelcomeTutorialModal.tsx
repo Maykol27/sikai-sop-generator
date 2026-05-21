@@ -3,26 +3,47 @@
 import { useState, useEffect } from 'react'
 import { Sparkles, Bot, Zap, X, ChevronRight, ChevronLeft, Award, Mic, FileText, CheckCircle2 } from 'lucide-react'
 
-export function WelcomeTutorialModal() {
-  const [isOpen, setIsOpen] = useState(false)
+interface WelcomeTutorialModalProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export function WelcomeTutorialModal({ isOpen: propIsOpen, onClose }: WelcomeTutorialModalProps = {}) {
+  const [localIsOpen, setLocalIsOpen] = useState(false)
   const [step, setStep] = useState(0)
   const [isClosing, setIsClosing] = useState(false)
 
+  const isControlled = propIsOpen !== undefined
+  const isOpen = isControlled ? propIsOpen : localIsOpen
+
   useEffect(() => {
-    const hasSeenTutorial = localStorage.getItem('sikai_sop_tutorial_seen')
-    if (!hasSeenTutorial) {
-      // 1.5s delay after load for premium experience
-      const timer = setTimeout(() => {
-        setIsOpen(true)
-      }, 1500)
-      return () => clearTimeout(timer)
+    if (isOpen) {
+      setStep(0)
     }
-  }, [])
+  }, [isOpen])
+
+  useEffect(() => {
+    if (!isControlled) {
+      const hasSeenTutorial = localStorage.getItem('sikai_sop_tutorial_seen')
+      if (!hasSeenTutorial) {
+        // 1.5s delay after load for premium experience
+        const timer = setTimeout(() => {
+          setLocalIsOpen(true)
+        }, 1500)
+        return () => clearTimeout(timer)
+      }
+    }
+  }, [isControlled])
 
   const handleClose = () => {
     setIsClosing(true)
     setTimeout(() => {
-      setIsOpen(false)
+      setIsClosing(false)
+      if (isControlled) {
+        onClose?.()
+      } else {
+        setLocalIsOpen(false)
+      }
       localStorage.setItem('sikai_sop_tutorial_seen', 'true')
     }, 300)
   }

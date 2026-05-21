@@ -3,6 +3,7 @@
 import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { ClipboardList } from "lucide-react";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -147,7 +148,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-[#0d0d0f] flex flex-col items-center justify-center p-4 relative overflow-hidden">
+        <div className="min-h-screen w-full bg-[#09101d] flex flex-col items-center justify-center p-4 relative overflow-hidden">
             {/* Background blobs */}
             <div className="absolute top-[-15%] left-[-10%] w-[500px] h-[500px] bg-[#1a88ff]/8 rounded-full blur-[120px] pointer-events-none" />
             <div className="absolute bottom-[-15%] right-[-10%] w-[500px] h-[500px] bg-[#26d8c4]/8 rounded-full blur-[120px] pointer-events-none" />
@@ -155,18 +156,18 @@ export default function LoginPage() {
             {/* Logo / Brand */}
             <div className="mb-6 flex flex-col items-center relative z-10 select-none">
                 <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-[18px] bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center shadow-[0_0_15px_rgba(26,136,255,0.45)]">
-                        <span className="text-white font-bold text-xl leading-none" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>S</span>
+                    <div className="w-10 h-10 rounded-xl border border-[#1a88ff]/30 bg-[#1a88ff]/10 flex items-center justify-center shadow-[0_0_15px_rgba(26,136,255,0.2)]">
+                        <ClipboardList className="w-5.5 h-5.5 text-[#1a88ff] stroke-[1.75]" />
                     </div>
-                    <div className="flex flex-col leading-none">
-                        <span className="font-bold text-lg text-white tracking-tight" style={{ fontFamily: 'var(--font-poppins), sans-serif' }}>SIKAI</span>
-                        <span className="text-[9px] text-[#26d8c4] tracking-[0.18em] uppercase font-bold mt-1.5" style={{ fontFamily: 'var(--font-source-code-pro), monospace' }}>SOP Generator</span>
+                    <div className="flex items-center gap-1.5 font-bold text-lg tracking-tight font-headline">
+                        <span className="text-white">SIKAI</span>
+                        <span className="text-[#1a88ff]">SOP GENERATOR</span>
                     </div>
                 </div>
             </div>
 
             {/* Card */}
-            <div className="w-full max-w-sm sm:max-w-md bg-[#111115] border border-white/8 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10">
+            <div className="w-full max-w-sm sm:max-w-md bg-[#121620]/60 backdrop-blur-md border border-white/8 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-[#1a88ff]/60 to-transparent" />
 
                 <div className="text-center mb-6">

@@ -5,21 +5,23 @@
 
 /* ── CSS Variables ── */
 :root {
-  --background: #09101d;
+  color-scheme: dark;
+  --background: #09101d; /* Deeper black/blue identical to SIKAI Finance */
   --foreground: #e0e6ed;
   --primary: #1a88ff;
   --primary-glow: rgba(26, 136, 255, 0.5);
   --primary-cyan: #26d8c4;
   --cyan-glow: rgba(38, 216, 196, 0.5);
-  --glass-bg: rgba(13, 17, 28, 0.65);
+  --glass-bg: rgba(22, 24, 29, 0.7);
   --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 .light {
-  --background: #f0f6fc;
+  color-scheme: light;
+  --background: #f0f6fc; /* Light blue nuance identical to SIKAI Finance */
   --foreground: #1f2937;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-  --glass-border: rgba(0, 0, 0, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.08);
 }
 
 /* ── Base ── */
@@ -40,8 +42,8 @@ body {
   color: var(--foreground);
   font-family: var(--font-pt-sans), sans-serif;
   background-image:
-    radial-gradient(circle at 50% 0%, rgba(26, 136, 255, 0.07) 0%, transparent 60%),
-    radial-gradient(circle at 100% 100%, rgba(38, 216, 196, 0.05) 0%, transparent 50%);
+    radial-gradient(circle at 50% 0%, rgba(26, 136, 255, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 100% 0%, rgba(38, 216, 196, 0.05) 0%, transparent 40%);
   background-attachment: fixed;
   min-height: 100vh;
 }
