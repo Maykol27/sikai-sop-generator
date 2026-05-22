@@ -283,19 +283,20 @@ export function sanitizeMermaidCode(code: string): string {
     return updatedLine
   })
 
-  // Ensure graph TD is prepended if no graph type is defined
+  // Ensure graph LR is prepended if no graph type is defined, and force horizontal layout (LR)
   let hasHeader = false
-  for (const line of finalLines) {
+  const updatedFinalLines = finalLines.map(line => {
     const trimmed = line.trim()
     if (trimmed.startsWith('graph ') || trimmed.startsWith('flowchart ')) {
       hasHeader = true
-      break
+      return trimmed.replace(/\b(TD|TB|BT|RL)\b/g, 'LR')
     }
-  }
+    return line
+  })
 
   if (!hasHeader) {
-    return 'graph TD\n' + finalLines.map(l => '  ' + l).join('\n')
+    return 'graph LR\n' + updatedFinalLines.map(l => '  ' + l).join('\n')
   }
 
-  return finalLines.join('\n')
+  return updatedFinalLines.join('\n')
 }
