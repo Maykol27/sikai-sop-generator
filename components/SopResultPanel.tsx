@@ -19,15 +19,20 @@ import {
   ChevronDown, 
   Cpu, 
   Sparkles,
-  Award
+  Award,
+  Edit3,
+  Save,
+  Loader2
 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 import { deduplicateText, formatMarkdownSubpoints, sanitizeMermaidCode } from '@/utils/cleaners'
+import { createClient } from '@/utils/supabase/client'
 
 type TabType = 'sop' | 'flow' | 'boost'
 
 interface SopResultPanelProps {
   sop: {
+    id?: string
     title: string
     markdown_content: string
     mermaid_code: string
@@ -288,31 +293,57 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
   const [copied, setCopied] = useState(false)
   const { theme } = useTheme()
 
+  // Local state for live-editing
+  const [editedTitle, setEditedTitle] = useState(sop.title)
+  const [editedMarkdown, setEditedMarkdown] = useState(sop.markdown_content)
+  const [editedMermaid, setEditedMermaid] = useState(sop.mermaid_code)
+  const [editedBoost, setEditedBoost] = useState(sop.boost_strategy)
+  const [isEditing, setIsEditing] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
+  const [saveMessage, setSaveMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  
+  // Zoom level state (default 100%)
+  const [zoom, setZoom] = useState(100)
+
+  // Synchronize when the sop prop changes (e.g. from server-side refresh)
+  useEffect(() => {
+    setEditedTitle(sop.title)
+    setEditedMarkdown(sop.markdown_content)
+    setEditedMermaid(sop.mermaid_code)
+    setEditedBoost(sop.boost_strategy)
+    setIsEditing(false)
+    setSaveMessage(null)
+  }, [sop])
+
   // Expandable sections state for SOP (First is open by default)
   const [expandedSections, setExpandedSections] = useState<Record<number, boolean>>({ 0: true })
 
   // Expandable sections state for Boost Recommendations
   const [expandedBoost, setExpandedBoost] = useState<Record<number, boolean>>({ 0: true })
 
-  // Clean and parse the markdown SOP content
-  const cleanMarkdownContent = deduplicateText(sop.markdown_content)
+  // Clean and parse the markdown SOP content based on the edited state
+  const cleanMarkdownContent = deduplicateText(editedMarkdown)
   const sopSections = parseMarkdownSections(cleanMarkdownContent)
   const hasMultipleSections = sopSections.length > 1
 
-  // Parse Boost Recommendations
-  const cleanBoostStrategy = deduplicateText(sop.boost_strategy)
+  // Parse Boost Recommendations based on the edited state
+  const cleanBoostStrategy = deduplicateText(editedBoost)
   const { intro: boostIntro, recommendations: boostRecommendations } = parseBoostRecommendations(cleanBoostStrategy)
   const hasBoostRecs = boostRecommendations.length > 0
 
-  // Sanitized Mermaid Code
-  const cleanMermaidCode = deduplicateText(sop.mermaid_code)
+  // Sanitized Mermaid Code based on the edited state
+  const cleanMermaidCode = deduplicateText(editedMermaid)
   const sanitizedFlowCode = sanitizeMermaidCode(cleanMermaidCode)
 
   useEffect(() => {
-    if (activeTab === 'flow' && sanitizedFlowCode) {
+    if (activeTab === 'flow' && sanitizedFlowCode && !isEditing) {
       mermaid.initialize({ 
         startOnLoad: true, 
         theme: theme === 'dark' ? 'dark' : 'default',
+        flowchart: {
+          useMaxWidth: false,
+          htmlLabels: true
+        },
         themeVariables: theme === 'dark' ? {
           primaryColor: '#1a88ff',
           primaryTextColor: '#fff',
@@ -337,7 +368,43 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
         }
       }, 100)
     }
-  }, [activeTab, sanitizedFlowCode, theme])
+  }, [activeTab, sanitizedFlowCode, theme, isEditing])
+
+  const handleSave = async () => {
+    if (!sop.id) {
+      setSaveMessage({ type: 'error', text: 'No se puede guardar: ID de SOP inválido' })
+      return
+    }
+
+    setIsSaving(true)
+    setSaveMessage(null)
+
+    try {
+      const supabase = createClient()
+      const { error } = await supabase
+        .from('sops')
+        .update({
+          title: editedTitle,
+          markdown_content: editedMarkdown,
+          mermaid_code: editedMermaid,
+          boost_strategy: editedBoost
+        })
+        .eq('id', sop.id)
+
+      if (error) {
+        throw new Error(error.message)
+      }
+
+      setSaveMessage({ type: 'success', text: '¡SOP guardado exitosamente!' })
+      setIsEditing(false)
+      setTimeout(() => setSaveMessage(null), 3000)
+    } catch (err: any) {
+      console.error('Error saving SOP:', err)
+      setSaveMessage({ type: 'error', text: `Error al guardar: ${err.message || 'Error desconocido'}` })
+    } finally {
+      setIsSaving(false)
+    }
+  }
 
   const copyToClipboard = () => {
     let contentToCopy = ''
@@ -366,15 +433,73 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
       {/* Header & Tabs */}
       <div className="border-b border-black/10 dark:border-white/10 p-6 z-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-glow flex items-center gap-2">
-            <Award className="w-6 h-6 text-[#1a88ff]" />
-            {sop.title}
-          </h2>
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1a88ff]/10 text-[#1a88ff] border border-[#1a88ff]/20">
-            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-            AI Optimizado
-          </span>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+          {isEditing ? (
+            <div className="flex-1">
+              <label className="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1 font-headline">Título del SOP</label>
+              <input
+                type="text"
+                value={editedTitle}
+                onChange={(e) => setEditedTitle(e.target.value)}
+                className="text-2xl font-bold text-gray-900 dark:text-white bg-black/10 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-xl px-4 py-2 w-full max-w-xl focus:outline-none focus:border-[#1a88ff] transition-all"
+                placeholder="Título del SOP"
+              />
+            </div>
+          ) : (
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white text-glow flex items-center gap-2">
+              <Award className="w-6 h-6 text-[#1a88ff]" />
+              {editedTitle}
+            </h2>
+          )}
+          
+          <div className="flex items-center gap-2 self-end">
+            {sop.id && (
+              <button
+                onClick={() => {
+                  if (isEditing) {
+                    handleSave()
+                  } else {
+                    setIsEditing(true)
+                  }
+                }}
+                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer ${
+                  isEditing 
+                    ? 'bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_15px_rgba(16,185,129,0.3)] border border-emerald-500/20' 
+                    : 'bg-[#1a88ff]/10 text-[#1a88ff] hover:bg-[#1a88ff]/20 border border-[#1a88ff]/20'
+                }`}
+                disabled={isSaving}
+              >
+                {isSaving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : isEditing ? (
+                  <Save className="w-4 h-4" />
+                ) : (
+                  <Edit3 className="w-4 h-4" />
+                )}
+                {isSaving ? 'Guardando...' : isEditing ? 'Guardar Cambios' : 'Editar SOP'}
+              </button>
+            )}
+            {isEditing && (
+              <button
+                onClick={() => {
+                  setEditedTitle(sop.title)
+                  setEditedMarkdown(sop.markdown_content)
+                  setEditedMermaid(sop.mermaid_code)
+                  setEditedBoost(sop.boost_strategy)
+                  setIsEditing(false)
+                  setSaveMessage(null)
+                }}
+                className="bg-red-600/10 text-red-500 hover:bg-red-600/20 border border-red-500/20 px-4 py-2 rounded-xl text-sm font-bold transition-all cursor-pointer"
+                disabled={isSaving}
+              >
+                Cancelar
+              </button>
+            )}
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#1a88ff]/10 text-[#1a88ff] border border-[#1a88ff]/20">
+              <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+              AI Optimizado
+            </span>
+          </div>
         </div>
 
         {/* Tab Buttons */}
@@ -415,10 +540,34 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
       {/* Content Area */}
       <div className="flex-1 p-6 overflow-y-auto z-10 print-expanded">
         
+        {saveMessage && (
+          <div className={`p-4 mb-6 rounded-xl border text-sm font-semibold flex items-center gap-2 ${
+            saveMessage.type === 'success'
+              ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.1)]'
+              : 'bg-red-500/10 text-red-400 border-red-500/20'
+          }`}>
+            <span className="w-2 h-2 rounded-full bg-current animate-ping" />
+            <span>{saveMessage.text}</span>
+          </div>
+        )}
+
         {/* ── TAB 1: SIKAI SOP (Accordions & Timeline) ── */}
         {activeTab === 'sop' && (
           <div className="space-y-4">
-            {hasMultipleSections ? (
+            {isEditing ? (
+              <div className="glass-card border border-black/10 dark:border-white/10 p-5 rounded-2xl flex flex-col gap-2">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-bold text-gray-400 font-headline">Contenido Markdown del SOP</span>
+                  <span className="text-xs text-gray-500 font-mono hidden sm:inline">Formatos con # para títulos y Paso X: para timeline</span>
+                </div>
+                <textarea
+                  value={editedMarkdown}
+                  onChange={(e) => setEditedMarkdown(e.target.value)}
+                  className="w-full min-h-[450px] p-4 bg-black/20 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-xl font-mono text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#1a88ff] transition-all resize-y"
+                  placeholder="Escribe el contenido del SOP en Markdown..."
+                />
+              </div>
+            ) : hasMultipleSections ? (
               sopSections.map((section, idx) => {
                 const isExpanded = !!expandedSections[idx]
                 const isStepByStep = section.title.toLowerCase().includes('paso') || section.title.toLowerCase().includes('procedimiento')
@@ -476,7 +625,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
             ) : (
               // Fallback to standard Markdown rendering if parsing yielded nothing
               <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed p-4 glass rounded-2xl border border-black/10 dark:border-white/10 whitespace-pre-line">
-                <ReactMarkdown>{formatMarkdownSubpoints(sop.markdown_content)}</ReactMarkdown>
+                <ReactMarkdown>{formatMarkdownSubpoints(editedMarkdown)}</ReactMarkdown>
               </div>
             )}
           </div>
@@ -484,112 +633,179 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
         {/* ── TAB 2: SIKAI Flow (Mermaid Live Chart) ── */}
         {activeTab === 'flow' && (
-          <div className="flex items-center justify-center min-h-[480px] bg-black/5 dark:bg-[#09101d]/80 rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner overflow-x-auto">
-            <div className="w-full max-w-4xl flex justify-center">
-              <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}`}>
-                {sanitizedFlowCode}
-              </pre>
+          isEditing ? (
+            <div className="glass-card border border-black/10 dark:border-white/10 p-5 rounded-2xl flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-bold text-gray-400 font-headline">Código Mermaid del Diagrama</span>
+                <span className="text-xs text-gray-500 font-mono hidden sm:inline">Usa graph LR para diseño horizontal</span>
+              </div>
+              <textarea
+                value={editedMermaid}
+                onChange={(e) => setEditedMermaid(e.target.value)}
+                className="w-full min-h-[450px] p-4 bg-black/20 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-xl font-mono text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-[#26d8c4] transition-all resize-y"
+                placeholder="Código Mermaid..."
+              />
             </div>
-          </div>
+          ) : (
+            <div className="relative flex flex-col bg-black/5 dark:bg-[#09101d]/80 rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner min-h-[500px]">
+              
+              {/* Zoom Controls Overlay (Top Right) */}
+              <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/40 dark:bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-lg">
+                <button
+                  type="button"
+                  onClick={() => setZoom(prev => Math.max(prev - 10, 30))}
+                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white flex items-center justify-center font-bold text-lg transition-all cursor-pointer select-none"
+                  title="Zoom Out"
+                >
+                  -
+                </button>
+                <span className="text-xs font-mono font-bold text-white min-w-[40px] text-center select-none">
+                  {zoom}%
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setZoom(prev => Math.min(prev + 10, 200))}
+                  className="w-8 h-8 rounded-lg bg-white/5 hover:bg-white/10 text-white flex items-center justify-center font-bold text-lg transition-all cursor-pointer select-none"
+                  title="Zoom In"
+                >
+                  +
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setZoom(100)}
+                  className="px-2 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-xs font-bold text-white transition-all cursor-pointer select-none"
+                >
+                  Reset
+                </button>
+              </div>
+
+              {/* Viewport with scrollbars */}
+              <div className="flex-1 overflow-auto flex items-center justify-start p-4 scrollbar-thin">
+                <div 
+                  className="transition-transform duration-200 ease-out origin-top-left flex justify-center items-center w-full min-w-max"
+                  style={{ transform: `scale(${zoom / 100})` }}
+                >
+                  <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}-${zoom}`}>
+                    {sanitizedFlowCode}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          )
         )}
 
         {/* ── TAB 3: SIKAI Boost (Premium Recommendations & Bottlenecks) ── */}
         {activeTab === 'boost' && (
-          <div className="space-y-6">
-            {hasBoostRecs ? (
-              <>
-                {boostIntro && (
-                  <div className="p-5 glass rounded-2xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-purple-500/5 to-transparent">
-                    <ReactMarkdown>{boostIntro}</ReactMarkdown>
-                  </div>
-                )}
+          isEditing ? (
+            <div className="glass-card border border-black/10 dark:border-white/10 p-5 rounded-2xl flex flex-col gap-2">
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-sm font-bold text-gray-400 font-headline">Estrategias y Recomendaciones (SIKAI Boost)</span>
+                <span className="text-xs text-gray-500 font-mono hidden sm:inline">Formatos con números (1, 2) y 'Cuello de botella:', 'Mejora:' para bloques visuales</span>
+              </div>
+              <textarea
+                value={editedBoost}
+                onChange={(e) => setEditedBoost(e.target.value)}
+                className="w-full min-h-[450px] p-4 bg-black/20 dark:bg-black/40 border border-black/10 dark:border-white/10 rounded-xl font-mono text-sm text-gray-800 dark:text-gray-200 focus:outline-none focus:border-purple-500 transition-all resize-y"
+                placeholder="Escribe las recomendaciones de SIKAI Boost..."
+              />
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {hasBoostRecs ? (
+                <>
+                  {boostIntro && (
+                    <div className="p-5 glass rounded-2xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-purple-500/5 to-transparent">
+                      <ReactMarkdown>{boostIntro}</ReactMarkdown>
+                    </div>
+                  )}
 
-                <div className="space-y-4">
-                  {boostRecommendations.map((rec, idx) => {
-                    const isExpanded = !!expandedBoost[idx]
+                  <div className="space-y-4">
+                    {boostRecommendations.map((rec, idx) => {
+                      const isExpanded = !!expandedBoost[idx]
 
-                    return (
-                      <div 
-                        key={idx} 
-                        className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-purple-500/30 shadow-sm"
-                      >
-                        <button
-                          onClick={() => toggleBoost(idx)}
-                          className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
+                      return (
+                        <div 
+                          key={idx} 
+                          className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-purple-500/30 shadow-sm"
                         >
-                          <div className="flex items-center gap-3.5">
-                            <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
-                              {rec.number}
-                            </div>
-                            <span className="text-lg font-bold tracking-tight text-purple-900 dark:text-purple-300">{rec.title}</span>
-                          </div>
-                          <motion.div
-                            animate={{ rotate: isExpanded ? 180 : 0 }}
-                            transition={{ duration: 0.25, ease: 'easeInOut' }}
+                          <button
+                            onClick={() => toggleBoost(idx)}
+                            className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
                           >
-                            <ChevronDown className="w-5 h-5 text-gray-400" />
-                          </motion.div>
-                        </button>
-
-                        <AnimatePresence initial={false}>
-                          {isExpanded && (
+                            <div className="flex items-center gap-3.5">
+                              <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
+                                {rec.number}
+                              </div>
+                              <span className="text-lg font-bold tracking-tight text-purple-900 dark:text-purple-300">{rec.title}</span>
+                            </div>
                             <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                              animate={{ rotate: isExpanded ? 180 : 0 }}
+                              transition={{ duration: 0.25, ease: 'easeInOut' }}
                             >
-                              <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 space-y-4">
-                                
-                                {/* Cuello de botella & Mejora Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                  {rec.cuelloBotella && (
-                                    <div className="bg-red-500/5 dark:bg-red-500/[0.02] rounded-xl p-4 border border-red-500/10 dark:border-red-500/[0.05]">
-                                      <span className="text-xs font-bold uppercase tracking-wider text-red-500 flex items-center gap-1.5 mb-1.5 font-headline">
-                                        <AlertTriangle className="w-4 h-4" />
-                                        Cuello de Botella
-                                      </span>
-                                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                        {rec.cuelloBotella}
-                                      </p>
-                                    </div>
-                                  )}
+                              <ChevronDown className="w-5 h-5 text-gray-400" />
+                            </motion.div>
+                          </button>
 
-                                  {rec.mejora && (
-                                    <div className="bg-[#26d8c4]/5 dark:bg-[#26d8c4]/[0.02] rounded-xl p-4 border border-[#26d8c4]/10 dark:border-[#26d8c4]/[0.05]">
-                                      <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] flex items-center gap-1.5 mb-1.5 font-headline">
-                                        <Zap className="w-4 h-4" />
-                                        Mejora Propuesta
-                                      </span>
-                                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                        {rec.mejora}
-                                      </p>
+                          <AnimatePresence initial={false}>
+                            {isExpanded && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: 'auto', opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                              >
+                                <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 space-y-4">
+                                  
+                                  {/* Cuello de botella & Mejora Grid */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    {rec.cuelloBotella && (
+                                      <div className="bg-red-500/5 dark:bg-red-500/[0.02] rounded-xl p-4 border border-red-500/10 dark:border-red-500/[0.05]">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-red-500 flex items-center gap-1.5 mb-1.5 font-headline">
+                                          <AlertTriangle className="w-4 h-4" />
+                                          Cuello de Botella
+                                        </span>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                          {rec.cuelloBotella}
+                                        </p>
+                                      </div>
+                                    )}
+
+                                    {rec.mejora && (
+                                      <div className="bg-[#26d8c4]/5 dark:bg-[#26d8c4]/[0.02] rounded-xl p-4 border border-[#26d8c4]/10 dark:border-[#26d8c4]/[0.05]">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] flex items-center gap-1.5 mb-1.5 font-headline">
+                                          <Zap className="w-4 h-4" />
+                                          Mejora Propuesta
+                                        </span>
+                                        <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                          {rec.mejora}
+                                        </p>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Details text */}
+                                  {rec.details && (
+                                    <div className="prose dark:prose-invert prose-purple max-w-none text-gray-700 dark:text-gray-300 bg-black/5 dark:bg-white/[0.01] p-5 rounded-xl border border-black/5 dark:border-white/[0.03] leading-relaxed">
+                                      <ReactMarkdown>{rec.details}</ReactMarkdown>
                                     </div>
                                   )}
                                 </div>
-
-                                {/* Details text */}
-                                {rec.details && (
-                                  <div className="prose dark:prose-invert prose-purple max-w-none text-gray-700 dark:text-gray-300 bg-black/5 dark:bg-white/[0.01] p-5 rounded-xl border border-black/5 dark:border-white/[0.03] leading-relaxed">
-                                    <ReactMarkdown>{rec.details}</ReactMarkdown>
-                                  </div>
-                                )}
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    )
-                  })}
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </>
+              ) : (
+                // Fallback to standard Markdown - No duplications occur here
+                <div className="prose dark:prose-invert prose-purple max-w-none p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
+                  <ReactMarkdown>{editedBoost}</ReactMarkdown>
                 </div>
-              </>
-            ) : (
-              // Fallback to standard Markdown - No duplications occur here
-              <div className="prose dark:prose-invert prose-purple max-w-none p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
-                <ReactMarkdown>{sop.boost_strategy}</ReactMarkdown>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          )
         )}
 
       </div>
