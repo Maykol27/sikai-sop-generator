@@ -435,30 +435,34 @@ function sanitizeMermaidCode(code: string): string {
       currentLine = currentLine.replace(shape.regex, (match, rawId, labelPlaceholder) => {
         const safeId = makeSafeId(rawId)
         
-        // Retrieve and clean the label from the placeholder if it is one
-        let labelContent = labelPlaceholder.trim()
-        const placeholderMatch = labelContent.match(/^__LABEL_(\d+)__$/)
-        
-        if (placeholderMatch) {
-          const idx = parseInt(placeholderMatch[1], 10)
-          let origLabel = labels[idx]
-          // Strip outer quotes of the original label
-          if (origLabel.startsWith('"') && origLabel.endsWith('"')) {
-            origLabel = origLabel.substring(1, origLabel.length - 1)
-          }
-          origLabel = origLabel.replace(/"/g, '\\"')
-          labelContent = origLabel
-        } else {
-          // If it wasn't a placeholder (e.g. unquoted label), escape quotes
-          labelContent = labelContent.replace(/"/g, '\\"')
-        }
-
-        // Return the clean, safe shape definition
-        return `${safeId}${shape.open}"${labelContent}"${shape.close}`
+        // Return the delayed label placeholder wrapped inside shape tags
+        return `${safeId}${shape.open}###SHAPE_LABEL_${labelPlaceholder.trim()}###${shape.close}`
       })
     }
 
-    // 3. Restore any remaining unconsumed labels in the line
+    // 3. Restore labels (both standard ones and shape labels)
+    // First, process any shape labels
+    currentLine = currentLine.replace(/###SHAPE_LABEL_(.*?)###/g, (match, inner) => {
+      let labelContent = inner.trim()
+      const placeholderMatch = labelContent.match(/^__LABEL_(\d+)__$/)
+      
+      if (placeholderMatch) {
+        const idx = parseInt(placeholderMatch[1], 10)
+        let origLabel = labels[idx]
+        // Strip outer quotes of the original label
+        if (origLabel.startsWith('"') && origLabel.endsWith('"')) {
+          origLabel = origLabel.substring(1, origLabel.length - 1)
+        }
+        origLabel = origLabel.replace(/"/g, '\\"')
+        labelContent = origLabel
+      } else {
+        // Unquoted label, escape quotes
+        labelContent = labelContent.replace(/"/g, '\\"')
+      }
+      return `"${labelContent}"`
+    })
+
+    // Now restore any remaining unconsumed labels in the line
     currentLine = currentLine.replace(/__LABEL_(\d+)__/g, (match, idxStr) => {
       const idx = parseInt(idxStr, 10)
       return labels[idx]
