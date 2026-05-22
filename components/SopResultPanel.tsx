@@ -19,9 +19,7 @@ import {
   ChevronDown, 
   Cpu, 
   Sparkles,
-  Award,
-  Layers,
-  Info
+  Award
 } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
 
@@ -59,6 +57,93 @@ interface BoostRecommendation {
   details?: string
   rawContent: string
 }
+
+// ── Deduplicate AI responses ──
+function deduplicateText(text: string): string {
+  if (!text) return ''
+  let trimmed = text.trim()
+  
+  // 1. Detect exact halves duplication
+  const len = trimmed.length
+  if (len > 20) {
+    const half = Math.floor(len / 2)
+    const firstHalf = trimmed.substring(0, half).trim()
+    const secondHalf = trimmed.substring(half).trim()
+    if (firstHalf === secondHalf) {
+      return firstHalf
+    }
+  }
+
+  // 2. Detect header-based duplication
+  const headers = [
+    'Estrategia de Mejora (SIKAI Boost)',
+    'Estrategia de Mejora',
+    'SIKAI Boost',
+    '# Estrategia de Mejora',
+    '## Estrategia de Mejora',
+    'SIKAI SOP',
+    '# SIKAI SOP',
+    '## SIKAI SOP',
+    'Procedimiento Estándar de Trabajo',
+    'Manual de Procedimiento',
+    'Objetivo',
+    '# Objetivo',
+    '## Objetivo',
+    'graph TD',
+    'graph LR',
+    'flowchart TD',
+    'flowchart LR'
+  ]
+  
+  for (const header of headers) {
+    const escapedHeader = header.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+    const regex = new RegExp(`(?:^|\\n)(?:#+\\s+)?(?:\\*\\*?\\s*)?${escapedHeader}(?:\\s*\\*\\*?)?(?:\\n|$)`, 'i')
+    const matches = [...trimmed.matchAll(new RegExp(regex.source, 'gi'))]
+    
+    if (matches.length >= 2) {
+      const secondMatchIdx = matches[1].index
+      if (secondMatchIdx !== undefined && secondMatchIdx > 20) {
+        return trimmed.substring(0, secondMatchIdx).trim()
+      }
+    }
+  }
+
+  // 3. General substring duplication check
+  const middle = Math.floor(trimmed.length / 2)
+  const leftPart = trimmed.substring(0, middle)
+  const rightPart = trimmed.substring(middle)
+  
+  const rightLines = rightPart.split('\n').map(l => l.trim()).filter(l => l.length > 30)
+  if (rightLines.length > 0) {
+    const firstBigLine = rightLines[0]
+    const leftIdx = leftPart.indexOf(firstBigLine)
+    if (leftIdx >= 0 && leftIdx < 150) {
+      const rightIdx = rightPart.indexOf(firstBigLine)
+      if (rightIdx >= 0) {
+        const boundary = middle + rightIdx
+        return trimmed.substring(0, boundary).trim()
+      }
+    }
+  }
+
+  return trimmed
+}
+
+// ── Formatter to split subpoints (e.g. 3.1, 3.2) onto new lines ──
+function formatMarkdownSubpoints(text: string): string {
+  if (!text) return ''
+  let formatted = text.trim()
+  
+  // Replace space/newline followed by a subpoint (e.g. 3.1 or **3.1**) with a double newline BEFORE the bold marker
+  formatted = formatted.replace(/(?:\s+)?(\*\*?\s*\d+\.\d+\.?\s*\*?)/g, (match, p1) => {
+    return `\n\n${p1.trim()}`
+  })
+  
+  // Make sure we don't have triple newlines
+  formatted = formatted.replace(/\n{3,}/g, '\n\n')
+  return formatted.trim()
+}
+
 
 // ── Parsers ──
 function parseMarkdownSections(markdown: string): Section[] {
@@ -108,7 +193,6 @@ function parseMarkdownSections(markdown: string): Section[] {
     })
   }
 
-  // Filter out any empty sections
   return sections.filter(s => s.title && s.content)
 }
 
@@ -122,7 +206,7 @@ function parseSteps(content: string): Step[] {
 
   for (const line of lines) {
     const trimmed = line.trim()
-    // Match "Paso 1: ...", "**Paso 2:** ...", "### Paso 3: ...", "Paso 1. Confirmación de Cierre de Oportunidad"
+    // Match "Paso 1: ...", "**Paso 2:** ...", "### Paso 3: ..."
     const stepMatch = trimmed.match(/^(?:#+\s+|\*\*?)?Paso\s+(\d+)\s*[\.:]?\s*(.*?)(?:\*\*?)?$/i)
     
     if (stepMatch) {
@@ -157,11 +241,17 @@ function parseStepFields(step: Partial<Step>, lines: string[]) {
   let currentField: 'accion' | 'herramienta' | 'descripcion' | null = null
   let fieldValues = { accion: '', herramienta: '', descripcion: '' }
 
+  // Split lines that have multiple subpoints on a single line first (e.g. "3.1. Acción: ... 3.2. Herramienta: ...")
+  const virtualLines: string[] = []
   for (const line of lines) {
+    const splitParts = line.split(/\s+(?=(?:\*\*?\s*)?\d+\.\d+\.?\s*)/)
+    virtualLines.push(...splitParts)
+  }
+
+  for (const line of virtualLines) {
     const trimmed = line.trim()
     if (!trimmed) continue
 
-    // Support both formats: "1.1. Acción: Text" or "**Acción**: Text" or "Acción: Text"
     const accionMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Acci[oó]n(?:\*\*?)?\s*:\s*(.*)$/i)
     const herramientaMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Herramienta(?:\*\*?)?\s*:\s*(.*)$/i)
     const descripcionMatch = trimmed.match(/^(?:\d+\.\d+\.?\s+)?(?:\*\*?)?Descripci[oó]n(?:\*\*?)?\s*:\s*(.*)$/i)
@@ -190,13 +280,33 @@ function parseBoostRecommendations(boostText: string): { intro: string, recommen
   const lines = boostText.split('\n')
   const recommendations: BoostRecommendation[] = []
   let introLines: string[] = []
+  
+  let firstRecIndex = -1
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim()
+    const recMatch = trimmed.match(/^(?:#+\s+)?(?:\*\*?\s*)?(\d+)\s*[\.:]\s*(.*?)(?:\*\*?)?$/)
+    if (recMatch && !/^\d+\.\d+/.test(trimmed)) {
+      firstRecIndex = i
+      break
+    }
+  }
+  
+  if (firstRecIndex === -1) {
+    return {
+      intro: boostText.trim(),
+      recommendations: []
+    }
+  }
+  
+  introLines = lines.slice(0, firstRecIndex)
+  
   let currentRec: Partial<BoostRecommendation> | null = null
   let currentRawLines: string[] = []
-
-  for (const line of lines) {
+  
+  for (let i = firstRecIndex; i < lines.length; i++) {
+    const line = lines[i]
     const trimmed = line.trim()
-    // Match "1. Recolección Proactiva de Información Tributaria..."
-    const recMatch = trimmed.match(/^(?:\*\*?\s*)?(\d+)\.\s+(.*?)(?:\*\*?)?$/)
+    const recMatch = trimmed.match(/^(?:#+\s+)?(?:\*\*?\s*)?(\d+)\s*[\.:]\s*(.*?)(?:\*\*?)?$/)
     
     if (recMatch && !/^\d+\.\d+/.test(trimmed)) {
       if (currentRec) {
@@ -213,18 +323,16 @@ function parseBoostRecommendations(boostText: string): { intro: string, recommen
     } else {
       if (currentRec) {
         currentRawLines.push(line)
-      } else {
-        introLines.push(line)
       }
     }
   }
-
+  
   if (currentRec) {
     currentRec.rawContent = currentRawLines.join('\n').trim()
     parseBoostFields(currentRec, currentRawLines)
     recommendations.push(currentRec as BoostRecommendation)
   }
-
+  
   return {
     intro: introLines.join('\n').trim(),
     recommendations
@@ -233,19 +341,23 @@ function parseBoostRecommendations(boostText: string): { intro: string, recommen
 
 function parseBoostFields(rec: Partial<BoostRecommendation>, lines: string[]) {
   const text = lines.join(' ').trim()
-  const cuelloMatch = text.match(/Cuello\s+de\s+botella\s*:\s*(.*?)(?=(?:Mejora\s*:|$))/i)
-  const mejoraMatch = text.match(/Mejora\s*:\s*(.*?)(?=(?:Cuello\s+de\s+botella\s*:|$))/i)
+  const cuelloMatch = text.match(/(?:\*\*?)?Cuello\s+de\s+botella(?:\*\*?)?\s*:\s*(.*?)(?=(?:\*\*?)?Mejora(?:\*\*?)?\s*:|$)/i)
+  const mejoraMatch = text.match(/(?:\*\*?)?Mejora(?:\*\*?)?\s*:\s*(.*?)(?=(?:\*\*?)?Cuello\s+de\s+botella(?:\*\*?)?\s*:|$)/i)
 
-  if (cuelloMatch) rec.cuelloBotella = cuelloMatch[1].trim()
-  if (mejoraMatch) rec.mejora = mejoraMatch[1].trim()
+  if (cuelloMatch) {
+    rec.cuelloBotella = cuelloMatch[1].replace(/^\*\*?/, '').replace(/\*\*?$/, '').trim()
+  }
+  if (mejoraMatch) {
+    rec.mejora = mejoraMatch[1].replace(/^\*\*?/, '').replace(/\*\*?$/, '').trim()
+  }
 
   rec.details = lines.filter(l => {
-    const trimmed = l.trim()
-    return !trimmed.toLowerCase().includes('cuello de botella') && !trimmed.toLowerCase().includes('mejora:')
+    const trimmed = l.trim().toLowerCase()
+    return !trimmed.includes('cuello de botella') && !trimmed.includes('mejora:') && !trimmed.includes('mejora :')
   }).join('\n').trim()
 }
 
-// ── Mermaid Syntax Sanitizer (Ensures 100% bug-free rendering) ──
+// ── Mermaid Syntax Sanitizer (Core fix for Flow crashing with spaces and special characters) ──
 function sanitizeMermaidCode(code: string): string {
   if (!code) return ''
   let sanitized = code.trim()
@@ -253,38 +365,208 @@ function sanitizeMermaidCode(code: string): string {
   // Remove markdown block wraps if present
   sanitized = sanitized.replace(/^```mermaid\s*/i, '').replace(/^```\s*/, '').replace(/\s*```$/, '')
 
-  const delimiterPairs = [
-    { open: '([', close: '])', openEsc: '\\(\\[', closeEsc: '\\]\\)' },
-    { open: '[(', close: ')]', openEsc: '\\[\\(', closeEsc: '\\)\\]' },
-    { open: '[[', close: ']]', openEsc: '\\[\\[', closeEsc: '\\]\\]' },
-    { open: '((', close: '))', openEsc: '\\(\\(', closeEsc: '\\)\\)' },
-    { open: '{{', close: '}}', openEsc: '\\{\\{', closeEsc: '\\}\\}' },
-    { open: '[/', close: '/]', openEsc: '\\[\\/', closeEsc: '\\/\\]' },
-    { open: '[\\', close: '\\]', openEsc: '\\[\\\\', closeEsc: '\\\\\\]' },
-    { open: '[', close: ']', openEsc: '\\[', closeEsc: '\\]' },
-    { open: '(', close: ')', openEsc: '\\(', closeEsc: '\\)' },
-    { open: '{', close: '}', openEsc: '\\{', closeEsc: '\\}' },
-    { open: '>', close: ']', openEsc: '>', closeEsc: '\\]' },
-  ]
+  const lines = sanitized.split('\n')
+  const idMap: Record<string, string> = {}
 
-  for (const pair of delimiterPairs) {
-    const regex = new RegExp(`([a-zA-Z0-9_-]+)\\s*${pair.openEsc}\\s*(.*?)\\s*${pair.closeEsc}`, 'g')
-    sanitized = sanitized.replace(regex, (match, nodeId, content) => {
-      let cleanContent = content.trim()
-      if (!cleanContent) return match
-      
-      const isWrapped = (cleanContent.startsWith('"') && cleanContent.endsWith('"')) || 
-                        (cleanContent.startsWith('\\"') && cleanContent.endsWith('\\"'))
-      
-      if (!isWrapped) {
-        cleanContent = cleanContent.replace(/"/g, '\\"')
-        return `${nodeId}${pair.open}"${cleanContent}"${pair.close}`
-      }
-      return match
-    })
+  // Helper to make a clean, safe Mermaid ID
+  const makeSafeId = (rawId: string): string => {
+    const trimmed = rawId.trim()
+    if (!trimmed) return 'node'
+    if (idMap[trimmed]) return idMap[trimmed]
+    
+    // Replace non-alphanumeric with underscores
+    let safe = trimmed.replace(/[^a-zA-Z0-9]/g, '_')
+    // Remove consecutive underscores
+    safe = safe.replace(/_+/g, '_')
+    // Remove leading/trailing underscores
+    safe = safe.replace(/^_+|_+$/g, '')
+    
+    // Mermaid IDs cannot start with numbers, prepend 'n_' if it does
+    if (/^\d/.test(safe) || !safe) {
+      safe = 'n_' + safe
+    }
+    idMap[trimmed] = safe
+    return safe
   }
 
-  return sanitized
+  // Pre-process definitions of shapes
+  const shapeRegexes = [
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\(\{\s*(.*?)\s*\}\)/g, open: '({', close: '})' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\(\[\s*(.*?)\s*\]\)/g, open: '([', close: '])' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\[\(\s*(.*?)\s*\)\]/g, open: '[(', close: ')]' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\[\[\s*(.*?)\s*\]\]/g, open: '[[', close: ']]' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\(\(\s*(.*?)\s*\)\)/g, open: '((', close: '))' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\{\{\s*(.*?)\s*\}\}/g, open: '{{', close: '}}' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\[\/\s*(.*?)\s*\/\]/g, open: '[/', close: '/]' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\[\\\s*(.*?)\s*\\\]/g, open: '[\\', close: '\\]' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\[\s*(.*?)\s*\]/g, open: '[', close: ']' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\(\s*(.*?)\s*\)/g, open: '(', close: ')' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*\{\s*(.*?)\s*\}/g, open: '{', close: '}' },
+    { regex: /([a-zA-Z0-9_\-\.\s\u00C0-\u024F]+)\s*(?<!-)(?<!=)>\s*(.*?)\s*\]/g, open: '>', close: ']' }
+  ]
+
+  // We will process line-by-line
+  const processedLines = lines.map(line => {
+    let currentLine = line
+    const trimmed = currentLine.trim()
+
+    // Ignore headers, subgraphs, styles, comments
+    if (trimmed.startsWith('graph ') || 
+        trimmed.startsWith('flowchart ') || 
+        trimmed.startsWith('subgraph') || 
+        trimmed === 'end' || 
+        trimmed.startsWith('style') || 
+        trimmed.startsWith('classDef') || 
+        trimmed.startsWith('class') || 
+        trimmed.startsWith('click') ||
+        trimmed.startsWith('%%')) {
+      return currentLine
+    }
+
+    // 1. Mask double-quoted strings
+    const labels: string[] = []
+    currentLine = currentLine.replace(/"(?:[^"\\]|\\.)*"/g, (match) => {
+      labels.push(match)
+      return `__LABEL_${labels.length - 1}__`
+    })
+
+    // 2. Run shape regexes on the masked line
+    for (const shape of shapeRegexes) {
+      currentLine = currentLine.replace(shape.regex, (match, rawId, labelPlaceholder) => {
+        const safeId = makeSafeId(rawId)
+        
+        // Retrieve and clean the label from the placeholder if it is one
+        let labelContent = labelPlaceholder.trim()
+        const placeholderMatch = labelContent.match(/^__LABEL_(\d+)__$/)
+        
+        if (placeholderMatch) {
+          const idx = parseInt(placeholderMatch[1], 10)
+          let origLabel = labels[idx]
+          // Strip outer quotes of the original label
+          if (origLabel.startsWith('"') && origLabel.endsWith('"')) {
+            origLabel = origLabel.substring(1, origLabel.length - 1)
+          }
+          origLabel = origLabel.replace(/"/g, '\\"')
+          labelContent = origLabel
+        } else {
+          // If it wasn't a placeholder (e.g. unquoted label), escape quotes
+          labelContent = labelContent.replace(/"/g, '\\"')
+        }
+
+        // Return the clean, safe shape definition
+        return `${safeId}${shape.open}"${labelContent}"${shape.close}`
+      })
+    }
+
+    // 3. Restore any remaining unconsumed labels in the line
+    currentLine = currentLine.replace(/__LABEL_(\d+)__/g, (match, idxStr) => {
+      const idx = parseInt(idxStr, 10)
+      return labels[idx]
+    })
+
+    return currentLine
+  })
+
+  // Register any remaining plain IDs that appear in connection lines but weren't defined with a shape
+  const connectionRegex = /\s*(?:--o|--x|-->|==>|-\.-\.|-\.-\.>|<-->|-.->|---|==|->)\s*(?:\|[^|]+\|\s*)?/g
+  processedLines.forEach(line => {
+    const trimmed = line.trim()
+    if (trimmed.startsWith('graph ') || 
+        trimmed.startsWith('flowchart ') || 
+        trimmed.startsWith('subgraph') || 
+        trimmed === 'end' || 
+        trimmed.startsWith('style') || 
+        trimmed.startsWith('classDef') || 
+        trimmed.startsWith('class') || 
+        trimmed.startsWith('click') ||
+        trimmed.startsWith('%%')) {
+      return
+    }
+
+    // Mask labels again to avoid splitting on connection labels (e.g. |Aprobado|) or processing double quotes
+    let tempLine = trimmed
+    const labels: string[] = []
+    tempLine = tempLine.replace(/"(?:[^"\\]|\\.)*"/g, (match) => {
+      labels.push(match)
+      return `__LABEL_${labels.length - 1}__`
+    })
+
+    // Split the line by connections to get node parts
+    const parts = tempLine.split(connectionRegex)
+    parts.forEach(part => {
+      const cleanPart = part.trim()
+      if (!cleanPart) return
+      
+      // If it contains shape characters or quotes, it was already handled or is a style line
+      if (cleanPart.includes('[') || cleanPart.includes('(') || cleanPart.includes('{') || cleanPart.includes('"')) {
+        return
+      }
+
+      // Restore any label placeholders in case they exist (they shouldn't in plain IDs)
+      let restoredPart = cleanPart.replace(/__LABEL_(\d+)__/g, (match, idxStr) => {
+        const idx = parseInt(idxStr, 10)
+        return labels[idx]
+      })
+
+      // If it has spaces, dots, hyphens, etc., and isn't registered, register it
+      if (restoredPart.includes(' ') || restoredPart.includes('.') || restoredPart.includes('-')) {
+        makeSafeId(restoredPart)
+      }
+    })
+  })
+
+  // Second Pass: Safe replacement of node IDs using word boundaries and lookaround assertions
+  const sortedRawIds = Object.keys(idMap).sort((a, b) => b.length - a.length)
+  
+  const finalLines = processedLines.map(line => {
+    const trimmed = line.trim()
+    
+    if (trimmed.startsWith('graph ') || trimmed.startsWith('flowchart ') || trimmed.startsWith('%%')) {
+      return line
+    }
+
+    let updatedLine = line
+
+    // Mask labels to avoid replacing parts of labels
+    const labels: string[] = []
+    updatedLine = updatedLine.replace(/"(?:[^"\\]|\\.)*"/g, (match) => {
+      labels.push(match)
+      return `__LABEL_${labels.length - 1}__`
+    })
+
+    for (const rawId of sortedRawIds) {
+      const safeId = idMap[rawId]
+      const escapedRawId = rawId.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&')
+      
+      // Use lookbehind and lookahead to match only node IDs, not parts of labels or other node shapes
+      const regex = new RegExp(`(?<=^|\\s|--|-->|==|==>|-\\.-|-\\.-:>|\\||<-->)(?:${escapedRawId})(?=$|\\s|--|-->|==|==>|-\\.-|-\\.-:>|\\||<-->|\\[|\\(|\\{|")`, 'g')
+      updatedLine = updatedLine.replace(regex, safeId)
+    }
+
+    // Restore labels
+    updatedLine = updatedLine.replace(/__LABEL_(\d+)__/g, (match, idxStr) => {
+      const idx = parseInt(idxStr, 10)
+      return labels[idx]
+    })
+
+    return updatedLine
+  })
+
+  // Ensure graph TD is prepended if no graph type is defined
+  let hasHeader = false
+  for (const line of finalLines) {
+    const trimmed = line.trim()
+    if (trimmed.startsWith('graph ') || trimmed.startsWith('flowchart ')) {
+      hasHeader = true
+      break
+    }
+  }
+
+  if (!hasHeader) {
+    return 'graph TD\n' + finalLines.map(l => '  ' + l).join('\n')
+  }
+
+  return finalLines.join('\n')
 }
 
 // ── Icons for sections ──
@@ -310,14 +592,18 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
   const [expandedBoost, setExpandedBoost] = useState<Record<number, boolean>>({ 0: true })
 
   // Clean and parse the markdown SOP content
-  const sopSections = parseMarkdownSections(sop.markdown_content)
+  const cleanMarkdownContent = deduplicateText(sop.markdown_content)
+  const sopSections = parseMarkdownSections(cleanMarkdownContent)
   const hasMultipleSections = sopSections.length > 1
 
   // Parse Boost Recommendations
-  const { intro: boostIntro, recommendations: boostRecommendations } = parseBoostRecommendations(sop.boost_strategy)
+  const cleanBoostStrategy = deduplicateText(sop.boost_strategy)
+  const { intro: boostIntro, recommendations: boostRecommendations } = parseBoostRecommendations(cleanBoostStrategy)
+  const hasBoostRecs = boostRecommendations.length > 0
 
   // Sanitized Mermaid Code
-  const sanitizedFlowCode = sanitizeMermaidCode(sop.mermaid_code)
+  const cleanMermaidCode = deduplicateText(sop.mermaid_code)
+  const sanitizedFlowCode = sanitizeMermaidCode(cleanMermaidCode)
 
   useEffect(() => {
     if (activeTab === 'flow' && sanitizedFlowCode) {
@@ -352,9 +638,9 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
   const copyToClipboard = () => {
     let contentToCopy = ''
-    if (activeTab === 'sop') contentToCopy = sop.markdown_content
+    if (activeTab === 'sop') contentToCopy = cleanMarkdownContent
     if (activeTab === 'flow') contentToCopy = sanitizedFlowCode
-    if (activeTab === 'boost') contentToCopy = sop.boost_strategy
+    if (activeTab === 'boost') contentToCopy = cleanBoostStrategy
 
     navigator.clipboard.writeText(contentToCopy)
     setCopied(true)
@@ -472,8 +758,9 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
                             {isStepByStep && steps.length > 0 ? (
                               <SopStepsTimeline steps={steps} />
                             ) : (
-                              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed">
-                                <ReactMarkdown>{section.content}</ReactMarkdown>
+                              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed whitespace-pre-line">
+                                {/* Formatted sub-points (e.g. 3.1, 3.2) split into single lines per renglón */}
+                                <ReactMarkdown>{formatMarkdownSubpoints(section.content)}</ReactMarkdown>
                               </div>
                             )}
                           </div>
@@ -485,8 +772,8 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
               })
             ) : (
               // Fallback to standard Markdown rendering if parsing yielded nothing
-              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
-                <ReactMarkdown>{sop.markdown_content}</ReactMarkdown>
+              <div className="prose dark:prose-invert prose-blue max-w-none leading-relaxed p-4 glass rounded-2xl border border-black/10 dark:border-white/10 whitespace-pre-line">
+                <ReactMarkdown>{formatMarkdownSubpoints(sop.markdown_content)}</ReactMarkdown>
               </div>
             )}
           </div>
@@ -494,18 +781,11 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
         {/* ── TAB 2: SIKAI Flow (Mermaid Live Chart) ── */}
         {activeTab === 'flow' && (
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-2 p-3 bg-blue-500/5 rounded-xl border border-blue-500/10 text-sm text-blue-600 dark:text-blue-400 font-medium">
-              <Info className="w-4 h-4" />
-              Diagrama interactivo sincronizado en tiempo real. Si detectas fallas, exporta tu SOP a PDF para visualizar el reporte completo.
-            </div>
-            
-            <div className="flex items-center justify-center min-h-[450px] bg-black/5 dark:bg-[#09101d] rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner overflow-x-auto">
-              <div className="w-full max-w-4xl flex justify-center">
-                <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}`}>
-                  {sanitizedFlowCode}
-                </pre>
-              </div>
+          <div className="flex items-center justify-center min-h-[480px] bg-black/5 dark:bg-[#09101d]/80 rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner overflow-x-auto">
+            <div className="w-full max-w-4xl flex justify-center">
+              <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}`}>
+                {sanitizedFlowCode}
+              </pre>
             </div>
           </div>
         )}
@@ -513,93 +793,95 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
         {/* ── TAB 3: SIKAI Boost (Premium Recommendations & Bottlenecks) ── */}
         {activeTab === 'boost' && (
           <div className="space-y-6">
-            {boostIntro && (
-              <div className="p-5 glass rounded-2xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-purple-500/5 to-transparent">
-                <ReactMarkdown>{boostIntro}</ReactMarkdown>
-              </div>
-            )}
+            {hasBoostRecs ? (
+              <>
+                {boostIntro && (
+                  <div className="p-5 glass rounded-2xl border border-black/10 dark:border-white/10 text-gray-700 dark:text-gray-300 leading-relaxed bg-gradient-to-r from-purple-500/5 to-transparent">
+                    <ReactMarkdown>{boostIntro}</ReactMarkdown>
+                  </div>
+                )}
 
-            {boostRecommendations.length > 0 ? (
-              <div className="space-y-4">
-                {boostRecommendations.map((rec, idx) => {
-                  const isExpanded = !!expandedBoost[idx]
+                <div className="space-y-4">
+                  {boostRecommendations.map((rec, idx) => {
+                    const isExpanded = !!expandedBoost[idx]
 
-                  return (
-                    <div 
-                      key={idx} 
-                      className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-purple-500/30 shadow-sm"
-                    >
-                      <button
-                        onClick={() => toggleBoost(idx)}
-                        className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
+                    return (
+                      <div 
+                        key={idx} 
+                        className="border border-black/10 dark:border-white/10 rounded-2xl overflow-hidden glass transition-all duration-300 hover:border-purple-500/30 shadow-sm"
                       >
-                        <div className="flex items-center gap-3.5">
-                          <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
-                            {rec.number}
-                          </div>
-                          <span className="text-lg font-bold tracking-tight text-purple-900 dark:text-purple-300">{rec.title}</span>
-                        </div>
-                        <motion.div
-                          animate={{ rotate: isExpanded ? 180 : 0 }}
-                          transition={{ duration: 0.25, ease: 'easeInOut' }}
+                        <button
+                          onClick={() => toggleBoost(idx)}
+                          className="w-full flex items-center justify-between p-5 text-left font-bold text-gray-900 dark:text-white transition-all hover:bg-black/5 dark:hover:bg-white/[0.02] cursor-pointer"
                         >
-                          <ChevronDown className="w-5 h-5 text-gray-400" />
-                        </motion.div>
-                      </button>
-
-                      <AnimatePresence initial={false}>
-                        {isExpanded && (
+                          <div className="flex items-center gap-3.5">
+                            <div className="w-8 h-8 rounded-full bg-purple-500/10 border border-purple-500/30 text-purple-600 dark:text-purple-400 flex items-center justify-center font-bold text-sm">
+                              {rec.number}
+                            </div>
+                            <span className="text-lg font-bold tracking-tight text-purple-900 dark:text-purple-300">{rec.title}</span>
+                          </div>
                           <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: 'auto', opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                            animate={{ rotate: isExpanded ? 180 : 0 }}
+                            transition={{ duration: 0.25, ease: 'easeInOut' }}
                           >
-                            <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 space-y-4">
-                              
-                              {/* Cuello de botella & Mejora Grid */}
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {rec.cuelloBotella && (
-                                  <div className="bg-red-500/5 dark:bg-red-500/[0.02] rounded-xl p-4 border border-red-500/10 dark:border-red-500/[0.05]">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-red-500 flex items-center gap-1.5 mb-1.5 font-headline">
-                                      <AlertTriangle className="w-4 h-4" />
-                                      Cuello de Botella
-                                    </span>
-                                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                      {rec.cuelloBotella}
-                                    </p>
-                                  </div>
-                                )}
+                            <ChevronDown className="w-5 h-5 text-gray-400" />
+                          </motion.div>
+                        </button>
 
-                                {rec.mejora && (
-                                  <div className="bg-[#26d8c4]/5 dark:bg-[#26d8c4]/[0.02] rounded-xl p-4 border border-[#26d8c4]/10 dark:border-[#26d8c4]/[0.05]">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] flex items-center gap-1.5 mb-1.5 font-headline">
-                                      <Zap className="w-4 h-4" />
-                                      Mejora Propuesta
-                                    </span>
-                                    <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
-                                      {rec.mejora}
-                                    </p>
+                        <AnimatePresence initial={false}>
+                          {isExpanded && (
+                            <motion.div
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: 'auto', opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: [0.04, 0.62, 0.23, 0.98] }}
+                            >
+                              <div className="p-6 border-t border-black/10 dark:border-white/10 bg-black/[0.01] dark:bg-black/30 space-y-4">
+                                
+                                {/* Cuello de botella & Mejora Grid */}
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {rec.cuelloBotella && (
+                                    <div className="bg-red-500/5 dark:bg-red-500/[0.02] rounded-xl p-4 border border-red-500/10 dark:border-red-500/[0.05]">
+                                      <span className="text-xs font-bold uppercase tracking-wider text-red-500 flex items-center gap-1.5 mb-1.5 font-headline">
+                                        <AlertTriangle className="w-4 h-4" />
+                                        Cuello de Botella
+                                      </span>
+                                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                        {rec.cuelloBotella}
+                                      </p>
+                                    </div>
+                                  )}
+
+                                  {rec.mejora && (
+                                    <div className="bg-[#26d8c4]/5 dark:bg-[#26d8c4]/[0.02] rounded-xl p-4 border border-[#26d8c4]/10 dark:border-[#26d8c4]/[0.05]">
+                                      <span className="text-xs font-bold uppercase tracking-wider text-[#26d8c4] flex items-center gap-1.5 mb-1.5 font-headline">
+                                        <Zap className="w-4 h-4" />
+                                        Mejora Propuesta
+                                      </span>
+                                      <p className="text-sm text-gray-800 dark:text-gray-200 font-medium">
+                                        {rec.mejora}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+
+                                {/* Details text */}
+                                {rec.details && (
+                                  <div className="prose dark:prose-invert prose-purple max-w-none text-gray-700 dark:text-gray-300 bg-black/5 dark:bg-white/[0.01] p-5 rounded-xl border border-black/5 dark:border-white/[0.03] leading-relaxed">
+                                    <ReactMarkdown>{rec.details}</ReactMarkdown>
                                   </div>
                                 )}
                               </div>
-
-                              {/* Details text */}
-                              {rec.details && (
-                                <div className="prose dark:prose-invert prose-purple max-w-none text-gray-700 dark:text-gray-300 bg-black/5 dark:bg-white/[0.01] p-5 rounded-xl border border-black/5 dark:border-white/[0.03] leading-relaxed">
-                                  <ReactMarkdown>{rec.details}</ReactMarkdown>
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
-                  )
-                })}
-              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )
+                  })}
+                </div>
+              </>
             ) : (
-              // Fallback to standard Markdown if recommendations couldn't be split
+              // Fallback to standard Markdown - No duplications occur here
               <div className="prose dark:prose-invert prose-purple max-w-none p-4 glass rounded-2xl border border-black/10 dark:border-white/10">
                 <ReactMarkdown>{sop.boost_strategy}</ReactMarkdown>
               </div>
@@ -618,7 +900,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           <button
             type="button"
             onClick={copyToClipboard}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold transition-all border border-black/10 dark:border-white/10 text-sm cursor-pointer animate-hover"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-black/5 dark:bg-white/5 hover:bg-black/10 dark:hover:bg-white/10 text-gray-900 dark:text-white font-bold transition-all border border-black/10 dark:border-white/10 text-sm cursor-pointer"
           >
             {copied ? <Check className="w-4 h-4 text-green-400" /> : <Copy className="w-4 h-4" />}
             {copied ? 'Copiado' : 'Copiar Texto'}
@@ -626,7 +908,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
           <button
             type="button"
             onClick={() => window.print()}
-            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] text-white font-bold transition-all text-sm shadow-[0_0_15px_rgba(26,136,255,0.3)] hover:shadow-[0_0_25px_rgba(38,216,196,0.5)] cursor-pointer animate-hover"
+            className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] text-white font-bold transition-all text-sm shadow-[0_0_15px_rgba(26,136,255,0.3)] hover:shadow-[0_0_25px_rgba(38,216,196,0.5)] cursor-pointer"
           >
             <Download className="w-4 h-4" /> Exportar PDF
           </button>
