@@ -1,0 +1,31 @@
+# Firebase App Hosting Configuration File
+# Documentation: https://firebase.google.com/docs/app-hosting/configure
+
+# Environment variables
+env:
+  # Public Supabase variables (required during Next.js static build generation)
+  - variable: NEXT_PUBLIC_SUPABASE_URL
+    value: https://elaabrsiudhvraibegoj.supabase.co
+    availability:
+      - BUILD
+      - RUNTIME
+
+  - variable: NEXT_PUBLIC_SUPABASE_ANON_KEY
+    value: sb_publishable_Pgux7lqxWqXwCmqo38jq7g_f50QQfqU
+    availability:
+      - BUILD
+      - RUNTIME
+
+  # Gemini AI API Key (Required at Runtime for SOP generations)
+  # NOTE: To keep this key secure, you can also define it as a secret in the Firebase Console
+  # or upload it to Google Cloud Secret Manager.
+  - variable: GEMINI_API_KEY
+    value: AIzaSyDIl8vXV5B6DRs0vGTVD02gtD31bZhSeW8
+    availability:
+      - RUNTIME
+
+  # Pagos Bold API Key
+  - variable: BOLD_API_KEY
+    value: your_bold_api_key
+    availability:
+      - RUNTIME
