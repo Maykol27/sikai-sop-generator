@@ -5,46 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tour Guiado Interactivo · SIKAI SOP Generator</title>
   
-  <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
+  <!-- Google Fonts: Poppins (headings), PT Sans (body), Source Code Pro (monospace) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=PT+Sans:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* ── Brand Design System (SIKAI CX Colors) ── */
+    /* ── CSS Variables matching SIKAI SOP Generator app ── */
     :root {
       color-scheme: dark;
-      --bg-studio: #0b0c10;
-      --bg-panel: #16181d;
-      --bg-card: #1f1f21;
-      --fg: #f3f4f6;
-      --fg-muted: #9ca3af;
+      --background: #16181d;
+      --foreground: #e0e6ed;
       --primary: #1a88ff;
-      --primary-glow: rgba(26, 136, 255, 0.45);
-      --cyan: #26d8c4;
-      --cyan-glow: rgba(38, 216, 196, 0.45);
-      --purple: #7c3aed;
-      --purple-glow: rgba(124, 58, 237, 0.35);
+      --primary-glow: rgba(26, 136, 255, 0.5);
+      --primary-cyan: #26d8c4;
+      --cyan-glow: rgba(38, 216, 196, 0.5);
       --glass-bg: rgba(31, 31, 33, 0.75);
       --glass-border: rgba(255, 255, 255, 0.08);
-      --shadow: rgba(0, 0, 0, 0.65);
+      --purple: #7c3aed;
+      --purple-glow: rgba(124, 58, 237, 0.35);
+      --shadow: rgba(0, 0, 0, 0.55);
       --dot-color: rgba(255, 255, 255, 0.015);
     }
 
     .light {
       color-scheme: light;
-      --bg-studio: #faf6fd;
-      --bg-panel: #ffffff;
-      --bg-card: rgba(255, 255, 255, 0.85);
-      --fg: #16181d;
-      --fg-muted: #6b7280;
-      --glass-bg: rgba(255, 255, 255, 0.85);
-      --glass-border: rgba(26, 136, 255, 0.12);
-      --shadow: rgba(31, 38, 135, 0.06);
-      --dot-color: rgba(26, 136, 255, 0.04);
+      --background: #faf6fd;
+      --foreground: #16181d;
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(26, 136, 255, 0.1);
+      --dot-color: rgba(26, 136, 255, 0.03);
     }
 
     * {
@@ -54,32 +47,67 @@
     }
 
     body {
-      background-color: var(--bg-studio);
-      color: var(--fg);
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'PT Sans', sans-serif;
       background-image: 
-        radial-gradient(circle at 10% 10%, rgba(26, 136, 255, 0.07) 0%, transparent 45%),
-        radial-gradient(circle at 90% 90%, rgba(38, 216, 196, 0.05) 0%, transparent 45%),
+        radial-gradient(circle at 50% 0%, rgba(26, 136, 255, 0.08) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(38, 216, 196, 0.05) 0%, transparent 40%),
         radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
       background-size: 100% 100%, 100% 100%, 24px 24px;
+      background-attachment: fixed;
       min-height: 100vh;
       overflow-x: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      padding-bottom: 2rem;
     }
 
-    h1, h2, h3, h4 {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
       letter-spacing: -0.02em;
     }
 
-    /* ── Main Container ── */
+    /* ── Background Blobs - SIKAI SOP Nebula Effect ── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: -1;
+      opacity: 0.25;
+      pointer-events: none;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+
+    .light .bg-blob {
+      opacity: 0.15;
+    }
+
+    .bg-blob-primary {
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+    }
+
+    .bg-blob-cyan {
+      background: radial-gradient(circle, var(--primary-cyan) 0%, transparent 70%);
+    }
+
+    .bg-blob-dark-blue {
+      background: radial-gradient(circle, #0d47a1 0%, transparent 70%);
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(100px, -50px) scale(1.1); }
+      66% { transform: translate(-50px, 100px) scale(0.9); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* ── Layout ── */
     .container {
-      max-width: 1240px;
-      margin: 0 auto;
-      padding: 1.5rem 1.5rem 0.5rem;
+      max-width: 1100px;
+      margin: 5.5rem auto 0; /* Offset for fixed header */
+      padding: 0 1.5rem 0;
       width: 100%;
       flex-grow: 1;
       display: flex;
@@ -88,19 +116,28 @@
     }
 
     header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4.25rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.8rem 1.5rem;
-      border-radius: 20px;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      box-shadow: 0 8px 32px 0 var(--shadow);
-      margin-bottom: 1.5rem;
-      z-index: 50;
-      position: relative;
+      padding: 0 2rem;
+      background: rgba(22, 24, 29, 0.85);
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      z-index: 100;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .light header {
+      background: rgba(255, 255, 255, 0.85);
+      border-bottom: 1px solid rgba(26, 136, 255, 0.1);
+      box-shadow: 0 4px 20px rgba(31, 38, 135, 0.05);
     }
 
     .logo-link {
@@ -111,7 +148,7 @@
       color: inherit;
     }
 
-    .logo-icon {
+    .logo-box {
       width: 2.25rem;
       height: 2.25rem;
       border-radius: 10px;
@@ -120,15 +157,54 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 0 12px rgba(26, 136, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+    
+    .logo-link:hover .logo-box {
+      box-shadow: 0 0 20px rgba(26, 136, 255, 0.35);
+      border-color: rgba(26, 136, 255, 0.6);
+    }
+
+    .logo-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: var(--primary);
+      stroke-width: 1.75;
+    }
+
+    .logo-text-group {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .logo-brand-text {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sikai {
+      color: var(--foreground);
+    }
+
+    .brand-sub {
       color: var(--primary);
     }
 
-    .logo-text {
-      font-size: 1.15rem;
-      font-weight: 800;
+    .logo-greeting {
+      font-size: 0.65rem;
+      color: #6b7280;
+      margin-top: 0.25rem;
+      font-weight: 500;
     }
-    .logo-text span {
-      color: var(--primary);
+    .light .logo-greeting {
+      color: #4b5563;
     }
 
     .theme-toggle {
@@ -137,7 +213,7 @@
       border-radius: 12px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--glass-border);
-      color: var(--fg);
+      color: var(--foreground);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -145,75 +221,82 @@
       box-shadow: 0 4px 12px var(--shadow);
       transition: all 0.2s ease;
     }
+    .light .theme-toggle {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(26, 136, 255, 0.1);
+    }
     .theme-toggle:hover {
       background: rgba(255, 255, 255, 0.08);
       border-color: var(--primary);
+    }
+    .light .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.08);
     }
     .theme-toggle .sun-icon { display: none; }
     .theme-toggle .moon-icon { display: block; }
     .light .theme-toggle .sun-icon { display: block; color: #f59e0b; }
     .light .theme-toggle .moon-icon { display: none; }
 
-    /* ── HIGH-FIDELITY MACBOOK PRO CABINET ── */
+    /* ── HIGH-FIDELITY LAPTOP CABINET ── */
     .laptop-cabinet {
       position: relative;
       width: 100%;
-      max-width: 980px;
-      margin: 0 auto 1.5rem;
+      max-width: 960px;
+      margin: 0 auto 2rem;
       z-index: 20;
     }
 
-    /* Laptop Screen (MacBook Bezel) */
+    /* MacBook Bezel */
     .laptop-screen {
       background: #000000;
-      border-radius: 22px 22px 0 0;
-      border: 14px solid #1c1d22;
+      border-radius: 20px 20px 0 0;
+      border: 12px solid #222225;
       border-bottom: none;
       aspect-ratio: 16 / 10;
       position: relative;
       overflow: hidden;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.75), inset 0 0 0 1px rgba(255,255,255,0.05);
       display: flex;
       flex-direction: column;
     }
 
-    /* MacBook Webcam Dot */
+    /* Webcam */
     .laptop-screen::before {
       content: '';
       position: absolute;
-      top: -9px;
+      top: -8px;
       left: 50%;
       transform: translateX(-50%);
       width: 5px;
       height: 5px;
       border-radius: 50%;
-      background: #0d1e3d;
+      background: #0a0a0c;
       border: 1px solid #333;
       z-index: 100;
     }
 
-    /* Laptop Base Recess Recoil (Aluminium Keyboard Base) */
+    /* MacBook Keyboard Base */
     .laptop-base {
-      background: linear-gradient(to bottom, #2b2e36 0%, #15181c 20%, #0d0f11 100%);
-      height: 20px;
-      border-radius: 0 0 20px 20px;
+      background: linear-gradient(to bottom, #d2d2d2 0%, #9a9a9a 15%, #7e7e7e 30%, #555555 100%);
+      height: 22px;
+      border-radius: 0 0 16px 16px;
       position: relative;
-      box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
-      border-bottom: 2px solid #050608;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.3);
     }
-    .light .laptop-base {
-      background: linear-gradient(to bottom, #e2e8f0 0%, #cbd5e1 20%, #94a3b8 100%);
-      border-bottom: 2px solid #64748b;
+    .dark .laptop-base {
+      background: linear-gradient(to bottom, #2b2e36 0%, #15181c 20%, #0d0f11 100%);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.08);
+      border-bottom: 1.5px solid #050608;
     }
 
-    /* Center notch key lift recess */
+    /* Notch */
     .laptop-base::after {
       content: '';
       position: absolute;
       top: 0;
       left: 50%;
       transform: translateX(-50%);
-      width: 95px;
+      width: 90px;
       height: 7px;
       background: #090a0c;
       border-radius: 0 0 8px 8px;
@@ -223,7 +306,7 @@
     .simulated-browser {
       width: 100%;
       height: 100%;
-      background: var(--bg-panel);
+      background: var(--background);
       display: flex;
       flex-direction: column;
       position: relative;
@@ -231,7 +314,7 @@
       font-size: 14px;
     }
 
-    /* Browser Header URL & controls */
+    /* Browser Header URL */
     .browser-header-row {
       height: 2.25rem;
       border-bottom: 1px solid var(--glass-border);
@@ -258,47 +341,94 @@
     .dot-minimize { background-color: #ffbd2e; }
     .dot-expand { background-color: #27c93f; }
 
-    .browser-url-input-field {
+    .browser-url-field {
       background: rgba(0, 0, 0, 0.25);
       border: 1px solid var(--glass-border);
       border-radius: 6px;
       font-size: 0.72rem;
-      color: var(--fg-muted);
+      color: var(--foreground);
       padding: 0.15rem 2rem;
       width: 45%;
       text-align: center;
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      opacity: 0.7;
     }
-    .light .browser-url-input-field {
+    .light .browser-url-field {
       background: rgba(255, 255, 255, 0.6);
     }
 
     /* App Nav */
     .sim-app-navbar {
-      height: 3.25rem;
+      height: 3.5rem;
       border-bottom: 1px solid var(--glass-border);
-      background: rgba(0, 0, 0, 0.1);
+      background: var(--glass-bg);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 0 1.25rem;
-    }
-    .light .sim-app-navbar {
-      background: rgba(255, 255, 255, 0.4);
     }
 
     .sim-app-brand {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-weight: 800;
-      font-size: 0.9rem;
     }
-    .sim-app-brand i {
+
+    .sim-logo-box {
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 8px;
+      border: 1px solid rgba(26, 136, 255, 0.3);
+      background: rgba(26, 136, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 8px rgba(26, 136, 255, 0.1);
+    }
+    
+    .sim-logo-icon {
+      width: 1rem;
+      height: 1rem;
       color: var(--primary);
+      stroke-width: 1.75;
+    }
+
+    .sim-logo-text-group {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .sim-logo-brand-text {
+      display: flex;
+      align-items: center;
+      gap: 0.2rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .sim-brand-sikai {
+      color: var(--foreground);
+    }
+
+    .sim-brand-sub {
+      color: var(--primary);
+    }
+
+    .sim-logo-greeting {
+      font-size: 0.55rem;
+      color: #6b7280;
+      margin-top: 0.15rem;
+      font-weight: 500;
+    }
+    .light .sim-logo-greeting {
+      color: #4b5563;
     }
 
     .sim-app-user-actions {
@@ -311,25 +441,25 @@
       display: flex;
       align-items: center;
       gap: 0.3rem;
-      padding: 0.25rem 0.55rem;
+      padding: 0.3rem 0.65rem;
       background: rgba(26, 136, 255, 0.1);
       border: 1px solid rgba(26, 136, 255, 0.2);
       border-radius: 20px;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--primary);
     }
 
     .sim-user-avatar {
-      width: 1.75rem;
-      height: 1.75rem;
+      width: 1.85rem;
+      height: 1.85rem;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      background: linear-gradient(135deg, var(--primary), var(--primary-cyan));
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      font-size: 0.65rem;
+      font-size: 0.7rem;
       font-weight: 700;
     }
 
@@ -343,11 +473,11 @@
       position: relative;
     }
 
-    /* ── Loader spinner ── */
+    /* Sikai Loader Overlay */
     .sim-spinner-overlay {
       position: absolute;
       inset: 0;
-      background: rgba(22, 24, 29, 0.95);
+      background: rgba(22, 24, 29, 0.96);
       z-index: 200;
       display: none;
       flex-direction: column;
@@ -357,7 +487,7 @@
       animation: fade 0.25s ease;
     }
     .light .sim-spinner-overlay {
-      background: rgba(250, 246, 253, 0.95);
+      background: rgba(250, 246, 253, 0.96);
     }
     .sim-spinner-overlay.active {
       display: flex;
@@ -365,17 +495,17 @@
     .sim-spinner-ring {
       width: 48px;
       height: 48px;
-      border: 3.5px solid rgba(26, 136, 255, 0.1);
+      border: 3.5px solid rgba(26, 136, 255, 0.15);
       border-top-color: var(--primary);
-      border-right-color: var(--cyan);
+      border-right-color: var(--primary-cyan);
       border-radius: 50%;
       animation: spin 1s infinite linear;
     }
     .sim-spinner-text {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
-      color: var(--cyan);
-      font-family: 'JetBrains Mono', monospace;
+      color: var(--primary-cyan);
+      font-family: 'Source Code Pro', monospace;
     }
 
     /* ── SOP Form Creator ── */
@@ -388,46 +518,61 @@
 
     .sim-header-block h2 {
       font-size: 1.35rem;
-      font-weight: 800;
+      font-weight: 700;
     }
     .sim-header-block p {
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       color: var(--fg-muted);
     }
 
     /* Switch buttons */
     .sim-mode-switches {
       display: flex;
-      gap: 0.4rem;
-      background: rgba(0, 0, 0, 0.15);
-      border: 1px solid var(--glass-border);
-      padding: 0.18rem;
-      border-radius: 10px;
-      width: fit-content;
+      gap: 0.25rem;
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 0.25rem;
+      border-radius: 1rem; /* rounded-2xl */
+      width: 100%;
+      max-width: 320px;
+      margin: 0 auto 0.5rem;
     }
     .light .sim-mode-switches {
-      background: rgba(0,0,0,0.04);
+      background: rgba(255, 255, 255, 0.6);
+      border-color: rgba(26, 136, 255, 0.1);
     }
 
     .sim-tab-btn {
+      flex: 1;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.35rem;
-      padding: 0.4rem 0.85rem;
-      font-size: 0.72rem;
+      padding: 0.5rem 0.85rem;
+      font-size: 0.75rem;
       font-weight: 700;
       border: 0;
       background: transparent;
-      color: var(--fg-muted);
+      color: #6b7280;
       cursor: pointer;
-      border-radius: 8px;
+      border-radius: 0.75rem; /* rounded-xl */
+      transition: all 0.3s ease;
+    }
+    .light .sim-tab-btn {
+      color: #4b5563;
     }
     .sim-tab-btn.active {
-      background: var(--primary);
+      background: linear-gradient(90deg, var(--primary), #1a88ffcc);
       color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    #simVoiceSwitchBtn.active {
+      background: linear-gradient(90deg, var(--primary-cyan), #26d8c4cc);
+      color: black;
+      box-shadow: 0 4px 12px var(--cyan-glow);
     }
 
-    /* Grid Fields */
+    /* Grid Fields styled like .sikai-input */
     .sim-fields-box {
       display: flex;
       flex-direction: column;
@@ -443,11 +588,11 @@
     .sim-input-group {
       display: flex;
       flex-direction: column;
-      gap: 0.3rem;
+      gap: 0.35rem;
       text-align: left;
     }
     .sim-label {
-      font-size: 0.62rem;
+      font-size: 0.65rem;
       font-weight: 800;
       text-transform: uppercase;
       color: var(--primary);
@@ -455,20 +600,26 @@
     }
     .sim-field {
       width: 100%;
-      background: rgba(0, 0, 0, 0.2);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.78rem;
-      color: var(--fg);
+      background: rgba(13, 18, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.85rem;
+      font-size: 0.8rem;
+      color: #f3f4f6;
       outline: none;
       font-family: inherit;
+      transition: all 0.25s ease;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.25);
     }
     .light .sim-field {
-      background: #ffffff;
+      background: rgba(255, 255, 255, 0.9);
+      border-color: rgba(0, 0, 0, 0.18);
+      color: #111827;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     .sim-field:focus {
       border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(26, 136, 255, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.25);
     }
 
     /* Steps list mock */
@@ -483,25 +634,25 @@
       align-items: center;
     }
     .sim-step-num {
-      width: 1.45rem;
-      height: 1.45rem;
+      width: 1.5rem;
+      height: 1.5rem;
       border-radius: 6px;
       background: rgba(255,255,255,0.04);
       border: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.68rem;
-      font-weight: 800;
+      font-size: 0.7rem;
+      font-weight: 700;
       color: var(--fg-muted);
     }
     .light .sim-step-num {
       background: rgba(0,0,0,0.02);
     }
     .sim-step-del-btn {
-      width: 1.75rem;
-      height: 1.75rem;
-      border-radius: 6px;
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 8px;
       background: rgba(239, 68, 68, 0.08);
       border: 1px solid rgba(239, 68, 68, 0.15);
       color: #ef4444;
@@ -515,11 +666,11 @@
       display: inline-flex;
       align-items: center;
       gap: 0.3rem;
-      padding: 0.35rem 0.75rem;
+      padding: 0.4rem 0.85rem;
       background: rgba(255,255,255,0.02);
       border: 1px dashed var(--glass-border);
-      border-radius: 6px;
-      font-size: 0.72rem;
+      border-radius: 8px;
+      font-size: 0.75rem;
       font-weight: 700;
       color: var(--fg-muted);
       cursor: pointer;
@@ -538,15 +689,15 @@
       display: inline-flex;
       align-items: center;
       gap: 0.45rem;
-      padding: 0.55rem 1.35rem;
-      border-radius: 10px;
+      padding: 0.65rem 1.5rem;
+      border-radius: 12px;
       border: 0;
-      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      background: linear-gradient(90deg, var(--primary), var(--primary-cyan));
       color: white;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       cursor: pointer;
-      box-shadow: 0 4px 12px var(--primary-glow);
+      box-shadow: 0 4px 15px var(--primary-glow);
     }
 
     /* ── Voice dictation Overlay modal ── */
@@ -574,23 +725,74 @@
       text-align: center;
     }
     .sim-voice-header h3 { font-size: 1.1rem; }
-    .sim-voice-header p { font-size: 0.7rem; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+    .sim-voice-header p { font-size: 0.7rem; color: var(--primary-cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
 
     .sim-voice-orb {
-      width: 68px;
-      height: 68px;
+      width: 76px;
+      height: 76px;
       border-radius: 50%;
-      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-cyan) 100%);
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+      box-shadow: 0 0 20px rgba(26, 136, 255, 0.4), 0 0 40px rgba(38, 216, 196, 0.2);
       cursor: pointer;
       z-index: 10;
+      position: relative;
+      transition: all 0.3s ease;
     }
+    
+    .sim-voice-orb::before, .sim-voice-orb::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      background: var(--primary);
+      opacity: 0.15;
+      filter: blur(8px);
+      z-index: -1;
+      animation: orbPulse 2s infinite ease-in-out;
+    }
+    
+    .sim-voice-orb::after {
+      inset: -16px;
+      background: var(--primary-cyan);
+      opacity: 0.08;
+      filter: blur(12px);
+      animation: orbPulse 2s infinite ease-in-out;
+      animation-delay: 1s;
+    }
+
     .sim-voice-orb.recording {
-      animation: micPulse 1.2s infinite alternate ease-in-out;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.6), 0 0 50px rgba(239, 68, 68, 0.3);
+      animation: micBreathing 1.2s infinite alternate ease-in-out;
+    }
+    
+    .sim-voice-orb.recording::before {
+      background: #ef4444;
+      animation: micRipple 1.5s infinite linear;
+    }
+    .sim-voice-orb.recording::after {
+      background: #dc2626;
+      animation: micRipple 1.5s infinite linear;
+      animation-delay: 0.75s;
+    }
+
+    @keyframes orbPulse {
+      0%, 100% { transform: scale(1); opacity: 0.1; }
+      50% { transform: scale(1.1); opacity: 0.2; }
+    }
+    
+    @keyframes micBreathing {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.06); }
+    }
+
+    @keyframes micRipple {
+      0% { transform: scale(1); opacity: 0.4; }
+      100% { transform: scale(1.4); opacity: 0; }
     }
 
     /* Waves container */
@@ -603,7 +805,7 @@
     .sim-wave-bar {
       width: 2.5px;
       height: 6px;
-      background: var(--cyan);
+      background: var(--primary-cyan);
       border-radius: 1px;
     }
     .sim-wave-bar.active-wave {
@@ -627,18 +829,18 @@
       background: #ffffff;
     }
     .sim-voice-transcript-text {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--fg-muted);
       text-align: center;
       line-height: 1.4;
     }
     .sim-voice-transcript-text.filled {
-      color: var(--fg);
+      color: var(--foreground);
       text-align: left;
     }
 
     .sim-voice-timer-stamp {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
       font-size: 0.72rem;
       color: var(--fg-muted);
     }
@@ -649,16 +851,16 @@
     }
     .sim-voice-btn {
       padding: 0.45rem 1.15rem;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      border-radius: 8px;
+      border-radius: 10px;
       cursor: pointer;
       border: 1px solid var(--glass-border);
       background: transparent;
-      color: var(--fg);
+      color: var(--foreground);
     }
     .sim-voice-btn.submit {
-      background: var(--cyan);
+      background: var(--primary-cyan);
       color: black;
       border: 0;
       font-weight: 800;
@@ -684,8 +886,8 @@
     }
     .sim-results-title {
       font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--fg);
+      font-weight: 700;
+      color: var(--foreground);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -701,13 +903,13 @@
       align-items: center;
       gap: 0.3rem;
       padding: 0.35rem 0.65rem;
-      border-radius: 6px;
-      font-size: 0.68rem;
+      border-radius: 8px;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
       border: 1px solid var(--glass-border);
       background: rgba(255, 255, 255, 0.02);
-      color: var(--fg);
+      color: var(--foreground);
     }
     .light .sim-action-btn {
       background: #ffffff;
@@ -720,36 +922,45 @@
 
     .sim-results-tabs {
       display: flex;
-      gap: 0.3rem;
-      background: rgba(0, 0, 0, 0.15);
-      border: 1px solid var(--glass-border);
-      padding: 0.15rem;
-      border-radius: 8px;
+      gap: 0.25rem;
+      background: rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 0.25rem;
+      border-radius: 0.75rem; /* rounded-xl */
       width: fit-content;
     }
     .light .sim-results-tabs {
-      background: rgba(0,0,0,0.04);
+      background: rgba(255, 255, 255, 0.6);
+      border-color: rgba(26, 136, 255, 0.1);
     }
     .sim-results-tab {
-      padding: 0.35rem 0.7rem;
-      font-size: 0.68rem;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.75rem;
       font-weight: 700;
       border: 0;
       background: transparent;
-      color: var(--fg-muted);
+      color: #6b7280;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 0.5rem; /* rounded-lg */
+      transition: all 0.2s ease;
+    }
+    .light .sim-results-tab {
+      color: #4b5563;
     }
     .sim-results-tab.active {
-      background: var(--primary);
+      background: linear-gradient(90deg, var(--primary), #1a88ffcc);
       color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
     }
     .sim-results-tab.active.flow {
-      background: var(--cyan);
+      background: linear-gradient(90deg, var(--primary-cyan), #26d8c4cc);
       color: black;
+      box-shadow: 0 4px 12px var(--cyan-glow);
     }
     .sim-results-tab.active.boost {
-      background: var(--purple);
+      background: linear-gradient(90deg, var(--purple), #7c3aedcc);
+      color: white;
+      box-shadow: 0 4px 12px var(--purple-glow);
     }
 
     .sim-results-tab-viewport {
@@ -767,7 +978,7 @@
     .sim-accordion-item {
       border: 1px solid var(--glass-border);
       background: rgba(255, 255, 255, 0.01);
-      border-radius: 8px;
+      border-radius: 10px;
       overflow: hidden;
     }
     .light .sim-accordion-item {
@@ -785,7 +996,7 @@
       display: flex;
       align-items: center;
       gap: 0.45rem;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
     }
     .sim-accordion-title i { color: var(--primary); }
@@ -794,7 +1005,7 @@
 
     .sim-accordion-content {
       padding: 0.75rem;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       color: var(--fg-muted);
       line-height: 1.45;
       border-top: 1px solid var(--glass-border);
@@ -835,7 +1046,7 @@
       border-radius: 50%;
       background: var(--primary);
     }
-    .sim-node-title { font-weight: 700; color: var(--fg); font-size: 0.7rem; margin-bottom: 0.15rem; }
+    .sim-node-title { font-weight: 700; color: var(--foreground); font-size: 0.72rem; margin-bottom: 0.15rem; }
     .sim-node-fields {
       display: flex;
       flex-direction: column;
@@ -843,10 +1054,10 @@
       background: rgba(0,0,0,0.12);
       border: 1px solid var(--glass-border);
       padding: 0.35rem 0.55rem;
-      border-radius: 6px;
+      border-radius: 8px;
     }
     .light .sim-node-fields { background: rgba(0,0,0,0.02); }
-    .sim-node-field { font-size: 0.65rem; }
+    .sim-node-field { font-size: 0.68rem; }
     .sim-node-field span { font-weight: 700; color: var(--primary); }
 
     /* SOP Flow Diagram view */
@@ -860,7 +1071,7 @@
       justify-content: space-between;
       align-items: center;
     }
-    .sim-flow-bar span { font-size: 0.68rem; font-weight: 700; color: var(--cyan); }
+    .sim-flow-bar span { font-size: 0.72rem; font-weight: 700; color: var(--primary-cyan); }
     .sim-flow-switches {
       display: flex;
       gap: 0.15rem;
@@ -871,7 +1082,7 @@
     }
     .sim-flow-dir-btn {
       padding: 0.15rem 0.45rem;
-      font-size: 0.58rem;
+      font-size: 0.62rem;
       font-weight: 700;
       background: transparent;
       border: 0;
@@ -880,7 +1091,7 @@
       border-radius: 4px;
     }
     .sim-flow-dir-btn.active {
-      background: var(--cyan);
+      background: var(--primary-cyan);
       color: black;
     }
 
@@ -908,12 +1119,12 @@
     }
     .sim-flow-node {
       background: rgba(38, 216, 196, 0.08);
-      border: 1px solid var(--cyan);
-      border-radius: 6px;
+      border: 1px solid var(--primary-cyan);
+      border-radius: 8px;
       padding: 0.35rem 0.65rem;
-      font-size: 0.68rem;
+      font-size: 0.72rem;
       font-weight: 700;
-      color: var(--cyan);
+      color: var(--primary-cyan);
       display: flex;
       align-items: center;
       gap: 0.25rem;
@@ -926,7 +1137,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: var(--primary);
-      font-size: 0.68rem;
+      font-size: 0.72rem;
     }
     .sim-flow-nodes.vertical .sim-flow-node::after {
       content: '▼';
@@ -944,7 +1155,7 @@
       flex-direction: column;
       gap: 0.5rem;
     }
-    .sim-boost-intro { font-size: 0.68rem; color: var(--fg-muted); }
+    .sim-boost-intro { font-size: 0.72rem; color: var(--fg-muted); }
     .sim-boost-grid {
       display: grid;
       grid-template-cols: 1fr;
@@ -958,7 +1169,7 @@
     .sim-boost-card {
       border: 1px solid var(--glass-border);
       padding: 0.75rem;
-      border-radius: 10px;
+      border-radius: 12px;
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
@@ -981,7 +1192,7 @@
       box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
     }
     .sim-boost-tag {
-      font-size: 0.55rem;
+      font-size: 0.58rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -991,7 +1202,7 @@
     }
     .sim-boost-card.bottleneck .sim-boost-tag { color: #ef4444; }
     .sim-boost-card.improvement .sim-boost-tag { color: var(--purple); }
-    .sim-boost-text { font-size: 0.7rem; line-height: 1.4; color: var(--fg); }
+    .sim-boost-text { font-size: 0.72rem; line-height: 1.4; color: var(--foreground); }
 
     /* PDF Success confirmation alert */
     .sim-pdf-alert {
@@ -1021,13 +1232,13 @@
       box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
     }
     .sim-pdf-close-btn {
-      padding: 0.4rem 1rem;
+      padding: 0.45rem 1rem;
       background: #10b981;
       color: white;
       border: 0;
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
 
@@ -1035,13 +1246,13 @@
     .tour-tooltip-card {
       position: absolute;
       background: rgba(22, 26, 38, 0.85);
-      border: 1.5px solid var(--cyan);
-      border-radius: 12px;
+      border: 1.5px solid var(--primary-cyan);
+      border-radius: 1.25rem;
       padding: 0.75rem 1rem;
       width: 260px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--cyan-glow);
-      backdrop-filter: blur(15px);
-      -webkit-backdrop-filter: blur(15px);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 0 0 15px var(--cyan-glow);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       z-index: 250;
       pointer-events: none;
       opacity: 0;
@@ -1049,15 +1260,19 @@
       transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-align: left;
     }
+    .light .tour-tooltip-card {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    }
     .tour-tooltip-card.active {
       opacity: 1;
       transform: scale(1) translateY(0);
     }
 
-    /* Custom Purple glowing border for specific tools */
+    /* Custom Purple glowing border for SIKAI Boost card */
     .tour-tooltip-card.purple-glow {
       border-color: var(--purple);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--purple-glow);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3), 0 0 15px var(--purple-glow);
     }
 
     .tooltip-arrow {
@@ -1070,41 +1285,42 @@
     .tour-tooltip-card.arrow-top .tooltip-arrow {
       top: -10px; left: 30px;
       border-width: 0 10px 10px 10px;
-      border-color: transparent transparent var(--cyan) transparent;
+      border-color: transparent transparent var(--primary-cyan) transparent;
     }
     .tour-tooltip-card.arrow-bottom .tooltip-arrow {
       bottom: -10px; left: 30px;
       border-width: 10px 10px 0 10px;
-      border-color: var(--cyan) transparent transparent transparent;
+      border-color: var(--primary-cyan) transparent transparent transparent;
     }
     .tour-tooltip-card.arrow-left .tooltip-arrow {
       left: -10px; top: 30px;
       border-width: 10px 10px 10px 0;
-      border-color: transparent var(--cyan) transparent transparent;
+      border-color: transparent var(--primary-cyan) transparent transparent;
     }
     .tour-tooltip-card.arrow-right .tooltip-arrow {
       right: -10px; top: 30px;
       border-width: 10px 0 10px 10px;
-      border-color: transparent transparent transparent var(--cyan);
+      border-color: transparent transparent transparent var(--primary-cyan);
     }
     
     .tour-tooltip-card.purple-glow.arrow-top .tooltip-arrow { border-bottom-color: var(--purple); }
     .tour-tooltip-card.purple-glow.arrow-bottom .tooltip-arrow { border-top-color: var(--purple); }
 
     .tooltip-step-label {
-      font-size: 0.62rem;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: var(--cyan);
+      color: var(--primary-cyan);
       margin-bottom: 0.15rem;
     }
     .tour-tooltip-card.purple-glow .tooltip-step-label { color: var(--purple); }
 
     .tooltip-desc {
-      font-size: 0.72rem;
+      font-size: 0.75rem;
       line-height: 1.45;
-      color: var(--fg);
+      color: var(--foreground);
     }
 
     /* ── AUTOMATED MOUSE POINTER ── */
@@ -1128,7 +1344,7 @@
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2.5px solid var(--cyan);
+      border: 2.5px solid var(--primary-cyan);
       box-shadow: 0 0 10px var(--cyan-glow);
       transform: translate(-50%, -50%) scale(0);
       pointer-events: none;
@@ -1148,16 +1364,16 @@
     .studio-scrubber-bar {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 20px;
+      border-radius: 1.5rem;
       padding: 0.85rem 1.5rem;
       display: flex;
       flex-direction: column;
       gap: 0.85rem;
-      box-shadow: 0 10px 30px var(--shadow);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px 0 var(--shadow);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
       width: 100%;
-      max-width: 980px;
+      max-width: 960px;
       margin: 0 auto;
     }
 
@@ -1179,7 +1395,7 @@
       top: 0;
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      background: linear-gradient(90deg, var(--primary), var(--primary-cyan));
       border-radius: 3px;
       transition: width 0.1s linear;
     }
@@ -1193,12 +1409,12 @@
       height: 10px;
       border-radius: 50%;
       background: #4b5563;
-      border: 2px solid var(--bg-studio);
+      border: 2px solid var(--background);
       z-index: 10;
       transition: background-color 0.2s ease, transform 0.2s ease;
     }
     .pin-marker.active-pin {
-      background: var(--cyan);
+      background: var(--primary-cyan);
       transform: translate(-50%, -50%) scale(1.2);
     }
 
@@ -1217,7 +1433,7 @@
     .player-btn {
       background: transparent;
       border: 0;
-      color: var(--fg);
+      color: var(--foreground);
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -1241,7 +1457,7 @@
       box-shadow: 0 4px 14px var(--primary-glow);
     }
     .digital-clock {
-      font-family: 'JetBrains Mono', monospace;
+      font-family: 'Source Code Pro', monospace;
       font-size: 0.78rem;
       color: var(--fg-muted);
       font-weight: 700;
@@ -1279,44 +1495,6 @@
       100% { transform: scale(1.02); box-shadow: 0 0 12px rgba(16, 185, 129, 0.15); }
     }
 
-    /* Explanatory CTA Block */
-    .guide-cta-section {
-      text-align: center;
-      margin-top: 2rem;
-      padding: 1.5rem;
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px var(--shadow);
-    }
-    .guide-cta-title {
-      font-size: 1.45rem;
-      font-weight: 800;
-      margin-bottom: 0.4rem;
-      background: linear-gradient(135deg, var(--fg) 50%, var(--primary) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .guide-cta-desc {
-      font-size: 0.8rem;
-      color: var(--fg-muted);
-      margin-bottom: 1rem;
-    }
-    .guide-cta-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 1.5rem;
-      font-weight: 700;
-      font-size: 0.8rem;
-      border-radius: 10px;
-      text-decoration: none;
-      background: linear-gradient(90deg, var(--primary), var(--cyan));
-      color: white;
-      box-shadow: 0 4px 12px var(--primary-glow);
-    }
-    .light .guide-cta-button { color: black; box-shadow: 0 4px 12px rgba(26,136,255,0.25); }
-
     /* Mechanics */
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
@@ -1328,15 +1506,26 @@
 </head>
 <body>
 
+  <!-- Background Blobs - SIKAI SOP Nebula Effect -->
+  <div class="bg-blob bg-blob-primary" style="width: 30rem; height: 30rem; top: -5rem; left: -5rem; animation-delay: 0s;"></div>
+  <div class="bg-blob bg-blob-cyan" style="width: 40rem; height: 40rem; top: 25%; right: -5rem; animation-delay: -5s;"></div>
+  <div class="bg-blob bg-blob-dark-blue" style="width: 25rem; height: 25rem; bottom: -5rem; left: 30%; animation-delay: -10s;"></div>
+
   <div class="container">
     
     <!-- Header row logo + theme toggler -->
     <header>
       <a href="#" class="logo-link">
-        <div class="logo-icon">
-          <i data-lucide="clipboard-list" style="width: 1.25rem; height: 1.25rem; stroke-width: 2;"></i>
+        <div class="logo-box">
+          <i data-lucide="clipboard-list" class="logo-icon"></i>
         </div>
-        <div class="logo-text">SIKAI <span>SOP GENERATOR</span></div>
+        <div class="logo-text-group">
+          <div class="logo-brand-text">
+            <span class="brand-sikai">SIKAI</span>
+            <span class="brand-sub">SOP GENERATOR</span>
+          </div>
+          <span class="logo-greeting">Hola, Maykol 👋</span>
+        </div>
       </a>
       
       <div class="header-actions">
@@ -1439,8 +1628,8 @@
             <div class="sim-pdf-circle">
               <i data-lucide="check" style="width:1.5rem; height:1.5rem; stroke-width:3.5;"></i>
             </div>
-            <h4 style="font-size:0.95rem; font-weight:800;">Manual Contable Guardado</h4>
-            <p style="font-size:0.72rem; color:var(--fg-muted); text-align:center; max-width:260px;">El documento PDF ha sido descargado y optimizado en orientación A4 con diagrama vertical.</p>
+            <h4 style="font-size:0.95rem; font-weight:800; font-family:'Poppins', sans-serif;">Manual Contable Guardado</h4>
+            <p style="font-size:0.75rem; color:var(--fg-muted); text-align:center; max-width:260px;">El documento PDF ha sido descargado y optimizado en orientación A4 con diagrama vertical.</p>
             <button class="sim-pdf-close-btn" id="simPdfAlertClose">Cerrar Ventana</button>
           </div>
 
@@ -1451,15 +1640,23 @@
               <span class="mac-dot dot-minimize"></span>
               <span class="mac-dot dot-expand"></span>
             </div>
-            <div class="browser-url-input-field" id="browserUrlField">https://sop.sikaicx.com/dashboard</div>
+            <div class="browser-url-field" id="browserUrlField">https://sop.sikaicx.com/dashboard</div>
             <div style="width:34px;"></div>
           </div>
 
           <!-- App navbar -->
           <div class="sim-app-navbar">
             <div class="sim-app-brand" id="targetNavBrand">
-              <i data-lucide="clipboard-list" style="width: 1rem; height: 1rem;"></i>
-              <span>SIKAI SOP</span>
+              <div class="sim-logo-box">
+                <i data-lucide="clipboard-list" class="sim-logo-icon"></i>
+              </div>
+              <div class="sim-logo-text-group">
+                <div class="sim-logo-brand-text">
+                  <span class="sim-brand-sikai">SIKAI</span>
+                  <span class="sim-brand-sub">SOP GENERATOR</span>
+                </div>
+                <span class="sim-logo-greeting">Hola, Maykol 👋</span>
+              </div>
             </div>
             <div class="sim-app-user-actions">
               <div class="sim-credits-capsule" id="targetNavCredits">
@@ -1477,7 +1674,7 @@
             <div class="sim-creator-view" id="simCreator">
               
               <div class="sim-header-block">
-                <h2>Crear nuevo SIKAI SOP</h2>
+                <h2 style="font-family:'Poppins', sans-serif;">Crear nuevo SIKAI SOP</h2>
                 <p>Describe tu proceso manualmente o utiliza el dictado por voz de precisión.</p>
               </div>
 
@@ -1546,7 +1743,7 @@
               <!-- Voice Dictation Modal overlay -->
               <div class="sim-voice-overlay" id="simVoiceModal">
                 <div class="sim-voice-header">
-                  <h3>Agente de Voz SIKAI</h3>
+                  <h3 style="font-family:'Poppins', sans-serif;">Agente de Voz SIKAI</h3>
                   <p id="simVoiceStatus">Escuchando micrófono...</p>
                 </div>
 
@@ -1584,7 +1781,7 @@
               
               <!-- Result header -->
               <div class="sim-results-header">
-                <div class="sim-results-title" id="simResultTitle">Cierre de Caja Mensual</div>
+                <div class="sim-results-title" id="simResultTitle" style="font-family:'Poppins', sans-serif;">Cierre de Caja Mensual</div>
                 <div class="sim-results-buttons">
                   <button class="sim-action-btn" id="simCopyBtn">
                     <i data-lucide="copy" style="width: 0.72rem; height: 0.72rem;"></i> Copiar
@@ -1700,7 +1897,7 @@
                         <i data-lucide="alert-triangle" style="width:0.7rem; height:0.7rem;"></i> Cuello de Botella
                       </div>
                       <div class="sim-boost-text">
-                        El proceso de digitar manualmente los recibos físicos en HubSpot es lento y propenso a errores tipográficos.
+                        El registro manual de facturas físicas por caja genera retrasos en la conciliación del mes contable.
                       </div>
                     </div>
 
@@ -1709,7 +1906,7 @@
                         <i data-lucide="zap" style="width:0.7rem; height:0.7rem;"></i> SIKAI Boost Mejora
                       </div>
                       <div class="sim-boost-text">
-                        Implementar un escaneo automático con OCR en lote para extraer valores y subirlos a HubSpot directamente en segundos.
+                        Utilizar OCR integrado para escanear y subir recibos directamente en segundos, eliminando errores tipográficos.
                       </div>
                     </div>
 
@@ -1773,16 +1970,6 @@
 
       </div>
 
-    </div>
-
-    <!-- Explanatory Branding CTA footer -->
-    <div class="guide-cta-section">
-      <h2 class="guide-cta-title">Sistematiza tu Operación Empresarial</h2>
-      <p class="guide-cta-desc">Elabora manuales operativos y diagramas lógicos en segundos a partir de texto o dictados de voz continuos.</p>
-      <a href="/dashboard" class="guide-cta-button">
-        <i data-lucide="zap" style="width: 0.85rem; height: 0.85rem;"></i>
-        Comenzar Ahora Gratis
-      </a>
     </div>
 
   </div>
@@ -1874,7 +2061,7 @@
       roles: "Contador, Gerente",
       objective: "Conciliar las cuentas contables y facturas del mes vencido.",
       tools: "Excel, HubSpot ERP, SAP",
-      bottlenecks: "El registro manual de comprobantes físicos en caja genera retrasos.",
+      bottlenecks: "El registro manual de comprobantes físicos en caja genera retrasos contables.",
       stepText1: "Reunir todas las facturas contables del mes..."
     };
 
@@ -1883,6 +2070,16 @@
       "Para cerrar la caja mensual primero recopilamos los recibos físicos...",
       "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego... ejem... registramos en HubSpot ERP...",
       "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego registramos en HubSpot ERP. (Transcripción limpia sin duplicados por la IA)"
+    ];
+
+    // Narration bubbles script
+    const timelineChapters = [
+      { start: 0, end: 12, key: 'manual' },
+      { start: 12, end: 24, key: 'form' },
+      { start: 24, end: 45, key: 'voice' },
+      { start: 45, end: 58, key: 'flow' },
+      { start: 58, end: 70, key: 'boost' },
+      { start: 70, end: 85, key: 'print' }
     ];
 
     // Format clock timestamp
@@ -1971,7 +2168,10 @@
 
     // Hide tooltips helper
     function hideAllTooltips() {
-      Object.values(tooltips).forEach(tooltip => tooltip.classList.remove('active'));
+      Object.values(tooltips).forEach(tooltip => {
+        tooltip.classList.remove('active');
+        tooltip.classList.remove('purple-glow');
+      });
     }
 
     // ── PROGRESSIVE SCREEN WORKFLOW ANIMATOR ──
@@ -2023,7 +2223,7 @@
         simVoiceSwitchBtn.classList.remove('active');
 
         // Target: credits badge in navbar
-        const targetCoord = { x: 800, y: 55 }; // Credits position
+        const targetCoord = { x: 740, y: 55 }; // Credits position
         virtualMouse.style.left = `${targetCoord.x}px`;
         virtualMouse.style.top = `${targetCoord.y}px`;
 
@@ -2096,7 +2296,7 @@
         }
 
         // Target: Microphone orb
-        const targetCoord = { x: 480, y: 220 }; // Voice mic position
+        const targetCoord = { x: 485, y: 200 }; // Voice mic position
         virtualMouse.style.left = `${targetCoord.x}px`;
         virtualMouse.style.top = `${targetCoord.y}px`;
 
@@ -2208,7 +2408,7 @@
         }
 
         // Target: PDF Button
-        const targetCoord = { x: 880, y: 100 }; // Export PDF button
+        const targetCoord = { x: 865, y: 95 }; // Export PDF button
         virtualMouse.style.left = `${targetCoord.x}px`;
         virtualMouse.style.top = `${targetCoord.y}px`;
 
@@ -2392,7 +2592,7 @@
       }, 3000);
     }
 
-    // 5. Results Tab Switched in Sandbox
+    // 5. Results Tab Switches in Sandbox
     tabSopTrigger.addEventListener('click', () => {
       if (isPlaying) pause();
       showSandboxResultsTab('sop');
