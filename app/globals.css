@@ -3,6 +3,8 @@
 
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ── CSS Variables ── */
 :root {
   color-scheme: dark;
@@ -285,5 +287,10 @@ h1, h2, h3, h4, h5, h6 {
   .print-page-break {
     page-break-before: always;
     break-before: page;
+  }
+  /* Scale down Mermaid SVG in print mode to prevent overflow */
+  .print-only .mermaid svg {
+    max-width: 100% !important;
+    height: auto !important;
   }
 }

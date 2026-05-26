@@ -29,7 +29,7 @@ export default async function SopViewPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="max-w-6xl mx-auto">
-      <div className="mb-6">
+      <div className="mb-6 screen-only">
         <Link href="/dashboard" className="text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center gap-2 transition-colors w-max">
           <ArrowLeft className="w-4 h-4" /> Volver al Dashboard
         </Link>

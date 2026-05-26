@@ -335,6 +335,11 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
   const cleanMermaidCode = deduplicateText(editedMermaid)
   const sanitizedFlowCode = sanitizeMermaidCode(cleanMermaidCode)
 
+  // Convert horizontal LR chart to TD (Top-Down) vertical layout for printed page compatibility
+  const printFlowCode = sanitizedFlowCode
+    .replace(/\bgraph\s+LR\b/gi, 'graph TD')
+    .replace(/\bflowchart\s+LR\b/gi, 'flowchart TD')
+
   useEffect(() => {
     if (sanitizedFlowCode && !isEditing) {
       mermaid.initialize({ 
@@ -929,14 +934,14 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
       </div>
 
       {/* Mermaid Process Diagram */}
-      {sanitizedFlowCode && (
+      {printFlowCode && (
         <div className="print-page-break mt-12 border-t pt-8">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-l-4 border-[#26d8c4] pl-3 font-headline">
             Diagrama de Procesos (SIKAI Flow)
           </h2>
           <div className="flex justify-center items-center p-4 bg-white border border-gray-200 rounded-xl shadow-inner min-h-[300px]">
-            <pre className="mermaid text-center w-full" key={`print-${theme}-${sanitizedFlowCode}`}>
-              {sanitizedFlowCode}
+            <pre className="mermaid text-center w-full" key={`print-${theme}-${printFlowCode}`}>
+              {printFlowCode}
             </pre>
           </div>
         </div>
