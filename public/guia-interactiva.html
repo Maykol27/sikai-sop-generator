@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guía Interactiva · SIKAI SOP Generator</title>
+  <meta name="description" content="Guía interactiva premium de funcionalidades de SIKAI SOP Generator AI.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Lucide Icons (Static Embed via ESM) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* ── Color Variables & Core Theme Design ── */
+    :root {
+      color-scheme: dark;
+      --bg: #16181d;
+      --fg: #e2e8f0;
+      --primary: #1a88ff;
+      --primary-glow: rgba(26, 136, 255, 0.4);
+      --cyan: #26d8c4;
+      --cyan-glow: rgba(38, 216, 196, 0.4);
+      --purple: #7c3aed;
+      --purple-glow: rgba(124, 58, 237, 0.4);
+      --glass-bg: rgba(31, 31, 33, 0.7);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --card-bg: rgba(22, 24, 29, 0.5);
+      --shadow: rgba(0, 0, 0, 0.3);
+      --dot-color: rgba(255, 255, 255, 0.03);
+    }
+
+    .light {
+      color-scheme: light;
+      --bg: #faf6fd;
+      --fg: #16181d;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(26, 136, 255, 0.12);
+      --card-bg: rgba(255, 255, 255, 0.6);
+      --shadow: rgba(31, 38, 135, 0.06);
+      --dot-color: rgba(26, 136, 255, 0.04);
+    }
+
+    /* ── Base Styling ── */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-image: 
+        radial-gradient(circle at 20% 0%, rgba(26, 136, 255, 0.06) 0%, transparent 40%),
+        radial-gradient(circle at 80% 90%, rgba(38, 216, 196, 0.05) 0%, transparent 40%),
+        radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 100% 100%, 100% 100%, 24px 24px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Layout & Wrapper ── */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── Floating Background Blobs ── */
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+      z-index: -1;
+      pointer-events: none;
+      opacity: 0.5;
+      animation: float 20s infinite alternate ease-in-out;
+    }
+    .blob-primary {
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      width: 400px;
+      height: 400px;
+      top: -100px;
+      left: -100px;
+    }
+    .blob-cyan {
+      background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
+      width: 500px;
+      height: 500px;
+      bottom: -150px;
+      right: -150px;
+      animation-delay: -5s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      50% { transform: translate(60px, -40px) scale(1.1); }
+      100% { transform: translate(-40px, 60px) scale(0.95); }
+    }
+
+    /* ── Navigation Header ── */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.25rem 2rem;
+      border-radius: 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px 0 var(--shadow);
+      margin-bottom: 3rem;
+      z-index: 10;
+      position: relative;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(26, 136, 255, 0.3);
+      background: rgba(26, 136, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .logo-text span {
+      color: var(--primary);
+    }
+
+    /* Theme Switcher Button */
+    .theme-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      color: var(--fg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+    .theme-toggle:active {
+      transform: scale(0.95);
+    }
+
+    .theme-toggle .sun-icon { display: none; }
+    .theme-toggle .moon-icon { display: block; }
+    .light .theme-toggle .sun-icon { display: block; color: #f59e0b; }
+    .light .theme-toggle .moon-icon { display: none; }
+
+    /* ── Hero Presentation ── */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 9999px;
+      background: rgba(26, 136, 255, 0.1);
+      border: 1px solid rgba(26, 136, 255, 0.2);
+      color: var(--primary);
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-title {
+      font-size: 3rem;
+      line-height: 1.15;
+      font-weight: 800;
+      max-width: 800px;
+      margin: 0 auto 1.5rem;
+      background: linear-gradient(135deg, var(--fg) 40%, rgba(26, 136, 255, 0.8) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
+      color: #64748b;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .light .hero-desc {
+      color: #475569;
+    }
+
+    /* ── Interactive Tab System ── */
+    .interactive-explorer {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 2rem;
+      margin-bottom: 5rem;
+    }
+
+    @media (min-width: 900px) {
+      .interactive-explorer {
+        grid-template-cols: 320px 1fr;
+      }
+    }
+
+    /* Vertical Navigation Tabs */
+    .explorer-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .explorer-tab-btn {
+      width: 100%;
+      text-align: left;
+      padding: 1.25rem 1.5rem;
+      border-radius: 16px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: 0 4px 12px var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .explorer-tab-btn::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: transparent;
+    }
+    .explorer-tab-btn:hover {
+      transform: translateY(-2px);
+      border-color: rgba(26, 136, 255, 0.2);
+    }
+
+    .explorer-tab-btn.active {
+      background: var(--card-bg);
+      border-color: rgba(26, 136, 255, 0.3);
+      box-shadow: 0 8px 24px var(--shadow);
+    }
+    .explorer-tab-btn.active::before {
+      background: var(--primary);
+    }
+    .explorer-tab-btn.active.tab-cyan::before { background: var(--cyan); }
+    .explorer-tab-btn.active.tab-purple::before { background: var(--purple); }
+
+    .tab-icon-wrapper {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.04);
+      color: #64748b;
+    }
+    .explorer-tab-btn.active .tab-icon-wrapper {
+      background: rgba(26, 136, 255, 0.1);
+      color: var(--primary);
+    }
+    .explorer-tab-btn.active.tab-cyan .tab-icon-wrapper {
+      background: rgba(38, 216, 196, 0.1);
+      color: var(--cyan);
+    }
+    .explorer-tab-btn.active.tab-purple .tab-icon-wrapper {
+      background: rgba(124, 58, 237, 0.1);
+      color: var(--purple);
+    }
+
+    .tab-title-text {
+      font-size: 0.95rem;
+      font-weight: 700;
+      display: block;
+    }
+    .tab-desc-text {
+      font-size: 0.75rem;
+      color: #64748b;
+      display: block;
+      margin-top: 0.1rem;
+      font-weight: 500;
+    }
+
+    /* Content Showcase Box */
+    .explorer-content {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      padding: 2.5rem;
+      box-shadow: 0 12px 40px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 480px;
+      position: relative;
+    }
+
+    .pane {
+      display: none;
+      height: 100%;
+      flex-direction: column;
+      animation: fadeIn 0.4s ease forwards;
+    }
+    .pane.active {
+      display: flex;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .pane-header {
+      margin-bottom: 1.5rem;
+    }
+
+    .pane-tag {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+      display: inline-block;
+    }
+    .pane-tag.tag-cyan { color: var(--cyan); }
+    .pane-tag.tag-purple { color: var(--purple); }
+
+    .pane-title {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--fg);
+      margin-bottom: 0.75rem;
+    }
+
+    .pane-desc {
+      font-size: 0.95rem;
+      color: #64748b;
+      line-height: 1.6;
+    }
+    .light .pane-desc {
+      color: #475569;
+    }
+
+    /* ── Tab Content Custom Visualizations ── */
+    .visual-sandbox {
+      flex-grow: 1;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--glass-border);
+      padding: 1.5rem;
+      margin-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      min-height: 250px;
+    }
+
+    /* Pane 1: Manual Form Visualizer Mockup */
+    .form-visual {
+      width: 100%;
+      max-width: 450px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .form-visual-row {
+      display: grid;
+      grid-template-cols: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .form-field-mock {
+      padding: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #64748b;
+    }
+    .light .form-field-mock {
+      background: #ffffff;
+      border-color: rgba(0, 0, 0, 0.08);
+      color: #475569;
+    }
+    .form-field-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--primary);
+      margin-bottom: 0.25rem;
+    }
+
+    /* Pane 2: SIKAI Voice visualization (Breathing Nebula Orb & Live Typing) */
+    .orb-visualizer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    
+    /* Glowing Breathing Nebula Orb */
+    .orb-nebula {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%);
+      box-shadow: 
+        0 0 30px var(--cyan-glow), 
+        0 0 60px var(--primary-glow);
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      transition: all 0.5s ease;
+      z-index: 2;
+    }
+    .orb-nebula.recording {
+      animation: pulse-recording 1.5s infinite alternate ease-in-out;
+      background: #ef4444;
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.3);
+    }
+
+    @keyframes pulse-recording {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.12); }
+    }
+
+    /* Oscillating Waveform lines */
+    .waveform-visual {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      height: 24px;
+      margin-top: 1rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .waveform-visual.active { opacity: 1; }
+
+    .wave-bar {
+      width: 3px;
+      height: 8px;
+      background: var(--cyan);
+      border-radius: 2px;
+      animation: bounce 0.6s infinite alternate ease-in-out;
+    }
+    .wave-bar:nth-child(2n) { animation-delay: 0.15s; background: var(--primary); }
+    .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
+    .wave-bar:nth-child(4n) { animation-delay: 0.45s; }
+
+    @keyframes bounce {
+      0% { height: 6px; }
+      100% { height: 28px; }
+    }
+
+    /* simulated voice transcript box */
+    .voice-simulate-box {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-top: 1rem;
+      font-size: 0.8rem;
+      min-height: 48px;
+      text-align: center;
+      color: #94a3b8;
+    }
+    .light .voice-simulate-box {
+      background: #ffffff;
+      color: #334155;
+    }
+
+    .voice-simulate-btn {
+      margin-top: 0.5rem;
+      padding: 0.4rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 8px;
+      background: var(--cyan);
+      color: black;
+      border: 0;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(38,216,196,0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .voice-simulate-btn:hover { opacity: 0.9; }
+
+    /* Pane 3: SIKAI Flow Diagram mock showing Horizontal vs Vertical */
+    .flow-visualizer-box {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .direction-switch {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.25rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      margin-bottom: 1.25rem;
+    }
+    
+    .direction-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      border: 0;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .direction-btn.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .diagram-viewport {
+      width: 100%;
+      max-width: 460px;
+      height: 160px;
+      background: rgba(0,0,0,0.15);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      position: relative;
+      display: flex;
+      padding: 1rem;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .light .diagram-viewport {
+      background: #ffffff;
+    }
+
+    .nodes-container {
+      display: flex;
+      gap: 1.5rem;
+      align-items: center;
+      transition: all 0.5s ease;
+    }
+    .nodes-container.vertical {
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .node-mock {
+      padding: 0.4rem 0.8rem;
+      background: rgba(26, 136, 255, 0.1);
+      border: 1px solid var(--primary);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      position: relative;
+    }
+    .node-mock::after {
+      content: '➔';
+      position: absolute;
+      right: -1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--cyan);
+      font-size: 0.8rem;
+    }
+    .node-mock:last-child::after { display: none; }
+
+    .nodes-container.vertical .node-mock::after {
+      content: '▼';
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -1rem;
+      transform: translateX(-50%);
+    }
+
+    /* Pane 4: SIKAI Boost card grid */
+    .boost-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1rem;
+      width: 100%;
+      max-width: 500px;
+    }
+    @media (min-width: 500px) {
+      .boost-grid { grid-template-cols: 1fr 1fr; }
+    }
+    
+    .boost-card {
+      border-radius: 12px;
+      padding: 1rem;
+      border: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+    .boost-card.bottleneck {
+      background: rgba(239, 68, 68, 0.03);
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+    .boost-card.improvement {
+      background: rgba(38, 216, 196, 0.03);
+      border-color: rgba(38, 216, 196, 0.15);
+    }
+    
+    .boost-card-title {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    .boost-card.bottleneck .boost-card-title { color: #ef4444; }
+    .boost-card.improvement .boost-card-title { color: var(--cyan); }
+
+    .boost-card-body {
+      font-size: 0.8rem;
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    /* Pane 5: Exporting visual sheet simulation */
+    .sheet-visualizer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .sheet-mock {
+      width: 130px;
+      height: 170px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      padding: 0.8rem;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      transition: all 0.3s ease;
+    }
+    .sheet-mock:hover {
+      transform: translateY(-8px) scale(1.03);
+    }
+
+    .sheet-bar {
+      height: 4px;
+      background: #e2e8f0;
+      width: 100%;
+      border-radius: 2px;
+    }
+    .sheet-bar.accent {
+      background: var(--primary);
+      width: 60%;
+      height: 6px;
+    }
+    .sheet-bar.flow-bar {
+      background: var(--cyan);
+      width: 40%;
+      align-self: center;
+      height: 18px;
+      margin-top: 0.5rem;
+    }
+
+    /* ── Bottom Premium Footer CTA ── */
+    footer.guide-footer {
+      text-align: center;
+      margin-top: 4rem;
+      padding: 3rem 1.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px var(--shadow);
+      position: relative;
+    }
+
+    .footer-title {
+      font-size: 2rem;
+      font-weight: 800;
+      margin-bottom: 0.75rem;
+      background: linear-gradient(135deg, var(--fg) 50%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer-desc {
+      font-size: 0.95rem;
+      color: #64748b;
+      margin-bottom: 1.75rem;
+    }
+
+    .footer-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.875rem 2rem;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border-radius: 12px;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      color: white;
+      box-shadow: 0 4px 15px var(--primary-glow);
+      transition: all 0.3s ease;
+    }
+    .light .footer-btn {
+      color: black;
+      box-shadow: 0 4px 15px rgba(26,136,255,0.25);
+    }
+    .footer-btn:hover {
+      box-shadow: 0 6px 20px var(--primary-glow);
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Blobs background -->
+  <div class="blob blob-primary"></div>
+  <div class="blob blob-cyan"></div>
+
+  <div class="container">
+    
+    <!-- Premium Header -->
+    <header>
+      <a href="#" class="logo-container">
+        <div class="logo-icon">
+          <i data-lucide="clipboard-list" style="width: 1.25rem; height: 1.25rem; stroke-width: 2;"></i>
+        </div>
+        <div class="logo-text">SIKAI <span>SOP GENERATOR</span></div>
+      </a>
+      
+      <!-- Theme Switcher Toggle -->
+      <button class="theme-toggle" id="themeToggler" aria-label="Cambiar tema">
+        <i data-lucide="sun" class="sun-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+        <i data-lucide="moon" class="moon-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+      </button>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-tag">
+        <i data-lucide="sparkles" style="width: 0.9rem; height: 0.9rem;"></i>
+        Guía Interactiva Oficial
+      </div>
+      <h1 class="hero-title">Conoce SIKAI SOP Generator AI</h1>
+      <p class="hero-desc">Descubre cómo sistematizar, estructurar y optimizar todos los procesos de tu empresa al instante con Inteligencia Artificial.</p>
+    </section>
+
+    <!-- Main Tab explorer -->
+    <section class="interactive-explorer">
+      
+      <!-- Explorer Left Tabs -->
+      <div class="explorer-tabs">
+        <button class="explorer-tab-btn active" data-target="manual">
+          <div class="tab-icon-wrapper">
+            <i data-lucide="file-text" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
+          </div>
+          <div>
+            <span class="tab-title-text">Generación Manual</span>
+            <span class="tab-desc-text">Formulario estructurado e intuitivo</span>
+          </div>
+        </button>
+
+        <button class="explorer-tab-btn tab-cyan" data-target="voice">
+          <div class="tab-icon-wrapper">
+            <i data-lucide="mic" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
+          </div>
+          <div>
+            <span class="tab-title-text">SIKAI Voice Agent</span>
+            <span class="tab-desc-text">Dictado continuo sin duplicados</span>
+          </div>
+        </button>
+
+        <button class="explorer-tab-btn tab-cyan" data-target="flow">
+          <div class="tab-icon-wrapper">
+            <i data-lucide="git-fork" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
+          </div>
+          <div>
+            <span class="tab-title-text">SIKAI Flow Diagrama</span>
+            <span class="tab-desc-text">Flujos de trabajo visuales</span>
+          </div>
+        </button>
+
+        <button class="explorer-tab-btn tab-purple" data-target="boost">
+          <div class="tab-icon-wrapper">
+            <i data-lucide="zap" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
+          </div>
+          <div>
+            <span class="tab-title-text">SIKAI Boost</span>
+            <span class="tab-desc-text">Estrategias de eficiencia IA</span>
+          </div>
+        </button>
+
+        <button class="explorer-tab-btn" data-target="export">
+          <div class="tab-icon-wrapper">
+            <i data-lucide="download" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
+          </div>
+          <div>
+            <span class="tab-title-text">Exportación PDF</span>
+            <span class="tab-desc-text">Documentación paginada perfecta</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Explorer Content Window -->
+      <div class="explorer-content">
+        
+        <!-- Tab Pane 1: Manual Form -->
+        <div class="pane active" id="manual">
+          <div class="pane-header">
+            <span class="pane-tag">Módulo Estructurado</span>
+            <h2 class="pane-title">SOP Manual Inteligente</h2>
+            <p class="pane-desc">Sistematiza procesos rápidamente mediante un asistente guiado. Define los objetivos principales, herramientas utilizadas, roles involucrados y una secuencia ordenada de hasta 10 pasos detallados de forma sumamente sencilla.</p>
+          </div>
+          <div class="visual-sandbox">
+            <div class="form-visual">
+              <div class="form-field-mock">
+                <div class="form-field-title">Título del Proceso</div>
+                Onboarding de Cliente Nuevo
+              </div>
+              <div class="form-visual-row">
+                <div class="form-field-mock">
+                  <div class="form-field-title">Roles y Responsables</div>
+                  Soporte, Ventas
+                </div>
+                <div class="form-field-mock">
+                  <div class="form-field-title">Herramientas</div>
+                  Slack, HubSpot, Gmail
+                </div>
+              </div>
+              <div class="form-field-mock">
+                <div class="form-field-title">Paso 1 del Proceso</div>
+                Enviar correo de bienvenida y registrar datos en HubSpot...
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pane 2: Voice Agent -->
+        <div class="pane" id="voice">
+          <div class="pane-header">
+            <span class="pane-tag tag-cyan">Control Manos Libres</span>
+            <h2 class="pane-title">SIKAI Voice Agent</h2>
+            <p class="pane-desc">Explica tus flujos de trabajo hablando de forma 100% natural. Nuestra IA procesa tu voz en tiempo real y, gracias a nuestro <strong>algoritmo de transcripción continua sin duplicados</strong>, genera un texto limpio y coherente sin importar las pausas o repeticiones involuntarias al hablar.</p>
+          </div>
+          <div class="visual-sandbox">
+            <div class="orb-visualizer">
+              <div class="orb-nebula" id="voiceOrb" title="Simular dictado de voz">
+                <i data-lucide="mic" style="width: 1.5rem; height: 1.5rem; stroke-width: 2.5;"></i>
+              </div>
+              
+              <div class="waveform-visual" id="voiceWave">
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+                <div class="wave-bar"></div>
+              </div>
+              
+              <div class="voice-simulate-box" id="voiceText">
+                Haz clic en el micrófono de arriba para simular el dictado de voz por IA...
+              </div>
+              
+              <button class="voice-simulate-btn" id="voiceBtn">
+                <i data-lucide="play" style="width: 0.8rem; height: 0.8rem;"></i> Simular Grabación
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pane 3: Process Diagram -->
+        <div class="pane" id="flow">
+          <div class="pane-header">
+            <span class="pane-tag tag-cyan">Diagrama Dinámico</span>
+            <h2 class="pane-title">SIKAI Flow Diagramas</h2>
+            <p class="pane-desc">Visualiza la secuencia lógica de tus procesos al instante. La IA compila de forma automática un diagrama de flujo interactivo que puedes explorar con zoom y arrastre. Al exportar a PDF, el flujo de trabajo **se reorganiza verticalmente** de forma inteligente para que nunca se desborde o se corte en las hojas impresas.</p>
+          </div>
+          <div class="visual-sandbox">
+            <div class="flow-visualizer-box">
+              <div class="direction-switch">
+                <button class="direction-btn active" id="dirLR">Horizontal (LR)</button>
+                <button class="direction-btn" id="dirTD">Vertical (TD - PDF)</button>
+              </div>
+              <div class="diagram-viewport">
+                <div class="nodes-container" id="diagramNodes">
+                  <div class="node-mock"><i data-lucide="play-circle" style="width:0.8rem;"></i> Inicio</div>
+                  <div class="node-mock"><i data-lucide="edit" style="width:0.8rem;"></i> Redacción</div>
+                  <div class="node-mock"><i data-lucide="check-square" style="width:0.8rem;"></i> Aprobación</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pane 4: Boost Strategies -->
+        <div class="pane" id="boost">
+          <div class="pane-header">
+            <span class="pane-tag tag-purple">Estrategia Quirúrgica</span>
+            <h2 class="pane-title">SIKAI Boost de Eficiencia</h2>
+            <p class="pane-desc">Tu proceso no solo queda documentado; es optimizado de inmediato. Nuestra Inteligencia Artificial detecta de forma autónoma los cuellos de botella del flujo de trabajo y te propone de inmediato estrategias de automatización concretas, mejoras organizativas y las herramientas idóneas para acelerar el ritmo en tu empresa.</p>
+          </div>
+          <div class="visual-sandbox">
+            <div class="boost-grid">
+              <div class="boost-card bottleneck">
+                <div class="boost-card-title">
+                  <i data-lucide="alert-triangle" style="width: 0.8rem; height: 0.8rem;"></i> Cuello de Botella
+                </div>
+                <div class="boost-card-body">La aprobación de contenidos por correo electrónico genera retrasos de hasta 48 horas.</div>
+              </div>
+              <div class="boost-card improvement">
+                <div class="boost-card-title">
+                  <i data-lucide="zap" style="width: 0.8rem; height: 0.8rem;"></i> SIKAI Boost Propuesta
+                </div>
+                <div class="boost-card-body">Automatizar notificaciones directas al canal de Slack usando Slack-Bot o Trello Alerts.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Pane 5: PDF Export -->
+        <div class="pane" id="export">
+          <div class="pane-header">
+            <span class="pane-tag">Documento Corporativo</span>
+            <h2 class="pane-title">Exportación Premium a PDF</h2>
+            <p class="pane-desc">Exporta tu documentación corporativa lista para imprimir de forma impecable. El sistema genera un PDF bien estructurado con colores institucionales que oculta los elementos interactivos de pantalla (como el enlace de regreso), expande todas las secciones automáticamente y reserva **exactamente una sola hoja** para que el diagrama de procesos se lea sin interrupciones.</p>
+          </div>
+          <div class="visual-sandbox">
+            <div class="sheet-visualizer">
+              <div class="sheet-mock">
+                <div class="sheet-bar accent"></div>
+                <div class="sheet-bar"></div>
+                <div class="sheet-bar"></div>
+                <div class="sheet-bar flow-bar"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- Bottom premium CTA -->
+    <footer class="guide-footer">
+      <h2 class="footer-title">Lleva tus Procesos al Siguiente Nivel</h2>
+      <p class="footer-desc">Regístrate en SIKAI SOP Generator y comienza a documentar y optimizar con el poder de la Inteligencia Artificial.</p>
+      <a href="/dashboard" class="footer-btn">
+        <i data-lucide="sparkles" style="width: 1.1rem; height: 1.1rem;"></i>
+        Comenzar Ahora Gratis
+      </a>
+    </footer>
+
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // ── Theme Switcher Logic ──
+    const themeToggler = document.getElementById('themeToggler');
+    
+    // Check local storage or default to dark
+    const savedTheme = localStorage.getItem('sikai-theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light');
+    } else {
+      document.documentElement.classList.add('dark');
+    }
+
+    themeToggler.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem('sikai-theme', isLight ? 'light' : 'dark');
+    });
+
+    // ── Tab Explorer Logic ──
+    const tabs = document.querySelectorAll('.explorer-tab-btn');
+    const panes = document.querySelectorAll('.pane');
+
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs & panes
+        tabs.forEach(t => t.classList.remove('active'));
+        panes.forEach(p => p.classList.remove('active'));
+        
+        // Add active class to current tab
+        tab.classList.add('active');
+        
+        // Show target pane
+        const target = tab.getAttribute('data-target');
+        const targetPane = document.getElementById(target);
+        if (targetPane) {
+          targetPane.classList.add('active');
+        }
+      });
+    });
+
+    // ── Interactive Simulation 1: Voice Recorder ──
+    const voiceOrb = document.getElementById('voiceOrb');
+    const voiceBtn = document.getElementById('voiceBtn');
+    const voiceWave = document.getElementById('voiceWave');
+    const voiceText = document.getElementById('voiceText');
+    let recordingInterval = null;
+    let isRecording = false;
+
+    const phrases = [
+      "Escuchando...",
+      "Para registrar un nuevo cliente...",
+      "Para registrar un nuevo cliente primero enviamos un correo de bienvenida...",
+      "Para registrar un nuevo cliente primero enviamos un correo de bienvenida y luego registramos los datos en el CRM de HubSpot...",
+      "¡Transcripción terminada con éxito! (Limpia y libre de duplicados de voz por IA)"
+    ];
+
+    function runVoiceSimulation() {
+      if (isRecording) return;
+      isRecording = true;
+      voiceOrb.classList.add('recording');
+      voiceWave.classList.add('active');
+      voiceBtn.disabled = true;
+      voiceBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Grabando Voz...';
+      lucide.createIcons();
+
+      let step = 0;
+      voiceText.innerText = phrases[0];
+
+      recordingInterval = setInterval(() => {
+        step++;
+        if (step < phrases.length) {
+          voiceText.innerText = phrases[step];
+        } else {
+          clearInterval(recordingInterval);
+          voiceOrb.classList.remove('recording');
+          voiceWave.classList.remove('active');
+          voiceBtn.disabled = false;
+          voiceBtn.innerHTML = '<i data-lucide="play"></i> Volver a Simular';
+          lucide.createIcons();
+          isRecording = false;
+        }
+      }, 1500);
+    }
+
+    voiceOrb.addEventListener('click', runVoiceSimulation);
+    voiceBtn.addEventListener('click', runVoiceSimulation);
+
+    // ── Interactive Simulation 2: Flow Layout Switcher ──
+    const dirLR = document.getElementById('dirLR');
+    const dirTD = document.getElementById('dirTD');
+    const diagramNodes = document.getElementById('diagramNodes');
+
+    dirLR.addEventListener('click', () => {
+      dirLR.classList.add('active');
+      dirTD.classList.remove('active');
+      diagramNodes.classList.remove('vertical');
+    });
+
+    dirTD.addEventListener('click', () => {
+      dirTD.classList.add('active');
+      dirLR.classList.remove('active');
+      diagramNodes.classList.add('vertical');
+    });
+  </script>
+</body>
+</html>
