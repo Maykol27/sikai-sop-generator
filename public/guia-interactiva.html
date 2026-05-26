@@ -3,53 +3,59 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guía Interactiva · SIKAI SOP Generator</title>
-  <meta name="description" content="Guía interactiva premium de funcionalidades de SIKAI SOP Generator AI.">
+  <title>Video Interactivo · SIKAI SOP Generator</title>
   
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   
-  <!-- Lucide Icons (Static Embed via ESM) -->
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
 
   <style>
-    /* ── Color Variables & Core Theme Design ── */
+    /* ── Theme Design System (SIKAI Brand) ── */
     :root {
       color-scheme: dark;
       --bg: #16181d;
-      --fg: #e2e8f0;
+      --bg-panel: #1f1f21;
+      --fg: #f3f4f6;
+      --fg-muted: #9ca3af;
       --primary: #1a88ff;
       --primary-glow: rgba(26, 136, 255, 0.4);
       --cyan: #26d8c4;
       --cyan-glow: rgba(38, 216, 196, 0.4);
       --purple: #7c3aed;
-      --purple-glow: rgba(124, 58, 237, 0.4);
+      --purple-glow: rgba(124, 58, 237, 0.3);
       --glass-bg: rgba(31, 31, 33, 0.7);
       --glass-border: rgba(255, 255, 255, 0.08);
-      --card-bg: rgba(22, 24, 29, 0.5);
-      --shadow: rgba(0, 0, 0, 0.3);
-      --dot-color: rgba(255, 255, 255, 0.03);
+      --card-bg: rgba(22, 24, 29, 0.9);
+      --shadow: rgba(0, 0, 0, 0.55);
+      --dot-color: rgba(255, 255, 255, 0.02);
+      --nebula-1: rgba(26, 136, 255, 0.08);
+      --nebula-2: rgba(38, 216, 196, 0.06);
     }
 
     .light {
       color-scheme: light;
       --bg: #faf6fd;
+      --bg-panel: #ffffff;
       --fg: #16181d;
-      --glass-bg: rgba(255, 255, 255, 0.85);
+      --fg-muted: #6b7280;
+      --glass-bg: rgba(255, 255, 255, 0.8);
       --glass-border: rgba(26, 136, 255, 0.12);
-      --card-bg: rgba(255, 255, 255, 0.6);
+      --card-bg: rgba(255, 255, 255, 0.95);
       --shadow: rgba(31, 38, 135, 0.06);
       --dot-color: rgba(26, 136, 255, 0.04);
+      --nebula-1: rgba(26, 136, 255, 0.05);
+      --nebula-2: rgba(124, 58, 237, 0.04);
     }
 
-    /* ── Base Styling ── */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
     body {
@@ -57,8 +63,8 @@
       color: var(--fg);
       font-family: 'Plus Jakarta Sans', sans-serif;
       background-image: 
-        radial-gradient(circle at 20% 0%, rgba(26, 136, 255, 0.06) 0%, transparent 40%),
-        radial-gradient(circle at 80% 90%, rgba(38, 216, 196, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 5% 5%, var(--nebula-1) 0%, transparent 40%),
+        radial-gradient(circle at 95% 95%, var(--nebula-2) 0%, transparent 45%),
         radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
       background-size: 100% 100%, 100% 100%, 24px 24px;
       min-height: 100vh;
@@ -72,63 +78,46 @@
       letter-spacing: -0.02em;
     }
 
-    /* ── Layout & Wrapper ── */
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--glass-border);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+
+    /* ── Main Layout ── */
     .container {
-      max-width: 1200px;
+      max-width: 1280px;
       margin: 0 auto;
-      padding: 2rem 1.5rem;
+      padding: 1.5rem;
     }
 
-    /* ── Floating Background Blobs ── */
-    .blob {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(120px);
-      z-index: -1;
-      pointer-events: none;
-      opacity: 0.5;
-      animation: float 20s infinite alternate ease-in-out;
-    }
-    .blob-primary {
-      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
-      width: 400px;
-      height: 400px;
-      top: -100px;
-      left: -100px;
-    }
-    .blob-cyan {
-      background: radial-gradient(circle, var(--cyan) 0%, transparent 70%);
-      width: 500px;
-      height: 500px;
-      bottom: -150px;
-      right: -150px;
-      animation-delay: -5s;
-    }
-
-    @keyframes float {
-      0% { transform: translate(0, 0) scale(1); }
-      50% { transform: translate(60px, -40px) scale(1.1); }
-      100% { transform: translate(-40px, 60px) scale(0.95); }
-    }
-
-    /* ── Navigation Header ── */
     header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 1.25rem 2rem;
+      padding: 0.85rem 1.75rem;
       border-radius: 20px;
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       box-shadow: 0 8px 32px 0 var(--shadow);
-      margin-bottom: 3rem;
-      z-index: 10;
+      margin-bottom: 1.5rem;
+      z-index: 50;
       position: relative;
     }
 
-    .logo-container {
+    .logo-link {
       display: flex;
       align-items: center;
       gap: 0.75rem;
@@ -146,22 +135,27 @@
       align-items: center;
       justify-content: center;
       color: var(--primary);
+      box-shadow: 0 0 15px rgba(26, 136, 255, 0.1);
     }
 
     .logo-text {
-      font-size: 1.1rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      letter-spacing: -0.01em;
     }
     .logo-text span {
       color: var(--primary);
     }
 
-    /* Theme Switcher Button */
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+    }
+
     .theme-toggle {
       width: 2.5rem;
       height: 2.5rem;
-      border-radius: 50%;
+      border-radius: 12px;
       background: rgba(255, 255, 255, 0.05);
       border: 1px solid var(--glass-border);
       color: var(--fg);
@@ -170,859 +164,1965 @@
       justify-content: center;
       cursor: pointer;
       box-shadow: 0 4px 12px var(--shadow);
+      transition: all 0.2s ease;
     }
     .theme-toggle:hover {
       background: rgba(255, 255, 255, 0.1);
-      transform: scale(1.05);
+      border-color: var(--primary);
     }
-    .theme-toggle:active {
-      transform: scale(0.95);
-    }
-
     .theme-toggle .sun-icon { display: none; }
     .theme-toggle .moon-icon { display: block; }
     .light .theme-toggle .sun-icon { display: block; color: #f59e0b; }
     .light .theme-toggle .moon-icon { display: none; }
 
-    /* ── Hero Presentation ── */
-    .hero {
-      text-align: center;
-      margin-bottom: 4rem;
-      position: relative;
-    }
-
-    .hero-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      border-radius: 9999px;
-      background: rgba(26, 136, 255, 0.1);
-      border: 1px solid rgba(26, 136, 255, 0.2);
-      color: var(--primary);
-      font-size: 0.8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-title {
-      font-size: 3rem;
-      line-height: 1.15;
-      font-weight: 800;
-      max-width: 800px;
-      margin: 0 auto 1.5rem;
-      background: linear-gradient(135deg, var(--fg) 40%, rgba(26, 136, 255, 0.8) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .hero-desc {
-      font-size: 1.15rem;
-      color: #64748b;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-    .light .hero-desc {
-      color: #475569;
-    }
-
-    /* ── Interactive Tab System ── */
-    .interactive-explorer {
+    /* ── Main Grid ── */
+    .walkthrough-grid {
       display: grid;
       grid-template-cols: 1fr;
-      gap: 2rem;
-      margin-bottom: 5rem;
+      gap: 1.5rem;
+      align-items: start;
     }
 
-    @media (min-width: 900px) {
-      .interactive-explorer {
-        grid-template-cols: 320px 1fr;
+    @media (min-width: 1024px) {
+      .walkthrough-grid {
+        grid-template-cols: 1fr 360px;
       }
     }
 
-    /* Vertical Navigation Tabs */
-    .explorer-tabs {
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-
-    .explorer-tab-btn {
-      width: 100%;
-      text-align: left;
-      padding: 1.25rem 1.5rem;
-      border-radius: 16px;
+    /* ── App Simulator Panel (Left) ── */
+    .app-browser-card {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      color: var(--fg);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      box-shadow: 0 4px 12px var(--shadow);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px var(--shadow);
+      padding: 1rem;
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
     }
-    .explorer-tab-btn::before {
+    .app-browser-card::before {
       content: '';
       position: absolute;
-      left: 0;
       top: 0;
-      bottom: 0;
-      width: 4px;
-      background: transparent;
-    }
-    .explorer-tab-btn:hover {
-      transform: translateY(-2px);
-      border-color: rgba(26, 136, 255, 0.2);
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--primary), var(--cyan), var(--purple));
     }
 
-    .explorer-tab-btn.active {
-      background: var(--card-bg);
-      border-color: rgba(26, 136, 255, 0.3);
-      box-shadow: 0 8px 24px var(--shadow);
-    }
-    .explorer-tab-btn.active::before {
-      background: var(--primary);
-    }
-    .explorer-tab-btn.active.tab-cyan::before { background: var(--cyan); }
-    .explorer-tab-btn.active.tab-purple::before { background: var(--purple); }
-
-    .tab-icon-wrapper {
-      width: 2.5rem;
-      height: 2.5rem;
-      border-radius: 12px;
+    /* Simulated Browser Top Bar */
+    .browser-bar {
       display: flex;
       align-items: center;
-      justify-content: center;
-      background: rgba(255, 255, 255, 0.04);
-      color: #64748b;
-    }
-    .explorer-tab-btn.active .tab-icon-wrapper {
-      background: rgba(26, 136, 255, 0.1);
-      color: var(--primary);
-    }
-    .explorer-tab-btn.active.tab-cyan .tab-icon-wrapper {
-      background: rgba(38, 216, 196, 0.1);
-      color: var(--cyan);
-    }
-    .explorer-tab-btn.active.tab-purple .tab-icon-wrapper {
-      background: rgba(124, 58, 237, 0.1);
-      color: var(--purple);
-    }
-
-    .tab-title-text {
-      font-size: 0.95rem;
-      font-weight: 700;
-      display: block;
-    }
-    .tab-desc-text {
-      font-size: 0.75rem;
-      color: #64748b;
-      display: block;
-      margin-top: 0.1rem;
-      font-weight: 500;
-    }
-
-    /* Content Showcase Box */
-    .explorer-content {
-      background: var(--glass-bg);
-      border: 1px solid var(--glass-border);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border-radius: 24px;
-      padding: 2.5rem;
-      box-shadow: 0 12px 40px var(--shadow);
-      display: flex;
-      flex-direction: column;
       justify-content: space-between;
-      min-height: 480px;
-      position: relative;
-    }
-
-    .pane {
-      display: none;
-      height: 100%;
-      flex-direction: column;
-      animation: fadeIn 0.4s ease forwards;
-    }
-    .pane.active {
-      display: flex;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .pane-header {
-      margin-bottom: 1.5rem;
-    }
-
-    .pane-tag {
-      font-size: 0.75rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--primary);
-      margin-bottom: 0.5rem;
-      display: inline-block;
-    }
-    .pane-tag.tag-cyan { color: var(--cyan); }
-    .pane-tag.tag-purple { color: var(--purple); }
-
-    .pane-title {
-      font-size: 1.75rem;
-      font-weight: 800;
-      color: var(--fg);
+      padding: 0.25rem 0.75rem 0.75rem;
+      border-bottom: 1px solid var(--glass-border);
       margin-bottom: 0.75rem;
     }
 
-    .pane-desc {
-      font-size: 0.95rem;
-      color: #64748b;
-      line-height: 1.6;
+    .browser-dots {
+      display: flex;
+      gap: 6px;
     }
-    .light .pane-desc {
-      color: #475569;
+    .browser-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+    .dot-red { background-color: #ef4444; }
+    .dot-yellow { background-color: #f59e0b; }
+    .dot-green { background-color: #10b981; }
+
+    .browser-url-bar {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      color: var(--fg-muted);
+      padding: 0.2rem 2.5rem;
+      width: 50%;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .light .browser-url-bar {
+      background: rgba(0, 0, 0, 0.05);
     }
 
-    /* ── Tab Content Custom Visualizations ── */
-    .visual-sandbox {
-      flex-grow: 1;
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.02);
+    /* Browser Viewport Content */
+    .app-viewport {
+      background: var(--card-bg);
       border: 1px solid var(--glass-border);
-      padding: 1.5rem;
-      margin-top: 1.5rem;
+      border-radius: 16px;
+      min-height: 480px;
       display: flex;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
       position: relative;
       overflow: hidden;
-      min-height: 250px;
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
-    /* Pane 1: Manual Form Visualizer Mockup */
-    .form-visual {
-      width: 100%;
-      max-width: 450px;
+    /* Active App Navigation */
+    .app-nav {
+      height: 3.5rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.15);
+      padding: 0 1rem;
       display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .form-visual-row {
-      display: grid;
-      grid-template-cols: 1fr 1fr;
-      gap: 0.75rem;
-    }
-    .form-field-mock {
-      padding: 0.75rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      color: #64748b;
-    }
-    .light .form-field-mock {
-      background: #ffffff;
-      border-color: rgba(0, 0, 0, 0.08);
-      color: #475569;
-    }
-    .form-field-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      color: var(--primary);
-      margin-bottom: 0.25rem;
-    }
-
-    /* Pane 2: SIKAI Voice visualization (Breathing Nebula Orb & Live Typing) */
-    .orb-visualizer {
-      display: flex;
-      flex-direction: column;
       align-items: center;
-      width: 100%;
+      justify-content: space-between;
     }
-    
-    /* Glowing Breathing Nebula Orb */
-    .orb-nebula {
-      width: 110px;
-      height: 110px;
+    .light .app-nav {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .app-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+    .app-brand i {
+      color: var(--primary);
+    }
+
+    .app-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .credits-capsule {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      background: rgba(26, 136, 255, 0.1);
+      border: 1px solid rgba(26, 136, 255, 0.2);
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--primary);
+      box-shadow: 0 0 10px rgba(26, 136, 255, 0.1);
+    }
+
+    .user-avatar-trigger {
+      width: 1.85rem;
+      height: 1.85rem;
       border-radius: 50%;
-      background: linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%);
-      box-shadow: 
-        0 0 30px var(--cyan-glow), 
-        0 0 60px var(--primary-glow);
-      position: relative;
-      cursor: pointer;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
       display: flex;
       align-items: center;
       justify-content: center;
       color: white;
-      transition: all 0.5s ease;
-      z-index: 2;
-    }
-    .orb-nebula.recording {
-      animation: pulse-recording 1.5s infinite alternate ease-in-out;
-      background: #ef4444;
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.5), 0 0 60px rgba(239, 68, 68, 0.3);
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      position: relative;
     }
 
-    @keyframes pulse-recording {
-      0% { transform: scale(1); }
-      100% { transform: scale(1.12); }
-    }
-
-    /* Oscillating Waveform lines */
-    .waveform-visual {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      height: 24px;
-      margin-top: 1rem;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    .waveform-visual.active { opacity: 1; }
-
-    .wave-bar {
-      width: 3px;
-      height: 8px;
-      background: var(--cyan);
-      border-radius: 2px;
-      animation: bounce 0.6s infinite alternate ease-in-out;
-    }
-    .wave-bar:nth-child(2n) { animation-delay: 0.15s; background: var(--primary); }
-    .wave-bar:nth-child(3n) { animation-delay: 0.3s; }
-    .wave-bar:nth-child(4n) { animation-delay: 0.45s; }
-
-    @keyframes bounce {
-      0% { height: 6px; }
-      100% { height: 28px; }
-    }
-
-    /* simulated voice transcript box */
-    .voice-simulate-box {
-      width: 100%;
-      max-width: 480px;
-      background: rgba(0,0,0,0.2);
+    /* Dropdown Mock */
+    .avatar-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 0.5rem;
+      background: var(--bg-panel);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
-      padding: 0.75rem 1rem;
-      margin-top: 1rem;
-      font-size: 0.8rem;
-      min-height: 48px;
-      text-align: center;
-      color: #94a3b8;
+      width: 160px;
+      padding: 0.5rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      z-index: 120;
+      display: none;
     }
-    .light .voice-simulate-box {
-      background: #ffffff;
-      color: #334155;
+    .avatar-dropdown.active {
+      display: block;
+    }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.75rem;
+      color: var(--fg);
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .dropdown-item:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--primary);
+    }
+    .light .dropdown-item:hover {
+      background: rgba(0,0,0,0.03);
     }
 
-    .voice-simulate-btn {
-      margin-top: 0.5rem;
-      padding: 0.4rem 1rem;
-      font-size: 0.75rem;
+    /* App Body Area */
+    .app-body {
+      flex-grow: 1;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      max-height: 480px;
+      position: relative;
+    }
+
+    /* SIKAI Loaders */
+    .hologram-loader {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.95);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .light .hologram-loader {
+      background: rgba(250, 246, 253, 0.95);
+    }
+    .hologram-loader.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .loader-glow-ring {
+      width: 50px;
+      height: 50px;
+      border: 3px solid rgba(26, 136, 255, 0.1);
+      border-top-color: var(--primary);
+      border-right-color: var(--cyan);
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      box-shadow: 0 0 15px var(--primary-glow);
+    }
+
+    .loader-status-text {
+      font-size: 0.85rem;
       font-weight: 700;
-      border-radius: 8px;
-      background: var(--cyan);
-      color: black;
-      border: 0;
-      cursor: pointer;
-      box-shadow: 0 4px 10px rgba(38,216,196,0.3);
+      color: var(--cyan);
+      letter-spacing: 0.05em;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+
+    /* ── SCREEN A: Form Creator Layout ── */
+    .screen-creator {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      animation: fadeUp 0.3s ease;
+    }
+
+    .sop-header-intro h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--fg);
+      margin-bottom: 0.25rem;
+    }
+    .sop-header-intro p {
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+    }
+
+    /* Form Input Mode Switches */
+    .form-mode-switch-row {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--glass-border);
+      padding: 0.2rem;
+      border-radius: 12px;
+      width: fit-content;
+    }
+    .light .form-mode-switch-row {
+      background: rgba(0,0,0,0.04);
+    }
+
+    .mode-tab-btn {
       display: flex;
       align-items: center;
       gap: 0.4rem;
-    }
-    .voice-simulate-btn:hover { opacity: 0.9; }
-
-    /* Pane 3: SIKAI Flow Diagram mock showing Horizontal vs Vertical */
-    .flow-visualizer-box {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-    
-    .direction-switch {
-      display: flex;
-      gap: 0.5rem;
-      padding: 0.25rem;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--glass-border);
-      border-radius: 8px;
-      margin-bottom: 1.25rem;
-    }
-    
-    .direction-btn {
-      padding: 0.35rem 0.75rem;
-      font-size: 0.7rem;
+      padding: 0.45rem 1rem;
+      font-size: 0.75rem;
       font-weight: 700;
       border: 0;
       background: transparent;
-      color: #64748b;
+      color: var(--fg-muted);
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.2s ease;
+    }
+    .mode-tab-btn:hover {
+      color: var(--fg);
+    }
+    .mode-tab-btn.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+
+    /* Form Fields Grid */
+    .manual-fields-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .form-row-grid-2 {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 0.85rem;
+    }
+    @media(min-width: 640px) {
+      .form-row-grid-2 {
+        grid-template-cols: 1.2fr 1fr;
+      }
+    }
+
+    .app-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      text-align: left;
+    }
+
+    .app-label {
+      font-size: 0.65rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+    }
+
+    .app-field {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.8rem;
+      color: var(--fg);
+      font-family: inherit;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+    .light .app-field {
+      background: #ffffff;
+    }
+    .app-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
+    .app-field.typing-cursor::after {
+      content: '|';
+      color: var(--primary);
+      font-weight: 800;
+      animation: cursor-blink 0.7s infinite;
+    }
+    @keyframes cursor-blink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Steps list mock styling */
+    .steps-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .step-item-card {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .step-index-badge {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: var(--fg-muted);
+    }
+    .light .step-index-badge {
+      background: rgba(0, 0, 0, 0.03);
+    }
+    .step-delete-btn {
+      width: 1.85rem;
+      height: 1.85rem;
+      border-radius: 8px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .step-delete-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+    }
+
+    .add-step-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px dashed var(--glass-border);
+      border-radius: 8px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--fg-muted);
+      cursor: pointer;
+      width: fit-content;
+      margin-top: 0.25rem;
+    }
+    .light .add-step-btn {
+      background: #ffffff;
+    }
+    .add-step-btn:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+    }
+
+    .generate-action-bar {
+      margin-top: 1rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+
+    .submit-generate-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.5rem;
+      border-radius: 12px;
+      border: 0;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      color: white;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 4px 15px var(--primary-glow);
+      transition: all 0.25s ease;
+    }
+    .submit-generate-btn:hover {
+      box-shadow: 0 6px 20px var(--primary-glow);
+      transform: translateY(-1px);
+    }
+
+    /* ── Voice Dictation Overlay Modal ── */
+    .voice-modal-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.96);
+      z-index: 150;
+      padding: 1.5rem;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      animation: fadeScale 0.3s ease;
+    }
+    .light .voice-modal-overlay {
+      background: rgba(250, 246, 253, 0.97);
+    }
+    .voice-modal-overlay.active {
+      display: flex;
+    }
+
+    .voice-header-desc {
+      text-align: center;
+    }
+    .voice-header-desc h3 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--fg);
+    }
+    .voice-header-desc p {
+      font-size: 0.75rem;
+      color: var(--cyan);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 0.1rem;
+    }
+
+    /* Visual Oscilloscope Voice Sphere */
+    .orb-mic-container {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .voice-glow-orb {
+      width: 74px;
+      height: 74px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+      z-index: 10;
+      cursor: pointer;
+    }
+    .voice-glow-orb.recording {
+      animation: micPulse 1.2s infinite alternate ease-in-out;
+    }
+
+    @keyframes micPulse {
+      0% { transform: scale(1); box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+      100% { transform: scale(1.08); box-shadow: 0 0 35px rgba(239, 68, 68, 0.8); }
+    }
+
+    .voice-particles-canvas {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    /* Waveform oscilloscopic */
+    .oscilloscope-bars {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      height: 25px;
+    }
+    .oscilloscope-bar {
+      width: 3px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 2px;
+    }
+    .oscilloscope-bar.active-wave {
+      animation: waveBounce 0.5s infinite alternate ease-in-out;
+    }
+    .oscilloscope-bar:nth-child(2) { animation-delay: 0.1s; }
+    .oscilloscope-bar:nth-child(3) { animation-delay: 0.2s; }
+    .oscilloscope-bar:nth-child(4) { animation-delay: 0.3s; }
+    .oscilloscope-bar:nth-child(5) { animation-delay: 0.15s; }
+    .oscilloscope-bar:nth-child(6) { animation-delay: 0.25s; }
+    .oscilloscope-bar:nth-child(7) { animation-delay: 0.05s; }
+
+    @keyframes waveBounce {
+      0% { height: 6px; }
+      100% { height: 26px; }
+    }
+
+    .voice-transcript-wrapper {
+      width: 100%;
+      max-width: 460px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 0.85rem 1rem;
+      min-height: 70px;
+      box-sizing: border-box;
+    }
+    .light .voice-transcript-wrapper {
+      background: #ffffff;
+    }
+    .voice-transcript-text {
+      font-size: 0.75rem;
+      line-height: 1.45;
+      color: var(--fg-muted);
+      text-align: center;
+    }
+    .voice-transcript-text.filled {
+      color: var(--fg);
+      text-align: left;
+    }
+
+    .voice-timer-stamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--fg-muted);
+    }
+
+    .voice-modal-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .voice-cancel-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 10px;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      color: var(--fg);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .voice-cancel-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .light .voice-cancel-btn:hover {
+      background: rgba(0,0,0,0.03);
+    }
+
+    .voice-submit-btn {
+      padding: 0.5rem 1.25rem;
+      border-radius: 10px;
+      border: 0;
+      background: var(--cyan);
+      color: black;
+      font-size: 0.75rem;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--cyan-glow);
+    }
+    .voice-submit-btn:hover {
+      box-shadow: 0 6px 18px var(--cyan-glow);
+    }
+
+    /* ── SCREEN B: Results Panel Replica ── */
+    .screen-results {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      animation: fadeUp 0.3s ease;
+    }
+    .screen-results.active {
+      display: flex;
+    }
+
+    .result-action-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.75rem;
+    }
+    .result-sop-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 60%;
+    }
+
+    .result-action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .result-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--fg);
+      transition: all 0.2s ease;
+    }
+    .light .result-btn {
+      background: #ffffff;
+    }
+    .result-btn:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--primary);
+    }
+    .light .result-btn:hover {
+      background: rgba(0,0,0,0.02);
+    }
+
+    .result-btn.pdf-btn {
+      background: rgba(26, 136, 255, 0.1);
+      border-color: rgba(26, 136, 255, 0.2);
+      color: var(--primary);
+      box-shadow: 0 0 10px rgba(26, 136, 255, 0.05);
+    }
+    .result-btn.pdf-btn:hover {
+      background: rgba(26, 136, 255, 0.18);
+      border-color: var(--primary);
+    }
+
+    /* Result Tab Navigation */
+    .result-tabs-row {
+      display: flex;
+      gap: 0.35rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--glass-border);
+      padding: 0.15rem;
+      border-radius: 8px;
+      width: fit-content;
+    }
+    .light .result-tabs-row {
+      background: rgba(0,0,0,0.04);
+    }
+
+    .result-tab-btn {
+      padding: 0.35rem 0.75rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border: 0;
+      background: transparent;
+      color: var(--fg-muted);
       cursor: pointer;
       border-radius: 6px;
+      transition: all 0.2s ease;
     }
-    .direction-btn.active {
+    .result-tab-btn:hover {
+      color: var(--fg);
+    }
+    .result-tab-btn.active {
       background: var(--primary);
       color: white;
     }
+    .result-tab-btn.active.flow-btn {
+      background: var(--cyan);
+      color: black;
+      font-weight: 800;
+    }
+    .result-tab-btn.active.boost-btn {
+      background: var(--purple);
+      color: white;
+    }
 
-    .diagram-viewport {
-      width: 100%;
-      max-width: 460px;
-      height: 160px;
-      background: rgba(0,0,0,0.15);
-      border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      position: relative;
+    /* Results Workspace Containers */
+    .result-view-container {
+      min-height: 250px;
       display: flex;
-      padding: 1rem;
-      align-items: center;
-      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* Accordion SOP Tab */
+    .accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .accordion-item {
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 10px;
       overflow: hidden;
     }
-    .light .diagram-viewport {
+    .light .accordion-item {
       background: #ffffff;
     }
 
-    .nodes-container {
+    .accordion-header {
+      padding: 0.65rem 0.85rem;
       display: flex;
-      gap: 1.5rem;
+      justify-content: space-between;
       align-items: center;
-      transition: all 0.5s ease;
+      cursor: pointer;
+      user-select: none;
+      background: rgba(0,0,0,0.05);
     }
-    .nodes-container.vertical {
-      flex-direction: column;
-      gap: 0.8rem;
+    .light .accordion-header {
+      background: rgba(0,0,0,0.01);
+    }
+    .accordion-header:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .light .accordion-header:hover {
+      background: rgba(0,0,0,0.02);
     }
 
-    .node-mock {
-      padding: 0.4rem 0.8rem;
-      background: rgba(26, 136, 255, 0.1);
-      border: 1px solid var(--primary);
-      border-radius: 6px;
+    .accordion-title-box {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
       font-size: 0.75rem;
       font-weight: 700;
+    }
+    .accordion-title-box i {
       color: var(--primary);
+    }
+
+    .accordion-arrow {
+      font-size: 0.75rem;
+      transition: transform 0.25s ease;
+      color: var(--fg-muted);
+    }
+    .accordion-item.expanded .accordion-arrow {
+      transform: rotate(180deg);
+    }
+
+    .accordion-content {
+      padding: 0.85rem;
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--fg-muted);
+      border-top: 1px solid var(--glass-border);
+      display: none;
+    }
+    .accordion-item.expanded .accordion-content {
+      display: block;
+      animation: slideDown 0.25s ease;
+    }
+
+    /* Step Subcards in Accordion */
+    .steps-timeline-mock {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      position: relative;
+      padding-left: 0.75rem;
+    }
+    .steps-timeline-mock::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 4px;
+      bottom: 4px;
+      width: 1.5px;
+      background: var(--glass-border);
+    }
+
+    .step-timeline-node {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+    .step-timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -9px;
+      top: 5px;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--primary);
+      box-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .step-node-header {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--fg);
+    }
+    .step-node-subfields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.15rem;
+      background: rgba(0,0,0,0.15);
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      border: 1px solid var(--glass-border);
+    }
+    .light .step-node-subfields {
+      background: rgba(0,0,0,0.02);
+    }
+    .step-subfield {
+      font-size: 0.68rem;
+    }
+    .step-subfield span {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* SIKAI Flow Tab Diagram Rendering */
+    .flow-diagram-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .flow-selector-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .flow-selector-row span {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--cyan);
+    }
+
+    .flow-direction-switch {
+      display: flex;
+      gap: 0.25rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      padding: 0.15rem;
+      border-radius: 6px;
+    }
+    .flow-direction-btn {
+      padding: 0.2rem 0.5rem;
+      font-size: 0.6rem;
+      font-weight: 700;
+      border: 0;
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .flow-direction-btn.active {
+      background: var(--cyan);
+      color: black;
+      font-weight: 800;
+    }
+
+    /* High-fidelity Diagram Grid */
+    .flowchart-viewport {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      min-height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .light .flowchart-viewport {
+      background: #ffffff;
+    }
+
+    .interactive-flowchart {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .interactive-flowchart.vertical {
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+
+    .flow-node-box {
+      background: rgba(38, 216, 196, 0.08);
+      border: 1px solid var(--cyan);
+      border-radius: 8px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--cyan);
       display: flex;
       align-items: center;
       gap: 0.3rem;
       position: relative;
+      box-shadow: 0 0 10px rgba(38, 216, 196, 0.05);
     }
-    .node-mock::after {
+    .flow-node-box i {
+      width: 0.75rem;
+    }
+
+    /* Node Arrows */
+    .flow-node-box::after {
       content: '➔';
       position: absolute;
-      right: -1.25rem;
+      right: -1.15rem;
       top: 50%;
       transform: translateY(-50%);
-      color: var(--cyan);
-      font-size: 0.8rem;
+      color: var(--primary);
+      font-size: 0.7rem;
     }
-    .node-mock:last-child::after { display: none; }
-
-    .nodes-container.vertical .node-mock::after {
+    .interactive-flowchart.vertical .flow-node-box::after {
       content: '▼';
       right: auto;
       left: 50%;
       top: auto;
-      bottom: -1rem;
+      bottom: -0.85rem;
       transform: translateX(-50%);
     }
+    .flow-node-box:last-child::after {
+      display: none;
+    }
 
-    /* Pane 4: SIKAI Boost card grid */
-    .boost-grid {
+    /* SIKAI Boost Tab Optimizations */
+    .boost-tab-container {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .boost-intro {
+      font-size: 0.7rem;
+      color: var(--fg-muted);
+      margin-bottom: 0.25rem;
+    }
+
+    .boost-cards-grid {
       display: grid;
       grid-template-cols: 1fr;
-      gap: 1rem;
-      width: 100%;
-      max-width: 500px;
+      gap: 0.85rem;
     }
-    @media (min-width: 500px) {
-      .boost-grid { grid-template-cols: 1fr 1fr; }
+    @media (min-width: 640px) {
+      .boost-cards-grid {
+        grid-template-cols: 1fr 1fr;
+      }
     }
-    
+
     .boost-card {
       border-radius: 12px;
-      padding: 1rem;
-      border: 1px solid rgba(255,255,255,0.05);
-      position: relative;
-      overflow: hidden;
+      border: 1px solid var(--glass-border);
+      padding: 0.85rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 0.5rem;
+      text-align: left;
+      transition: all 0.3s ease;
     }
+    
     .boost-card.bottleneck {
       background: rgba(239, 68, 68, 0.03);
       border-color: rgba(239, 68, 68, 0.15);
     }
-    .boost-card.improvement {
-      background: rgba(38, 216, 196, 0.03);
-      border-color: rgba(38, 216, 196, 0.15);
+    .boost-card.bottleneck.highlighted {
+      border-color: #ef4444;
+      box-shadow: 0 0 15px rgba(239, 68, 68, 0.25);
     }
-    
-    .boost-card-title {
-      font-size: 0.65rem;
+
+    .boost-card.improvement {
+      background: rgba(124, 58, 237, 0.03);
+      border-color: rgba(124, 58, 237, 0.15);
+    }
+    .boost-card.improvement.highlighted {
+      border-color: var(--purple);
+      box-shadow: 0 0 15px rgba(124, 58, 237, 0.25);
+    }
+
+    .boost-tag {
+      font-size: 0.55rem;
       font-weight: 800;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.4rem;
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.25rem;
     }
-    .boost-card.bottleneck .boost-card-title { color: #ef4444; }
-    .boost-card.improvement .boost-card-title { color: var(--cyan); }
+    .boost-card.bottleneck .boost-tag { color: #ef4444; }
+    .boost-card.improvement .boost-tag { color: var(--purple); }
 
-    .boost-card-body {
-      font-size: 0.8rem;
-      font-weight: 500;
+    .boost-card-text {
+      font-size: 0.72rem;
       line-height: 1.4;
+      color: var(--fg);
     }
 
-    /* Pane 5: Exporting visual sheet simulation */
-    .sheet-visualizer {
-      display: flex;
+    /* ── PDF Export Download Success Modal Mock ── */
+    .pdf-download-alert {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.95);
+      z-index: 180;
+      display: none;
       flex-direction: column;
       align-items: center;
-      width: 100%;
+      justify-content: center;
+      gap: 1rem;
+      animation: fadeScale 0.25s ease;
+    }
+    .light .pdf-download-alert {
+      background: rgba(250, 246, 253, 0.95);
+    }
+    .pdf-download-alert.active {
+      display: flex;
+    }
+    .pdf-alert-circle {
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid #10b981;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px rgba(16, 185, 129, 0.2);
+    }
+    .pdf-alert-title {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--fg);
+    }
+    .pdf-alert-desc {
+      font-size: 0.75rem;
+      color: var(--fg-muted);
+      max-width: 250px;
+      text-align: center;
+      line-height: 1.45;
+    }
+    .pdf-alert-close-btn {
+      padding: 0.45rem 1rem;
+      border: 0;
+      background: #10b981;
+      color: white;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
     }
 
-    .sheet-mock {
-      width: 130px;
-      height: 170px;
-      background: white;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      padding: 0.8rem;
-      position: relative;
-      overflow: hidden;
+    /* ── Right Panel: AI Narrator & Chapters ── */
+    .narrator-sidebar {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-      transition: all 0.3s ease;
-    }
-    .sheet-mock:hover {
-      transform: translateY(-8px) scale(1.03);
+      gap: 1.25rem;
     }
 
-    .sheet-bar {
-      height: 4px;
-      background: #e2e8f0;
-      width: 100%;
-      border-radius: 2px;
-    }
-    .sheet-bar.accent {
-      background: var(--primary);
-      width: 60%;
-      height: 6px;
-    }
-    .sheet-bar.flow-bar {
-      background: var(--cyan);
-      width: 40%;
-      align-self: center;
-      height: 18px;
-      margin-top: 0.5rem;
-    }
-
-    /* ── Bottom Premium Footer CTA ── */
-    footer.guide-footer {
-      text-align: center;
-      margin-top: 4rem;
-      padding: 3rem 1.5rem;
+    /* Cyberspace Narrator Orb Box */
+    .avatar-panel {
       background: var(--glass-bg);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 1.25rem;
       box-shadow: 0 8px 32px var(--shadow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
       position: relative;
     }
+    
+    .holo-sphere-box {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--cyan) 0%, var(--primary) 100%);
+      box-shadow: 0 0 25px var(--cyan-glow), 0 0 40px var(--primary-glow);
+      margin-bottom: 0.85rem;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    .holo-sphere-box::after {
+      content: '';
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 1.5px dashed var(--primary);
+      animation: rotateRing 12s linear infinite;
+    }
 
-    .footer-title {
-      font-size: 2rem;
+    @keyframes rotateRing {
+      100% { transform: rotate(360deg); }
+    }
+
+    .holo-narrator-title {
+      font-size: 0.65rem;
       font-weight: 800;
-      margin-bottom: 0.75rem;
-      background: linear-gradient(135deg, var(--fg) 50%, var(--primary) 100%);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--cyan);
+      margin-bottom: 0.25rem;
+    }
+
+    .speech-narration-card {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      font-size: 0.82rem;
+      color: var(--fg-muted);
+      width: 100%;
+      text-align: left;
+      min-height: 80px;
+      line-height: 1.45;
+    }
+    .light .speech-narration-card {
+      background: #ffffff;
+      color: #374151;
+    }
+    .speech-narration-card strong {
+      color: var(--fg);
+    }
+    .light .speech-narration-card strong {
+      color: var(--primary);
+    }
+
+    /* Chapter Playlist Selection */
+    .playlist-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .playlist-item {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 14px;
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 12px var(--shadow);
+    }
+    .playlist-item:hover {
+      transform: translateX(4px);
+      border-color: rgba(26, 136, 255, 0.25);
+    }
+    .playlist-item.active {
+      background: var(--card-bg);
+      border-color: rgba(26, 136, 255, 0.35);
+      box-shadow: 0 6px 16px var(--shadow);
+    }
+
+    .playlist-item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+    }
+    .playlist-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+    .playlist-item-desc {
+      font-size: 0.68rem;
+      color: var(--fg-muted);
+      font-weight: 500;
+    }
+
+    .playlist-item-badge {
+      width: 1.65rem;
+      height: 1.65rem;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--fg-muted);
+    }
+    .playlist-item.active .playlist-item-badge {
+      background: var(--primary);
+      color: white;
+    }
+    .playlist-item.active.accent-cyan .playlist-item-badge {
+      background: var(--cyan);
+      color: black;
+    }
+    .playlist-item.active.accent-purple .playlist-item-badge {
+      background: var(--purple);
+      color: white;
+    }
+
+    /* ── Bottom Video Controller Scrubber ── */
+    .video-controller-bar {
+      margin-top: 1.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      box-shadow: 0 10px 30px var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    /* Scrubber line slider */
+    .scrub-line-container {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .light .scrub-line-container {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .scrub-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+
+    /* Chapter timeline markers */
+    .timeline-dot {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4b5563;
+      border: 2px solid var(--bg);
+      z-index: 10;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .timeline-dot.active-dot {
+      background: var(--cyan);
+      transform: translate(-50%, -50%) scale(1.2);
+      box-shadow: 0 0 8px var(--cyan-glow);
+    }
+
+    /* Action bar controls row */
+    .playback-action-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .playback-main-buttons {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .playback-btn {
+      background: transparent;
+      border: 0;
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .playback-btn:hover {
+      opacity: 0.85;
+      transform: scale(1.08);
+    }
+    .playback-btn:active {
+      transform: scale(0.92);
+    }
+
+    .main-play-pause-btn {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .main-play-pause-btn:hover {
+      box-shadow: 0 4px 20px var(--primary-glow);
+    }
+
+    .digital-timestamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--fg-muted);
+      font-weight: 700;
+    }
+
+    /* Mode indicator badge */
+    .mode-interactive-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, 0.05);
+      animation: alertPulse 1.5s infinite alternate ease-in-out;
+    }
+    .mode-interactive-badge.sandbox-on {
+      border-color: rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.1);
+      animation: alertPulseGreen 1.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes alertPulse {
+      0% { transform: scale(1); box-shadow: 0 0 5px rgba(239, 68, 68, 0.05); }
+      100% { transform: scale(1.02); box-shadow: 0 0 12px rgba(239, 68, 68, 0.15); }
+    }
+    @keyframes alertPulseGreen {
+      0% { transform: scale(1); box-shadow: 0 0 5px rgba(16, 185, 129, 0.05); }
+      100% { transform: scale(1.02); box-shadow: 0 0 12px rgba(16, 185, 129, 0.15); }
+    }
+
+    /* Explanatory Footer */
+    .guide-footer-block {
+      text-align: center;
+      margin-top: 2.5rem;
+      padding: 2rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+    .guide-footer-title {
+      font-size: 1.65rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+      background: linear-gradient(135deg, var(--fg) 40%, var(--primary) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-
-    .footer-desc {
-      font-size: 0.95rem;
-      color: #64748b;
-      margin-bottom: 1.75rem;
+    .guide-footer-desc {
+      font-size: 0.85rem;
+      color: var(--fg-muted);
+      margin-bottom: 1.25rem;
     }
-
-    .footer-btn {
+    .guide-cta-btn {
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.875rem 2rem;
+      padding: 0.7rem 1.65rem;
       font-weight: 700;
-      font-size: 0.9rem;
-      border-radius: 12px;
+      font-size: 0.82rem;
+      border-radius: 10px;
       text-decoration: none;
       background: linear-gradient(90deg, var(--primary), var(--cyan));
       color: white;
-      box-shadow: 0 4px 15px var(--primary-glow);
+      box-shadow: 0 4px 12px var(--primary-glow);
       transition: all 0.3s ease;
     }
-    .light .footer-btn {
+    .light .guide-cta-btn {
       color: black;
-      box-shadow: 0 4px 15px rgba(26,136,255,0.25);
+      box-shadow: 0 4px 12px rgba(26,136,255,0.2);
     }
-    .footer-btn:hover {
-      box-shadow: 0 6px 20px var(--primary-glow);
+    .guide-cta-btn:hover {
+      box-shadow: 0 6px 18px var(--primary-glow);
       transform: translateY(-2px);
+    }
+
+    /* Common Utilities */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeScale {
+      from { opacity: 0; transform: scale(0.97); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideDown {
+      from { opacity: 0; max-height: 0; }
+      to { opacity: 1; max-height: 500px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating Blobs background -->
-  <div class="blob blob-primary"></div>
-  <div class="blob blob-cyan"></div>
-
   <div class="container">
     
-    <!-- Premium Header -->
+    <!-- Header of the landing guide -->
     <header>
-      <a href="#" class="logo-container">
+      <a href="#" class="logo-link">
         <div class="logo-icon">
           <i data-lucide="clipboard-list" style="width: 1.25rem; height: 1.25rem; stroke-width: 2;"></i>
         </div>
         <div class="logo-text">SIKAI <span>SOP GENERATOR</span></div>
       </a>
       
-      <!-- Theme Switcher Toggle -->
-      <button class="theme-toggle" id="themeToggler" aria-label="Cambiar tema">
-        <i data-lucide="sun" class="sun-icon" style="width: 1.25rem; height: 1.25rem;"></i>
-        <i data-lucide="moon" class="moon-icon" style="width: 1.25rem; height: 1.25rem;"></i>
-      </button>
+      <div class="header-actions">
+        <!-- Theme conmuter toggle -->
+        <button class="theme-toggle" id="themeToggler" aria-label="Cambiar tema">
+          <i data-lucide="sun" class="sun-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+          <i data-lucide="moon" class="moon-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+        </button>
+      </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-tag">
-        <i data-lucide="sparkles" style="width: 0.9rem; height: 0.9rem;"></i>
-        Guía Interactiva Oficial
-      </div>
-      <h1 class="hero-title">Conoce SIKAI SOP Generator AI</h1>
-      <p class="hero-desc">Descubre cómo sistematizar, estructurar y optimizar todos los procesos de tu empresa al instante con Inteligencia Artificial.</p>
-    </section>
-
-    <!-- Main Tab explorer -->
-    <section class="interactive-explorer">
+    <!-- Main Content Workspace Grid -->
+    <div class="walkthrough-grid">
       
-      <!-- Explorer Left Tabs -->
-      <div class="explorer-tabs">
-        <button class="explorer-tab-btn active" data-target="manual">
-          <div class="tab-icon-wrapper">
-            <i data-lucide="file-text" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
-          </div>
-          <div>
-            <span class="tab-title-text">Generación Manual</span>
-            <span class="tab-desc-text">Formulario estructurado e intuitivo</span>
-          </div>
-        </button>
-
-        <button class="explorer-tab-btn tab-cyan" data-target="voice">
-          <div class="tab-icon-wrapper">
-            <i data-lucide="mic" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
-          </div>
-          <div>
-            <span class="tab-title-text">SIKAI Voice Agent</span>
-            <span class="tab-desc-text">Dictado continuo sin duplicados</span>
-          </div>
-        </button>
-
-        <button class="explorer-tab-btn tab-cyan" data-target="flow">
-          <div class="tab-icon-wrapper">
-            <i data-lucide="git-fork" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
-          </div>
-          <div>
-            <span class="tab-title-text">SIKAI Flow Diagrama</span>
-            <span class="tab-desc-text">Flujos de trabajo visuales</span>
-          </div>
-        </button>
-
-        <button class="explorer-tab-btn tab-purple" data-target="boost">
-          <div class="tab-icon-wrapper">
-            <i data-lucide="zap" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
-          </div>
-          <div>
-            <span class="tab-title-text">SIKAI Boost</span>
-            <span class="tab-desc-text">Estrategias de eficiencia IA</span>
-          </div>
-        </button>
-
-        <button class="explorer-tab-btn" data-target="export">
-          <div class="tab-icon-wrapper">
-            <i data-lucide="download" style="width: 1.2rem; height: 1.2rem; stroke-width: 2;"></i>
-          </div>
-          <div>
-            <span class="tab-title-text">Exportación PDF</span>
-            <span class="tab-desc-text">Documentación paginada perfecta</span>
-          </div>
-        </button>
-      </div>
-
-      <!-- Explorer Content Window -->
-      <div class="explorer-content">
+      <!-- LEFT COLUMN: The Browser/App Simulator -->
+      <div class="app-browser-card">
         
-        <!-- Tab Pane 1: Manual Form -->
-        <div class="pane active" id="manual">
-          <div class="pane-header">
-            <span class="pane-tag">Módulo Estructurado</span>
-            <h2 class="pane-title">SOP Manual Inteligente</h2>
-            <p class="pane-desc">Sistematiza procesos rápidamente mediante un asistente guiado. Define los objetivos principales, herramientas utilizadas, roles involucrados y una secuencia ordenada de hasta 10 pasos detallados de forma sumamente sencilla.</p>
+        <!-- Browser header row dots + URL -->
+        <div class="browser-bar">
+          <div class="browser-dots">
+            <span class="browser-dot dot-red"></span>
+            <span class="browser-dot dot-yellow"></span>
+            <span class="browser-dot dot-green"></span>
           </div>
-          <div class="visual-sandbox">
-            <div class="form-visual">
-              <div class="form-field-mock">
-                <div class="form-field-title">Título del Proceso</div>
-                Onboarding de Cliente Nuevo
+          <div class="browser-url-bar" id="browserUrl">https://sop.sikaicx.com/dashboard</div>
+          <div style="width: 38px;"></div>
+        </div>
+
+        <!-- The Viewport -->
+        <div class="app-viewport">
+          
+          <!-- Glowing Loader overlay -->
+          <div class="hologram-loader" id="appLoader">
+            <div class="loader-glow-ring"></div>
+            <div class="loader-status-text" id="loaderText">Sincronizando con GPT-4...</div>
+          </div>
+
+          <!-- PDF Export Success Modal -->
+          <div class="pdf-download-alert" id="pdfAlert">
+            <div class="pdf-alert-circle">
+              <i data-lucide="check" style="width: 1.75rem; height: 1.75rem; stroke-width: 3;"></i>
+            </div>
+            <div class="pdf-alert-title">SOP Exportado con Éxito</div>
+            <div class="pdf-alert-desc">El documento PDF ha sido optimizado con el flujograma en orientación vertical de A4.</div>
+            <button class="pdf-alert-close-btn" id="pdfAlertClose">Cerrar Ventana</button>
+          </div>
+
+          <!-- App Navigation Bar inside Viewport -->
+          <div class="app-nav">
+            <div class="app-brand">
+              <i data-lucide="clipboard-list" style="width: 1rem; height: 1rem;"></i>
+              <span>SIKAI SOP</span>
+            </div>
+            <div class="app-user-actions">
+              <div class="credits-capsule">
+                <i data-lucide="coins" style="width: 0.75rem; height: 0.75rem;"></i>
+                <span>12 créditos</span>
               </div>
-              <div class="form-visual-row">
-                <div class="form-field-mock">
-                  <div class="form-field-title">Roles y Responsables</div>
-                  Soporte, Ventas
+              <div class="user-avatar-trigger" id="avatarTrigger">
+                MS
+                <!-- Profile dropdown -->
+                <div class="avatar-dropdown" id="avatarDropdown">
+                  <div class="dropdown-item"><i data-lucide="user" style="width:0.75rem;"></i> Mi Perfil</div>
+                  <div class="dropdown-item"><i data-lucide="credit-card" style="width:0.75rem;"></i> Billing</div>
+                  <hr style="border: 0; border-top:1px solid var(--glass-border); margin:0.3rem 0;">
+                  <div class="dropdown-item" style="color:#ef4444;"><i data-lucide="log-out" style="width:0.75rem;"></i> Salir</div>
                 </div>
-                <div class="form-field-mock">
-                  <div class="form-field-title">Herramientas</div>
-                  Slack, HubSpot, Gmail
-                </div>
-              </div>
-              <div class="form-field-mock">
-                <div class="form-field-title">Paso 1 del Proceso</div>
-                Enviar correo de bienvenida y registrar datos en HubSpot...
               </div>
             </div>
           </div>
+
+          <!-- The Scrollable App Body inside Viewport -->
+          <div class="app-body" id="appBody">
+            
+            <!-- ── SCREEN A: SOP Form Creator ── -->
+            <div class="screen-creator" id="screenCreator">
+              
+              <div class="sop-header-intro">
+                <h2>Crear nuevo SIKAI SOP</h2>
+                <p>Describe tu proceso manualmente o utiliza el dictado por voz de precisión.</p>
+              </div>
+
+              <!-- Switches for manual/voice mode -->
+              <div class="form-mode-switch-row">
+                <button class="mode-tab-btn active" id="tabManualSwitch">
+                  <i data-lucide="edit" style="width: 0.75rem; height: 0.75rem;"></i> Formulario Manual
+                </button>
+                <button class="mode-tab-btn" id="tabVoiceSwitch">
+                  <i data-lucide="mic" style="width: 0.75rem; height: 0.75rem;"></i> Agente de Voz SIKAI
+                </button>
+              </div>
+
+              <!-- Manual Fields Box -->
+              <div class="manual-fields-box">
+                <div class="form-row-grid-2">
+                  <div class="app-input-group">
+                    <label class="app-label">Título del Proceso</label>
+                    <input type="text" class="app-field" id="fieldTitle" placeholder="Ej. Cierre de Caja Mensual">
+                  </div>
+                  <div class="app-input-group">
+                    <label class="app-label">Roles y Responsables</label>
+                    <input type="text" class="app-field" id="fieldRoles" placeholder="Ej. Contador, Administrador">
+                  </div>
+                </div>
+                
+                <div class="app-input-group">
+                  <label class="app-label">Objetivo Principal</label>
+                  <textarea class="app-field" id="fieldObjective" rows="2" placeholder="Describe brevemente cuál es el fin de documentar este proceso..."></textarea>
+                </div>
+
+                <div class="app-input-group">
+                  <label class="app-label">Herramientas o Softwares Utilizados</label>
+                  <input type="text" class="app-field" id="fieldTools" placeholder="Ej. Excel, HubSpot, ERP de Facturación">
+                </div>
+
+                <div class="app-input-group">
+                  <label class="app-label">Cuellos de Botella (Problemas Actuales)</label>
+                  <textarea class="app-field" id="fieldBottlenecks" rows="2" placeholder="Ej. El registro manual de facturas genera demoras en conciliación."></textarea>
+                </div>
+
+                <!-- Steps List Container -->
+                <div class="app-input-group">
+                  <label class="app-label">Procedimiento Paso a Paso</label>
+                  <div class="steps-list-container" id="stepsListContainer">
+                    <div class="step-item-card" data-step-id="1">
+                      <span class="step-index-badge">1</span>
+                      <input type="text" class="app-field step-input-field" placeholder="Paso 1 del proceso...">
+                      <div class="step-delete-btn"><i data-lucide="trash-2" style="width: 0.75rem; height: 0.75rem;"></i></div>
+                    </div>
+                  </div>
+                  <button class="add-step-btn" id="addStepBtn">
+                    <i data-lucide="plus" style="width:0.75rem;"></i> Agregar Paso
+                  </button>
+                </div>
+              </div>
+
+              <!-- Submision Button -->
+              <div class="generate-action-bar">
+                <button class="submit-generate-btn" id="generateSopBtn">
+                  <i data-lucide="sparkles" style="width: 0.85rem; height: 0.85rem;"></i>
+                  Generar SIKAI SOP
+                </button>
+              </div>
+
+              <!-- Voice Dictation Overlay Modal -->
+              <div class="voice-modal-overlay" id="voiceModal">
+                <div class="voice-header-desc">
+                  <h3>Agente de Voz SIKAI</h3>
+                  <p id="voiceStatusBadge">Escuchando micrófono...</p>
+                </div>
+
+                <!-- Glow Mic Orb -->
+                <div class="orb-mic-container">
+                  <div class="voice-glow-orb recording" id="voiceOrb">
+                    <i data-lucide="mic" style="width: 1.5rem; height: 1.5rem;"></i>
+                  </div>
+                  <canvas class="voice-particles-canvas" id="voiceCanvas"></canvas>
+                </div>
+
+                <!-- Oscilloscope Sound waves -->
+                <div class="oscilloscope-bars" id="voiceWaves">
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                  <div class="oscilloscope-bar active-wave"></div>
+                </div>
+
+                <!-- Real-time transcript box -->
+                <div class="voice-transcript-wrapper">
+                  <div class="voice-transcript-text" id="voiceText">Escribe lo que digas aquí en tiempo real...</div>
+                </div>
+
+                <div class="voice-timer-stamp" id="voiceTimer">00:00 / 08:00</div>
+
+                <div class="voice-modal-actions">
+                  <button class="voice-cancel-btn" id="voiceCancelBtn">Cancelar</button>
+                  <button class="voice-submit-btn" id="voiceSubmitBtn">Generar con Voz</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ── SCREEN B: SOP Results Panel ── -->
+            <div class="screen-results" id="screenResults">
+              
+              <!-- Result header Actions -->
+              <div class="result-action-header">
+                <div class="result-sop-title" id="resultSopTitle">Cierre de Caja Mensual</div>
+                <div class="result-action-buttons">
+                  <button class="result-btn" id="copyResultBtn">
+                    <i data-lucide="copy" style="width: 0.75rem; height: 0.75rem;"></i> Copiar
+                  </button>
+                  <button class="result-btn pdf-btn" id="pdfResultBtn">
+                    <i data-lucide="download" style="width: 0.75rem; height: 0.75rem;"></i> Exportar PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- Result Tab Selectors -->
+              <div class="result-tabs-row" id="resultTabs">
+                <button class="result-tab-btn active" id="tabResultSop">SIKAI SOP</button>
+                <button class="result-tab-btn flow-btn" id="tabResultFlow">SIKAI Flow</button>
+                <button class="result-tab-btn boost-btn" id="tabResultBoost">SIKAI Boost</button>
+              </div>
+
+              <!-- Results Views -->
+              <div class="result-view-container">
+                
+                <!-- TAB 1: SIKAI SOP Accordions -->
+                <div class="accordion-list" id="viewSopAccordion">
+                  
+                  <div class="accordion-item expanded">
+                    <div class="accordion-header">
+                      <div class="accordion-title-box">
+                        <i data-lucide="target" style="width:0.8rem; height:0.8rem;"></i>
+                        <span>1. Objetivo Principal</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="accordion-arrow"></i>
+                    </div>
+                    <div class="accordion-content">
+                      Conciliar con precisión absoluta todas las cuentas contables, facturas físicas y saldos virtuales de la empresa correspondientes al periodo del mes vencido, asegurando el orden fiscal y financiero.
+                    </div>
+                  </div>
+
+                  <div class="accordion-item">
+                    <div class="accordion-header">
+                      <div class="accordion-title-box">
+                        <i data-lucide="users" style="width:0.8rem; height:0.8rem;"></i>
+                        <span>2. Roles y Responsables</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="accordion-arrow"></i>
+                    </div>
+                    <div class="accordion-content">
+                      <ul>
+                        <li><strong>Contador General:</strong> Recopila, revisa y concilia las facturas.</li>
+                        <li><strong>Gerente de Administración:</strong> Supervisa y aprueba el cierre contable mensual.</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="accordion-item">
+                    <div class="accordion-header">
+                      <div class="accordion-title-box">
+                        <i data-lucide="wrench" style="width:0.8rem; height:0.8rem;"></i>
+                        <span>3. Herramientas o Softwares Utilizados</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="accordion-arrow"></i>
+                    </div>
+                    <div class="accordion-content">
+                      HubSpot ERP, Microsoft Excel Avanzado, SAP Business One para facturación oficial de la marca.
+                    </div>
+                  </div>
+
+                  <div class="accordion-item">
+                    <div class="accordion-header">
+                      <div class="accordion-title-box">
+                        <i data-lucide="milestone" style="width:0.8rem; height:0.8rem;"></i>
+                        <span>4. Procedimiento Paso a Paso</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="accordion-arrow"></i>
+                    </div>
+                    <div class="accordion-content" style="padding: 1rem 0.85rem;">
+                      
+                      <!-- steps list timeline visual -->
+                      <div class="steps-timeline-mock">
+                        
+                        <div class="step-timeline-node">
+                          <div class="step-node-header">Paso 1: Recopilación de Recibos</div>
+                          <div class="step-node-subfields">
+                            <div class="step-subfield"><span>Acción:</span> Reunir todas las facturas y comprobantes físicos en caja.</div>
+                            <div class="step-subfield"><span>Herramienta:</span> Archivo manual y escáner digital.</div>
+                            <div class="step-subfield"><span>Descripción:</span> Clasificar los documentos según fecha de emisión y departamento.</div>
+                          </div>
+                        </div>
+
+                        <div class="step-timeline-node">
+                          <div class="step-node-header">Paso 2: Registro Contable</div>
+                          <div class="step-node-subfields">
+                            <div class="step-subfield"><span>Acción:</span> Digitar y contrastar saldos contra la cuenta de HubSpot.</div>
+                            <div class="step-subfield"><span>Herramienta:</span> HubSpot ERP.</div>
+                            <div class="step-subfield"><span>Descripción:</span> Verificar que no existan cobros duplicados ni desajustes.</div>
+                          </div>
+                        </div>
+
+                        <div class="step-timeline-node">
+                          <div class="step-node-header">Paso 3: Conciliación de Cierre</div>
+                          <div class="step-node-subfields">
+                            <div class="step-subfield"><span>Acción:</span> Emitir reporte consolidado y enviar para aprobación formal.</div>
+                            <div class="step-subfield"><span>Herramienta:</span> Excel, Correo Electrónico.</div>
+                            <div class="step-subfield"><span>Descripción:</span> El Gerente valida los saldos consolidados contra extractos.</div>
+                          </div>
+                        </div>
+
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- TAB 2: SIKAI Flow Diagram viewport -->
+                <div class="flow-diagram-container" id="viewSopFlow" style="display: none;">
+                  <div class="flow-selector-row">
+                    <span>Visor de Diagramas SIKAI Flow</span>
+                    <div class="flow-direction-switch" id="flowDirectionSwitch">
+                      <button class="flow-direction-btn active" id="flowDirLR">Horizontal</button>
+                      <button class="flow-direction-btn" id="flowDirTD">Vertical (PDF)</button>
+                    </div>
+                  </div>
+                  <div class="flowchart-viewport">
+                    <!-- Flow nodes layout -->
+                    <div class="interactive-flowchart" id="flowNodesBox">
+                      <div class="flow-node-box"><i data-lucide="play" style="width:0.6rem;"></i> Inicio</div>
+                      <div class="flow-node-box"><i data-lucide="file-text" style="width:0.6rem;"></i> Recopilar Facturas</div>
+                      <div class="flow-node-box"><i data-lucide="activity" style="width:0.6rem;"></i> Registrar ERP</div>
+                      <div class="flow-node-box"><i data-lucide="award" style="width:0.6rem;"></i> Cierre Listo</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- TAB 3: SIKAI Boost recommendations -->
+                <div class="boost-tab-container" id="viewSopBoost" style="display: none;">
+                  <div class="boost-intro">Análisis Inteligente de Procesos (IA)</div>
+                  
+                  <div class="boost-cards-grid">
+                    
+                    <div class="boost-card bottleneck highlighted" id="bCard1">
+                      <div class="boost-tag">
+                        <i data-lucide="alert-triangle" style="width:0.75rem; height:0.75rem;"></i> Cuello de Botella
+                      </div>
+                      <div class="boost-card-text">
+                        El proceso de digitar manualmente los recibos físicos en HubSpot es lento y propenso a errores tipográficos.
+                      </div>
+                    </div>
+
+                    <div class="boost-card improvement" id="bCard2">
+                      <div class="boost-tag">
+                        <i data-lucide="zap" style="width:0.75rem; height:0.75rem;"></i> SIKAI Boost Mejora
+                      </div>
+                      <div class="boost-card-text">
+                        Implementar un escaneo automático con OCR en lote para extraer valores y subirlos a HubSpot directamente en segundos.
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
         </div>
 
-        <!-- Tab Pane 2: Voice Agent -->
-        <div class="pane" id="voice">
-          <div class="pane-header">
-            <span class="pane-tag tag-cyan">Control Manos Libres</span>
-            <h2 class="pane-title">SIKAI Voice Agent</h2>
-            <p class="pane-desc">Explica tus flujos de trabajo hablando de forma 100% natural. Nuestra IA procesa tu voz en tiempo real y, gracias a nuestro <strong>algoritmo de transcripción continua sin duplicados</strong>, genera un texto limpio y coherente sin importar las pausas o repeticiones involuntarias al hablar.</p>
+        <!-- ── INTERACTIVE PLAYBACK TIMELINE CONTROLLER ── -->
+        <div class="video-controller-bar">
+          
+          <!-- Timeline scrubber slider bar -->
+          <div class="scrub-line-container" id="timelineScrubber">
+            <div class="scrub-progress" id="progressScrubber"></div>
+            
+            <!-- Chapter dot pins on timeline -->
+            <div class="timeline-dot active-dot" style="left: 0%;" title="Formulario Manual" id="pin0"></div>
+            <div class="timeline-dot" style="left: 17%;" title="Dictado SIKAI Voice" id="pin15"></div>
+            <div class="timeline-dot" style="left: 41%;" title="Diagrama SIKAI Flow" id="pin35"></div>
+            <div class="timeline-dot" style="left: 65%;" title="SIKAI Boost" id="pin55"></div>
+            <div class="timeline-dot" style="left: 82%;" title="Exportación PDF" id="pin70"></div>
           </div>
-          <div class="visual-sandbox">
-            <div class="orb-visualizer">
-              <div class="orb-nebula" id="voiceOrb" title="Simular dictado de voz">
-                <i data-lucide="mic" style="width: 1.5rem; height: 1.5rem; stroke-width: 2.5;"></i>
-              </div>
-              
-              <div class="waveform-visual" id="voiceWave">
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-                <div class="wave-bar"></div>
-              </div>
-              
-              <div class="voice-simulate-box" id="voiceText">
-                Haz clic en el micrófono de arriba para simular el dictado de voz por IA...
-              </div>
-              
-              <button class="voice-simulate-btn" id="voiceBtn">
-                <i data-lucide="play" style="width: 0.8rem; height: 0.8rem;"></i> Simular Grabación
+
+          <!-- Video control actions -->
+          <div class="playback-action-row">
+            
+            <div class="playback-main-buttons">
+              <!-- Play / Pause -->
+              <button class="playback-btn main-play-pause-btn" id="playPauseBtn" aria-label="Play/Pause">
+                <i data-lucide="play" id="playIcon"></i>
               </button>
-            </div>
-          </div>
-        </div>
+              
+              <!-- Skip backward -->
+              <button class="playback-btn" id="rewindBtn" aria-label="Rebobinar">
+                <i data-lucide="rotate-ccw" style="width: 1.15rem; height: 1.15rem;"></i>
+              </button>
 
-        <!-- Tab Pane 3: Process Diagram -->
-        <div class="pane" id="flow">
-          <div class="pane-header">
-            <span class="pane-tag tag-cyan">Diagrama Dinámico</span>
-            <h2 class="pane-title">SIKAI Flow Diagramas</h2>
-            <p class="pane-desc">Visualiza la secuencia lógica de tus procesos al instante. La IA compila de forma automática un diagrama de flujo interactivo que puedes explorar con zoom y arrastre. Al exportar a PDF, el flujo de trabajo **se reorganiza verticalmente** de forma inteligente para que nunca se desborde o se corte en las hojas impresas.</p>
-          </div>
-          <div class="visual-sandbox">
-            <div class="flow-visualizer-box">
-              <div class="direction-switch">
-                <button class="direction-btn active" id="dirLR">Horizontal (LR)</button>
-                <button class="direction-btn" id="dirTD">Vertical (TD - PDF)</button>
-              </div>
-              <div class="diagram-viewport">
-                <div class="nodes-container" id="diagramNodes">
-                  <div class="node-mock"><i data-lucide="play-circle" style="width:0.8rem;"></i> Inicio</div>
-                  <div class="node-mock"><i data-lucide="edit" style="width:0.8rem;"></i> Redacción</div>
-                  <div class="node-mock"><i data-lucide="check-square" style="width:0.8rem;"></i> Aprobación</div>
-                </div>
-              </div>
+              <!-- digital timestamp -->
+              <div class="digital-timestamp" id="digitalTimestamp">00:00 / 01:25</div>
             </div>
-          </div>
-        </div>
 
-        <!-- Tab Pane 4: Boost Strategies -->
-        <div class="pane" id="boost">
-          <div class="pane-header">
-            <span class="pane-tag tag-purple">Estrategia Quirúrgica</span>
-            <h2 class="pane-title">SIKAI Boost de Eficiencia</h2>
-            <p class="pane-desc">Tu proceso no solo queda documentado; es optimizado de inmediato. Nuestra Inteligencia Artificial detecta de forma autónoma los cuellos de botella del flujo de trabajo y te propone de inmediato estrategias de automatización concretas, mejoras organizativas y las herramientas idóneas para acelerar el ritmo en tu empresa.</p>
-          </div>
-          <div class="visual-sandbox">
-            <div class="boost-grid">
-              <div class="boost-card bottleneck">
-                <div class="boost-card-title">
-                  <i data-lucide="alert-triangle" style="width: 0.8rem; height: 0.8rem;"></i> Cuello de Botella
-                </div>
-                <div class="boost-card-body">La aprobación de contenidos por correo electrónico genera retrasos de hasta 48 horas.</div>
-              </div>
-              <div class="boost-card improvement">
-                <div class="boost-card-title">
-                  <i data-lucide="zap" style="width: 0.8rem; height: 0.8rem;"></i> SIKAI Boost Propuesta
-                </div>
-                <div class="boost-card-body">Automatizar notificaciones directas al canal de Slack usando Slack-Bot o Trello Alerts.</div>
-              </div>
+            <!-- Mode badge indicator -->
+            <div class="mode-interactive-badge" id="modeBadge">
+              <i data-lucide="tv-2" style="width: 0.85rem; height: 0.85rem;" id="badgeIcon"></i>
+              <span id="badgeText">REPRODUCIENDO GUÍA</span>
             </div>
-          </div>
-        </div>
 
-        <!-- Tab Pane 5: PDF Export -->
-        <div class="pane" id="export">
-          <div class="pane-header">
-            <span class="pane-tag">Documento Corporativo</span>
-            <h2 class="pane-title">Exportación Premium a PDF</h2>
-            <p class="pane-desc">Exporta tu documentación corporativa lista para imprimir de forma impecable. El sistema genera un PDF bien estructurado con colores institucionales que oculta los elementos interactivos de pantalla (como el enlace de regreso), expande todas las secciones automáticamente y reserva **exactamente una sola hoja** para que el diagrama de procesos se lea sin interrupciones.</p>
           </div>
-          <div class="visual-sandbox">
-            <div class="sheet-visualizer">
-              <div class="sheet-mock">
-                <div class="sheet-bar accent"></div>
-                <div class="sheet-bar"></div>
-                <div class="sheet-bar"></div>
-                <div class="sheet-bar flow-bar"></div>
-              </div>
-            </div>
-          </div>
+
         </div>
 
       </div>
 
-    </section>
+      <!-- RIGHT COLUMN: Narrator & Playlist Chapters -->
+      <div class="narrator-sidebar">
+        
+        <!-- Narrator Hologram Box -->
+        <div class="avatar-panel">
+          <div class="holo-sphere-box" id="avatarSphere">
+            <i data-lucide="bot" style="width: 1.85rem; height: 1.85rem; stroke-width: 1.75;"></i>
+          </div>
+          <div class="holo-narrator-title">Asistente SIKAI IA</div>
+          <div class="speech-narration-card" id="narratorCard">
+            Cargando el narrador virtual...
+          </div>
+        </div>
 
-    <!-- Bottom premium CTA -->
-    <footer class="guide-footer">
-      <h2 class="footer-title">Lleva tus Procesos al Siguiente Nivel</h2>
-      <p class="footer-desc">Regístrate en SIKAI SOP Generator y comienza a documentar y optimizar con el poder de la Inteligencia Artificial.</p>
-      <a href="/dashboard" class="footer-btn">
-        <i data-lucide="sparkles" style="width: 1.1rem; height: 1.1rem;"></i>
+        <!-- Chapters Playlist stack -->
+        <div class="playlist-cards" id="playlistBox">
+          
+          <div class="playlist-item active" data-chapter-time="0" id="chapterCard0">
+            <div class="playlist-item-info">
+              <span class="playlist-item-title">1. Formulario Manual</span>
+              <span class="playlist-item-desc">Estructuración limpia y ágil</span>
+            </div>
+            <span class="playlist-item-badge">1</span>
+          </div>
+
+          <div class="playlist-item accent-cyan" data-chapter-time="15" id="chapterCard15">
+            <div class="playlist-item-info">
+              <span class="playlist-item-title">2. Dictado SIKAI Voice</span>
+              <span class="playlist-item-desc">Dictado inteligente sin duplicados</span>
+            </div>
+            <span class="playlist-item-badge">2</span>
+          </div>
+
+          <div class="playlist-item accent-cyan" data-chapter-time="35" id="chapterCard35">
+            <div class="playlist-item-info">
+              <span class="playlist-item-title">3. Diagrama SIKAI Flow</span>
+              <span class="playlist-item-desc">Flujogramas listos para imprimir</span>
+            </div>
+            <span class="playlist-item-badge">3</span>
+          </div>
+
+          <div class="playlist-item accent-purple" data-chapter-time="55" id="chapterCard55">
+            <div class="playlist-item-info">
+              <span class="playlist-item-title">4. SIKAI Boost</span>
+              <span class="playlist-item-desc">Análisis de cuellos de botella</span>
+            </div>
+            <span class="playlist-item-badge">4</span>
+          </div>
+
+          <div class="playlist-item" data-chapter-time="70" id="chapterCard70">
+            <div class="playlist-item-info">
+              <span class="playlist-item-title">5. Exportación Premium</span>
+              <span class="playlist-item-desc">PDF formateado en una hoja</span>
+            </div>
+            <span class="playlist-item-badge">5</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bottom premium branding footer CTA -->
+    <div class="guide-footer-block">
+      <h2 class="guide-footer-title">Revoluciona tu Operación con SIKAI CX</h2>
+      <p class="guide-footer-desc">Elabora manuales operativos y diagramas lógicos en segundos a partir de texto o dictados continuos de voz.</p>
+      <a href="/dashboard" class="guide-cta-btn">
+        <i data-lucide="zap" style="width: 0.95rem; height: 0.95rem;"></i>
         Comenzar Ahora Gratis
       </a>
-    </footer>
+    </div>
 
   </div>
 
@@ -1030,107 +2130,662 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
-    // ── Theme Switcher Logic ──
+    // ── Theme Switcher ──
     const themeToggler = document.getElementById('themeToggler');
-    
-    // Check local storage or default to dark
     const savedTheme = localStorage.getItem('sikai-theme') || 'dark';
     if (savedTheme === 'light') {
       document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.add('dark');
     }
-
     themeToggler.addEventListener('click', () => {
       const isLight = document.documentElement.classList.toggle('light');
       localStorage.setItem('sikai-theme', isLight ? 'light' : 'dark');
     });
 
-    // ── Tab Explorer Logic ──
-    const tabs = document.querySelectorAll('.explorer-tab-btn');
-    const panes = document.querySelectorAll('.pane');
+    // Toggle dropdown mockup
+    const avatarTrigger = document.getElementById('avatarTrigger');
+    const avatarDropdown = document.getElementById('avatarDropdown');
+    avatarTrigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      avatarDropdown.classList.toggle('active');
+    });
+    document.addEventListener('click', () => {
+      avatarDropdown.classList.remove('active');
+    });
 
-    tabs.forEach(tab => {
-      tab.addEventListener('click', () => {
-        // Remove active class from all tabs & panes
-        tabs.forEach(t => t.classList.remove('active'));
-        panes.forEach(p => p.classList.remove('active'));
-        
-        // Add active class to current tab
-        tab.classList.add('active');
-        
-        // Show target pane
-        const target = tab.getAttribute('data-target');
-        const targetPane = document.getElementById(target);
-        if (targetPane) {
-          targetPane.classList.add('active');
+    // ── VIDEO PLAYBACK CONFIGURATION ──
+    const totalDuration = 85; // 1:25 in seconds
+    let currentTime = 0;
+    let isPlaying = false;
+    let autoPlaybackInterval = null;
+
+    const playPauseBtn = document.getElementById('playPauseBtn');
+    const playIcon = document.getElementById('playIcon');
+    const rewindBtn = document.getElementById('rewindBtn');
+    const digitalTimestamp = document.getElementById('digitalTimestamp');
+    const progressScrubber = document.getElementById('progressScrubber');
+    const modeBadge = document.getElementById('modeBadge');
+    const badgeText = document.getElementById('badgeText');
+    const badgeIcon = document.getElementById('badgeIcon');
+    const narratorCard = document.getElementById('narratorCard');
+    const timelineScrubber = document.getElementById('timelineScrubber');
+
+    // Browser URL selector reference
+    const browserUrl = document.getElementById('browserUrl');
+
+    // Simulator view panels
+    const screenCreator = document.getElementById('screenCreator');
+    const screenResults = document.getElementById('screenResults');
+    const appLoader = document.getElementById('appLoader');
+    const loaderText = document.getElementById('loaderText');
+
+    // Form switches
+    const tabManualSwitch = document.getElementById('tabManualSwitch');
+    const tabVoiceSwitch = document.getElementById('tabVoiceSwitch');
+    const voiceModal = document.getElementById('voiceModal');
+    const voiceTimer = document.getElementById('voiceTimer');
+    const voiceText = document.getElementById('voiceText');
+    const voiceStatusBadge = document.getElementById('voiceStatusBadge');
+
+    // Accordion tab buttons and layouts
+    const tabResultSop = document.getElementById('tabResultSop');
+    const tabResultFlow = document.getElementById('tabResultFlow');
+    const tabResultBoost = document.getElementById('tabResultBoost');
+
+    const viewSopAccordion = document.getElementById('viewSopAccordion');
+    const viewSopFlow = document.getElementById('viewSopFlow');
+    const viewSopBoost = document.getElementById('viewSopBoost');
+
+    // Flow directions
+    const flowDirLR = document.getElementById('flowDirLR');
+    const flowDirTD = document.getElementById('flowDirTD');
+    const flowNodesBox = document.getElementById('flowNodesBox');
+
+    // PDF Alerts
+    const pdfResultBtn = document.getElementById('pdfResultBtn');
+    const pdfAlert = document.getElementById('pdfAlert');
+    const pdfAlertClose = document.getElementById('pdfAlertClose');
+
+    // SIKAI Boost cards
+    const bCard1 = document.getElementById('bCard1');
+    const bCard2 = document.getElementById('bCard2');
+
+    // Real-time typing variables
+    const formMockTexts = {
+      title: "Cierre de Caja Mensual",
+      roles: "Contador, Gerente",
+      objective: "Conciliar las cuentas contables y facturas del mes vencido.",
+      tools: "Excel, HubSpot ERP, SAP",
+      bottlenecks: "El registro manual de comprobantes físicos en caja genera demoras contables.",
+      step1: "Reunir todas las facturas y comprobantes físicos en caja del mes..."
+    };
+
+    const voiceScriptTexts = [
+      "Para cerrar la caja... eh... sí...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego... ejem... registramos en HubSpot ERP...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego registramos en HubSpot ERP. (Transcripción optimizada y limpia de pausas por la IA)"
+    ];
+
+    // Narration bubbles script
+    const timelineChapters = [
+      { start: 0, end: 15, key: 'manual', bubble: "¡Bienvenido a la guía de <strong>SIKAI SOP Generator</strong>! En este capítulo exploramos el <strong>Formulario Manual</strong>. Con campos diseñados para guiarte de forma intuitiva, puedes detallar y documentar flujos operativos complejos en segundos, indicando roles, herramientas y cuellos de botella." },
+      { start: 15, end: 35, key: 'voice', bubble: "Capítulo 2: <strong>SIKAI Voice Dictation</strong>. ¿Prefieres hablar? El dictado continuo de voz con IA te asiste en todo momento. Nuestra tecnología de transcripción interactiva filtra automáticamente las pausas, balbuceos y duplicados del micrófono en tiempo real." },
+      { start: 35, end: 55, key: 'flow', bubble: "Capítulo 3: <strong>SIKAI Flow</strong>. A partir de tu texto o voz, la IA compila al instante un flujograma lógico. Utiliza la vista horizontal en pantalla para visualización rápida y cambia a <strong>Vertical (TD)</strong> con un solo clic para asegurar una impresión perfecta." },
+      { start: 55, end: 70, key: 'boost', bubble: "Capítulo 4: <strong>SIKAI Boost</strong>. El sistema procesa tu proceso quirúrgicamente, detecta los <strong>cuellos de botella</strong> con un brillo de advertencia y te propone al instante herramientas y mejoras de automatización idóneas." },
+      { start: 70, end: 85, key: 'print', bubble: "Capítulo 5: <strong>Exportación Premium</strong>. Al hacer clic en Exportar PDF, el sistema optimiza y adapta automáticamente todo el SOP con su diagrama en una sola hoja A4 limpia, ocultando botones y enlaces innecesarios para entregar un manual pulido." }
+    ];
+
+    // ── NARRATION TIMELINE CORE FUNCTIONS ──
+    function formatClock(secs) {
+      const mins = Math.floor(secs / 60);
+      const remainingSecs = secs % 60;
+      return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
+    }
+
+    function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      playIcon.setAttribute('data-lucide', 'pause');
+      lucide.createIcons();
+      
+      // Update badge visual
+      modeBadge.classList.remove('sandbox-on');
+      badgeText.innerText = "REPRODUCIENDO GUÍA";
+      badgeIcon.setAttribute('data-lucide', 'tv-2');
+      lucide.createIcons();
+
+      autoPlaybackInterval = setInterval(() => {
+        currentTime++;
+        if (currentTime > totalDuration) {
+          currentTime = 0; // loop
         }
+        updateGuideState();
+      }, 1000);
+    }
+
+    function pause() {
+      if (!isPlaying) return;
+      isPlaying = false;
+      playIcon.setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+      
+      // Update badge visual to sandbox mode
+      modeBadge.classList.add('sandbox-on');
+      badgeText.innerText = "MODO INTERACTIVO ACTIVO";
+      badgeIcon.setAttribute('data-lucide', 'gamepad-2');
+      lucide.createIcons();
+
+      clearInterval(autoPlaybackInterval);
+    }
+
+    // Scrubber click handler
+    timelineScrubber.addEventListener('click', (e) => {
+      const rect = timelineScrubber.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickedPercent = clickX / rect.width;
+      currentTime = Math.floor(clickedPercent * totalDuration);
+      updateGuideState();
+    });
+
+    playPauseBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        pause();
+      } else {
+        play();
+      }
+    });
+
+    rewindBtn.addEventListener('click', () => {
+      currentTime = 0;
+      updateGuideState();
+    });
+
+    // Chapter clicking
+    document.querySelectorAll('.playlist-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const time = parseInt(item.getAttribute('data-chapter-time'), 10);
+        currentTime = time;
+        updateGuideState();
+        play();
       });
     });
 
-    // ── Interactive Simulation 1: Voice Recorder ──
-    const voiceOrb = document.getElementById('voiceOrb');
-    const voiceBtn = document.getElementById('voiceBtn');
-    const voiceWave = document.getElementById('voiceWave');
-    const voiceText = document.getElementById('voiceText');
-    let recordingInterval = null;
-    let isRecording = false;
+    // Update global timeline visual and state
+    function updateGuideState() {
+      const percent = (currentTime / totalDuration) * 100;
+      progressScrubber.style.width = `${percent}%`;
 
-    const phrases = [
-      "Escuchando...",
-      "Para registrar un nuevo cliente...",
-      "Para registrar un nuevo cliente primero enviamos un correo de bienvenida...",
-      "Para registrar un nuevo cliente primero enviamos un correo de bienvenida y luego registramos los datos en el CRM de HubSpot...",
-      "¡Transcripción terminada con éxito! (Limpia y libre de duplicados de voz por IA)"
-    ];
-
-    function runVoiceSimulation() {
-      if (isRecording) return;
-      isRecording = true;
-      voiceOrb.classList.add('recording');
-      voiceWave.classList.add('active');
-      voiceBtn.disabled = true;
-      voiceBtn.innerHTML = '<i data-lucide="loader" class="animate-spin"></i> Grabando Voz...';
-      lucide.createIcons();
-
-      let step = 0;
-      voiceText.innerText = phrases[0];
-
-      recordingInterval = setInterval(() => {
-        step++;
-        if (step < phrases.length) {
-          voiceText.innerText = phrases[step];
+      // Update pins passed
+      document.querySelectorAll('.timeline-dot').forEach(dot => {
+        const pinId = parseInt(dot.id.replace('pin', ''), 10);
+        if (currentTime >= pinId) {
+          dot.classList.add('active-dot');
         } else {
-          clearInterval(recordingInterval);
-          voiceOrb.classList.remove('recording');
-          voiceWave.classList.remove('active');
-          voiceBtn.disabled = false;
-          voiceBtn.innerHTML = '<i data-lucide="play"></i> Volver a Simular';
-          lucide.createIcons();
-          isRecording = false;
+          dot.classList.remove('active-dot');
         }
-      }, 1500);
+      });
+
+      // Digital time stamp
+      digitalTimestamp.innerText = `${formatClock(currentTime)} / ${formatClock(totalDuration)}`;
+
+      // Identify active segment
+      let activeSeg = timelineChapters[0];
+      for (const seg of timelineChapters) {
+        if (currentTime >= seg.start && currentTime < seg.end) {
+          activeSeg = seg;
+          break;
+        }
+      }
+
+      // Sync narrator subtitle and chapter listing cards
+      narratorCard.innerHTML = activeSeg.bubble;
+
+      document.querySelectorAll('.playlist-item').forEach(card => {
+        const cTime = parseInt(card.getAttribute('data-chapter-time'), 10);
+        const index = Array.from(card.parentNode.children).indexOf(card);
+        const nextCard = card.parentNode.children[index + 1];
+        const nextTime = nextCard ? parseInt(nextCard.getAttribute('data-chapter-time'), 10) : totalDuration;
+
+        if (currentTime >= cTime && currentTime < nextTime) {
+          card.classList.add('active');
+        } else {
+          card.classList.remove('active');
+        }
+      });
+
+      // Run App Screen Animations based on time
+      simulateAppWorkflow(activeSeg.key);
     }
 
-    voiceOrb.addEventListener('click', runVoiceSimulation);
-    voiceBtn.addEventListener('click', runVoiceSimulation);
+    // ── APPLICATION WORKFLOW SIMULATOR ──
+    let isTypingRunning = false;
+    let stepCountGlobal = 1;
 
-    // ── Interactive Simulation 2: Flow Layout Switcher ──
-    const dirLR = document.getElementById('dirLR');
-    const dirTD = document.getElementById('dirTD');
-    const diagramNodes = document.getElementById('diagramNodes');
+    function simulateAppWorkflow(chapterKey) {
+      // Hide full loaders & alert panels by default in auto-video
+      appLoader.classList.remove('active');
+      pdfAlert.classList.remove('active');
 
-    dirLR.addEventListener('click', () => {
-      dirLR.classList.add('active');
-      dirTD.classList.remove('active');
-      diagramNodes.classList.remove('vertical');
+      if (chapterKey === 'manual') {
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard";
+        screenCreator.style.display = 'flex';
+        screenResults.classList.remove('active');
+        voiceModal.classList.remove('active');
+        tabManualSwitch.classList.add('active');
+        tabVoiceSwitch.classList.remove('active');
+
+        // Typing effect synced with progression
+        const elapsed = currentTime;
+        
+        // Populate inputs progressively
+        document.getElementById('fieldTitle').value = elapsed > 2 ? formMockTexts.title : "Cier";
+        document.getElementById('fieldRoles').value = elapsed > 4 ? formMockTexts.roles : "";
+        document.getElementById('fieldObjective').value = elapsed > 7 ? formMockTexts.objective : "";
+        document.getElementById('fieldTools').value = elapsed > 9 ? formMockTexts.tools : "";
+        document.getElementById('fieldBottlenecks').value = elapsed > 11 ? formMockTexts.bottlenecks : "";
+        
+        // Dynamically add a step mock input
+        const stepContainer = document.getElementById('stepsListContainer');
+        if (elapsed > 13) {
+          stepContainer.innerHTML = `
+            <div class="step-item-card" data-step-id="1">
+              <span class="step-index-badge">1</span>
+              <input type="text" class="app-field step-input-field" value="${formMockTexts.step1}">
+              <div class="step-delete-btn"><i data-lucide="trash-2" style="width: 0.75rem; height: 0.75rem;"></i></div>
+            </div>`;
+          lucide.createIcons();
+        } else {
+          stepContainer.innerHTML = `
+            <div class="step-item-card" data-step-id="1">
+              <span class="step-index-badge">1</span>
+              <input type="text" class="app-field step-input-field" placeholder="Paso 1 del proceso...">
+              <div class="step-delete-btn"><i data-lucide="trash-2" style="width: 0.75rem; height: 0.75rem;"></i></div>
+            </div>`;
+          lucide.createIcons();
+        }
+
+      } else if (chapterKey === 'voice') {
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard?voice=active";
+        screenCreator.style.display = 'flex';
+        screenResults.classList.remove('active');
+        voiceModal.classList.add('active');
+        tabManualSwitch.classList.remove('active');
+        tabVoiceSwitch.classList.add('active');
+
+        // Timer simulation
+        const offset = currentTime - 15;
+        voiceTimer.innerText = `00:${offset.toString().padStart(2, '0')} / 08:00`;
+
+        // Sound waves bounces
+        const waves = document.getElementById('voiceWaves');
+        if (offset < 18) {
+          voiceText.innerText = voiceScriptTexts[0];
+          voiceText.classList.add('filled');
+          voiceStatusBadge.innerText = "Escuchando micrófono...";
+        } else if (offset < 24) {
+          voiceText.innerText = voiceScriptTexts[1];
+          voiceStatusBadge.innerText = "Escuchando micrófono...";
+        } else if (offset < 30) {
+          voiceText.innerText = voiceScriptTexts[2];
+          voiceStatusBadge.innerText = "Escuchando micrófono...";
+        } else {
+          voiceText.innerText = voiceScriptTexts[3];
+          voiceStatusBadge.innerText = "Limpieza Inteligente Completada ✓";
+          waves.querySelectorAll('.oscilloscope-bar').forEach(b => b.classList.remove('active-wave'));
+        }
+
+        // Trigger loading screen right before chapter ends
+        if (offset >= 19) {
+          waves.querySelectorAll('.oscilloscope-bar').forEach(b => b.classList.add('active-wave'));
+        }
+
+      } else if (chapterKey === 'flow') {
+        screenCreator.style.display = 'none';
+        screenResults.classList.add('active');
+        
+        tabResultSop.classList.remove('active');
+        tabResultFlow.classList.add('active');
+        tabResultBoost.classList.remove('active');
+
+        viewSopAccordion.style.display = 'none';
+        viewSopFlow.style.display = 'flex';
+        viewSopBoost.style.display = 'none';
+
+        // Toggle layout directions automatically
+        const offset = currentTime - 35;
+        if (offset > 11) {
+          browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow-pdf";
+          flowDirLR.classList.remove('active');
+          flowDirTD.classList.add('active');
+          flowNodesBox.classList.add('vertical');
+        } else {
+          browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow";
+          flowDirLR.classList.add('active');
+          flowDirTD.classList.remove('active');
+          flowNodesBox.classList.remove('vertical');
+        }
+
+      } else if (chapterKey === 'boost') {
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#boost";
+        screenCreator.style.display = 'none';
+        screenResults.classList.add('active');
+
+        tabResultSop.classList.remove('active');
+        tabResultFlow.classList.remove('active');
+        tabResultBoost.classList.add('active');
+
+        viewSopAccordion.style.display = 'none';
+        viewSopFlow.style.display = 'none';
+        viewSopBoost.style.display = 'flex';
+
+        // Glowing cards focus
+        const offset = currentTime - 55;
+        if (offset > 9) {
+          bCard1.classList.remove('highlighted');
+          bCard2.classList.add('highlighted');
+        } else if (offset > 3) {
+          bCard1.classList.add('highlighted');
+          bCard2.classList.remove('highlighted');
+        } else {
+          bCard1.classList.remove('highlighted');
+          bCard2.classList.remove('highlighted');
+        }
+
+      } else if (chapterKey === 'print') {
+        screenCreator.style.display = 'none';
+        screenResults.classList.add('active');
+
+        tabResultSop.classList.add('active');
+        tabResultFlow.classList.remove('active');
+        tabResultBoost.classList.remove('active');
+
+        viewSopAccordion.style.display = 'flex';
+        viewSopFlow.style.display = 'none';
+        viewSopBoost.style.display = 'none';
+
+        // Animate printing modal alert at the end of A4 export chapter
+        const offset = currentTime - 70;
+        if (offset > 7 && offset < 13) {
+          browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1?print=exporting";
+          pdfAlert.classList.add('active');
+        } else {
+          browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+          pdfAlert.classList.remove('active');
+        }
+      }
+    }
+
+    // ── SANDBOX INTERACTIVE LOGIC (Click actions when paused) ──
+
+    // 1. Tab switches in form creator
+    tabManualSwitch.addEventListener('click', () => {
+      if (isPlaying) pause();
+      voiceModal.classList.remove('active');
+      tabManualSwitch.classList.add('active');
+      tabVoiceSwitch.classList.remove('active');
+      browserUrl.innerText = "https://sop.sikaicx.com/dashboard";
     });
 
-    dirTD.addEventListener('click', () => {
-      dirTD.classList.add('active');
-      dirLR.classList.remove('active');
-      diagramNodes.classList.add('vertical');
+    tabVoiceSwitch.addEventListener('click', () => {
+      if (isPlaying) pause();
+      voiceModal.classList.add('active');
+      tabManualSwitch.classList.remove('active');
+      tabVoiceSwitch.classList.add('active');
+      browserUrl.innerText = "https://sop.sikaicx.com/dashboard?voice=active";
+      // Fill interactive hints
+      voiceText.innerText = "Presiona el micrófono para iniciar el dictado por voz real de tu navegador...";
+      voiceText.classList.remove('filled');
+      voiceStatusBadge.innerText = "Micrófono Listo";
+      voiceTimer.innerText = "00:00 / 08:00";
     });
+
+    voiceCancelBtn.addEventListener('click', () => {
+      voiceModal.classList.remove('active');
+      tabManualSwitch.classList.add('active');
+      tabVoiceSwitch.classList.remove('active');
+      stopVoiceRecording();
+    });
+
+    // 2. Real Speech Recognition in Sandbox Mode!
+    let speechRecognitionInstance = null;
+    let voiceSecondsCounter = 0;
+    let voiceSecondsInterval = null;
+
+    const voiceOrb = document.getElementById('voiceOrb');
+
+    voiceOrb.addEventListener('click', () => {
+      if (isPlaying) pause();
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("El dictado real por micrófono de tu navegador no es soportado. Por favor, usa Google Chrome o Microsoft Edge.");
+        return;
+      }
+
+      if (speechRecognitionInstance) {
+        // Stop
+        stopVoiceRecording();
+      } else {
+        // Start Speech
+        speechRecognitionInstance = new SpeechRecognition();
+        speechRecognitionInstance.continuous = true;
+        speechRecognitionInstance.interimResults = true;
+        speechRecognitionInstance.lang = 'es-ES';
+
+        voiceSecondsCounter = 0;
+        voiceTimer.innerText = "00:00 / 08:00";
+        voiceText.innerText = "Escuchando... Di algo con tu voz.";
+        voiceText.classList.add('filled');
+        voiceStatusBadge.innerText = "Escuchando en vivo (Habla ahora)";
+        voiceOrb.classList.add('recording');
+
+        speechRecognitionInstance.onresult = (event) => {
+          let currentText = '';
+          for (let i = 0; i < event.results.length; ++i) {
+            currentText += event.results[i][0].transcript;
+          }
+          voiceText.innerText = currentText;
+        };
+
+        speechRecognitionInstance.onerror = (err) => {
+          console.error(err);
+          stopVoiceRecording();
+        };
+
+        speechRecognitionInstance.onend = () => {
+          stopVoiceRecording();
+        };
+
+        speechRecognitionInstance.start();
+
+        voiceSecondsInterval = setInterval(() => {
+          voiceSecondsCounter++;
+          const mins = Math.floor(voiceSecondsCounter / 60);
+          const secs = voiceSecondsCounter % 60;
+          voiceTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / 08:00`;
+        }, 1000);
+      }
+    });
+
+    function stopVoiceRecording() {
+      if (speechRecognitionInstance) {
+        speechRecognitionInstance.stop();
+        speechRecognitionInstance = null;
+      }
+      if (voiceSecondsInterval) {
+        clearInterval(voiceSecondsInterval);
+        voiceSecondsInterval = null;
+      }
+      voiceOrb.classList.remove('recording');
+      voiceStatusBadge.innerText = "Grabación Finalizada ✓";
+    }
+
+    voiceSubmitBtn.addEventListener('click', () => {
+      stopVoiceRecording();
+      triggerMockGeneration("Conciliación de saldos por dictado de voz...");
+    });
+
+    // 3. Dynamic Steps Adding in Sandbox Form
+    const addStepBtn = document.getElementById('addStepBtn');
+    const stepsListContainer = document.getElementById('stepsListContainer');
+
+    addStepBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      stepCountGlobal++;
+      const stepDiv = document.createElement('div');
+      stepDiv.className = 'step-item-card';
+      stepDiv.setAttribute('data-step-id', stepCountGlobal);
+      stepDiv.innerHTML = `
+        <span class="step-index-badge">${stepCountGlobal}</span>
+        <input type="text" class="app-field step-input-field" placeholder="Paso ${stepCountGlobal} del proceso...">
+        <div class="step-delete-btn"><i data-lucide="trash-2" style="width: 0.75rem; height: 0.75rem;"></i></div>
+      `;
+      stepsListContainer.appendChild(stepDiv);
+      lucide.createIcons();
+
+      // Bind delete click
+      stepDiv.querySelector('.step-delete-btn').addEventListener('click', () => {
+        stepDiv.remove();
+        recalcStepIndices();
+      });
+    });
+
+    function recalcStepIndices() {
+      const cards = stepsListContainer.querySelectorAll('.step-item-card');
+      stepCountGlobal = cards.length;
+      cards.forEach((card, idx) => {
+        card.querySelector('.step-index-badge').innerText = idx + 1;
+      });
+    }
+
+    // 4. Generate SOP Trigger Loader
+    const generateSopBtn = document.getElementById('generateSopBtn');
+    generateSopBtn.addEventListener('click', () => {
+      const titleVal = document.getElementById('fieldTitle').value.trim();
+      triggerMockGeneration(titleVal || "Proceso de Operación");
+    });
+
+    function triggerMockGeneration(titleName) {
+      if (isPlaying) pause();
+      
+      // Open Loader
+      appLoader.classList.add('active');
+      loaderText.innerText = "Sincronizando con GPT-4...";
+
+      setTimeout(() => {
+        loaderText.innerText = "Estructurando pasos operativos...";
+      }, 1000);
+
+      setTimeout(() => {
+        loaderText.innerText = "Compilando diagrama de flujo SIKAI Flow...";
+      }, 2000);
+
+      setTimeout(() => {
+        appLoader.classList.remove('active');
+        screenCreator.style.display = 'none';
+        screenResults.classList.add('active');
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+
+        // Fill custom result title
+        document.getElementById('resultSopTitle').innerText = titleName;
+
+        // Reset to SIKAI SOP Tab by default
+        showResultsTab('sop');
+      }, 3000);
+    }
+
+    // 5. Result panel tabs toggling in sandbox
+    tabResultSop.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showResultsTab('sop');
+    });
+
+    tabResultFlow.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showResultsTab('flow');
+    });
+
+    tabResultBoost.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showResultsTab('boost');
+    });
+
+    function showResultsTab(tabName) {
+      tabResultSop.classList.remove('active');
+      tabResultFlow.classList.remove('active');
+      tabResultBoost.classList.remove('active');
+
+      viewSopAccordion.style.display = 'none';
+      viewSopFlow.style.display = 'none';
+      viewSopBoost.style.display = 'none';
+
+      if (tabName === 'sop') {
+        tabResultSop.classList.add('active');
+        viewSopAccordion.style.display = 'flex';
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#details";
+      } else if (tabName === 'flow') {
+        tabResultFlow.classList.add('active');
+        viewSopFlow.style.display = 'flex';
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow";
+      } else if (tabName === 'boost') {
+        tabResultBoost.classList.add('active');
+        viewSopBoost.style.display = 'flex';
+        browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1#boost";
+      }
+    }
+
+    // 6. Accordion expand/collapse in results
+    document.querySelectorAll('.accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        if (isPlaying) pause();
+        const item = header.parentNode;
+        item.classList.toggle('expanded');
+      });
+    });
+
+    // 7. SIKAI Flow Diagram horizontal/vertical toggling
+    flowDirLR.addEventListener('click', () => {
+      if (isPlaying) pause();
+      flowDirLR.classList.add('active');
+      flowDirTD.classList.remove('active');
+      flowNodesBox.classList.remove('vertical');
+    });
+
+    flowDirTD.addEventListener('click', () => {
+      if (isPlaying) pause();
+      flowDirTD.classList.add('active');
+      flowDirLR.classList.remove('active');
+      flowNodesBox.classList.add('vertical');
+    });
+
+    // 8. PDF Export success alert dialog trigger
+    pdfResultBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      pdfAlert.classList.add('active');
+      browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1?print=exporting";
+    });
+
+    pdfAlertClose.addEventListener('click', () => {
+      pdfAlert.classList.remove('active');
+      browserUrl.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+    });
+
+    // 9. Copy to clipboard button feedback
+    const copyResultBtn = document.getElementById('copyResultBtn');
+    copyResultBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      copyResultBtn.innerHTML = `<i data-lucide="check" style="width:0.75rem; height:0.75rem; color:#10b981;"></i> Copiado`;
+      lucide.createIcons();
+      setTimeout(() => {
+        copyResultBtn.innerHTML = `<i data-lucide="copy" style="width:0.75rem; height:0.75rem;"></i> Copiar`;
+        lucide.createIcons();
+      }, 2000);
+    });
+
+    // ── INITIAL LAUNCH ──
+    updateGuideState();
+    play(); // Auto-play the gorgeous interactive video by default
+
   </script>
 </body>
 </html>
