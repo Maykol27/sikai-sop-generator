@@ -41,7 +41,7 @@ export default function BillingClient({ userId }: { userId: string }) {
       <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-glow">Paquete SIKAI Starter</h2>
       
       <div className="bg-[#1a88ff]/10 border border-[#1a88ff]/30 rounded-xl p-6 mb-8 text-center">
-        <h3 className="text-3xl font-extrabold text-[#26d8c4] mb-2">$15 USD / $60.000 COP</h3>
+        <h3 className="text-3xl font-extrabold text-[#26d8c4] mb-2">15 USD</h3>
         <p className="text-gray-700 dark:text-gray-300 font-medium mb-4">Incluye 10 Créditos SIKAI (Generación de 10 SOPs con Inteligencia Artificial)</p>
         
         <a 
