@@ -159,6 +159,7 @@ export default function SopGeneratorForm() {
     }
 
     setIsRecording(true)
+    const baseText = globalVoiceText.trim()
     const recognition = new SpeechRecognition()
     recognitionRef.current = recognition
     recognition.lang = "es-ES" 
@@ -174,27 +175,20 @@ export default function SopGeneratorForm() {
     }
 
     recognition.onresult = (event: any) => {
-      let finalTranscript = ""
-      let interimTranscript = ""
-      for (let i = event.resultIndex; i < event.results.length; i++) {
+      let sessionFinal = ""
+      let sessionInterim = ""
+      for (let i = 0; i < event.results.length; i++) {
         const transcript = event.results[i][0].transcript
         if (event.results[i].isFinal) {
-          finalTranscript += transcript + " "
+          sessionFinal += transcript + " "
         } else {
-          interimTranscript += transcript
+          sessionInterim += transcript
         }
       }
       
-      const combined = finalTranscript || interimTranscript
-      if (combined) {
-        setGlobalVoiceText(prev => {
-          if (event.results[event.results.length - 1].isFinal) {
-            return prev + finalTranscript
-          } else {
-            // Provide smooth interim text updates
-            return prev.trim() + " " + interimTranscript
-          }
-        })
+      const newSessionText = (sessionFinal + sessionInterim).trim()
+      if (newSessionText) {
+        setGlobalVoiceText(baseText ? `${baseText} ${newSessionText}` : newSessionText)
       }
     }
 
@@ -338,7 +332,7 @@ export default function SopGeneratorForm() {
       <div className="glass-card p-6 md:p-8 max-w-4xl mx-auto">
         {/* Segmented Pill Selector (Formulario vs Voice) */}
         <div className="flex justify-center mb-8">
-          <div className="inline-flex p-1 bg-black/10 dark:bg-black/40 backdrop-blur-md rounded-2xl border border-black/10 dark:border-white/10 w-full max-w-md shadow-inner">
+          <div className="inline-flex p-1 bg-white/60 dark:bg-black/40 backdrop-blur-md rounded-2xl border border-[#1a88ff]/10 dark:border-white/10 w-full max-w-md shadow-inner">
             <button
               type="button"
               onClick={() => setMode('manual')}

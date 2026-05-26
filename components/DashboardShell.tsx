@@ -123,7 +123,7 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
         <div className="fixed bg-blob bg-blob-dark-blue w-[25rem] h-[25rem] bottom-0 left-1/3 pointer-events-none" style={{ animationDelay: '-10s' }} />
 
         {/* Flagship Fixed edge-to-edge Navbar */}
-        <header className="fixed top-0 left-0 right-0 h-16 z-50 border-b border-black/5 dark:border-white/10 bg-[#09101d]/85 dark:bg-[#09101d]/85 light:bg-[#ffffff]/85 backdrop-blur-md transition-all duration-300">
+        <header className="fixed top-0 left-0 right-0 h-16 z-50 border-b border-black/5 dark:border-white/10 bg-white/85 dark:bg-[#16181d]/85 backdrop-blur-md transition-all duration-300">
           <div className="max-w-7xl mx-auto h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
             {/* Left: Logo + Brand */}
             <Link href="/dashboard" className="flex items-center gap-3 group select-none">

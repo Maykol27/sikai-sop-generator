@@ -336,7 +336,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
   const sanitizedFlowCode = sanitizeMermaidCode(cleanMermaidCode)
 
   useEffect(() => {
-    if (activeTab === 'flow' && sanitizedFlowCode && !isEditing) {
+    if (sanitizedFlowCode && !isEditing) {
       mermaid.initialize({ 
         startOnLoad: true, 
         theme: theme === 'dark' ? 'dark' : 'default',
@@ -426,7 +426,9 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
   }
 
   return (
-    <div className="glass-card flex flex-col h-full min-h-[600px] border border-black/10 dark:border-white/10 shadow-2xl relative">
+    <>
+      {/* ── Screen-only Premium Interactive UI ── */}
+      <div className="glass-card flex flex-col h-full min-h-[600px] border border-black/10 dark:border-white/10 shadow-2xl relative screen-only">
       {/* Glow Effects in background */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-blob bg-blob-primary -mr-40 -mt-40 opacity-15 pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-80 h-80 bg-blob bg-blob-cyan -ml-40 -mb-40 opacity-15 pointer-events-none" />
@@ -503,7 +505,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
         </div>
 
         {/* Tab Buttons */}
-        <div className="flex items-center gap-2 bg-black/10 dark:bg-black/45 p-1 rounded-xl w-fit border border-black/5 dark:border-white/5">
+        <div className="flex items-center gap-2 bg-white/60 dark:bg-black/45 p-1 rounded-xl w-fit border border-[#1a88ff]/10 dark:border-white/5">
           <button
             onClick={() => setActiveTab('sop')}
             className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide transition-all cursor-pointer ${
@@ -518,7 +520,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
             onClick={() => setActiveTab('flow')}
             className={`px-5 py-2.5 rounded-lg text-sm font-bold tracking-wide transition-all cursor-pointer ${
               activeTab === 'flow' 
-                ? 'bg-gradient-to-r from-[#26d8c4] to-[#26d8c4]/80 text-white shadow-lg' 
+                ? 'bg-gradient-to-r from-[#26d8c4] to-[#26d8c4]/80 text-black shadow-lg shadow-[#26d8c4]/20' 
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
             }`}
           >
@@ -834,6 +836,168 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
         </div>
       </div>
     </div>
+
+    {/* ── Print-only Premium Structured Document Layout ── */}
+    <div className="print-only p-8 bg-white text-gray-900 font-body">
+      {/* Document Header */}
+      <div className="border-b-4 border-[#1a88ff] pb-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <span className="text-xs font-bold uppercase tracking-widest text-[#1a88ff]">DOCUMENTO SOP OFICIAL SIKAI CX</span>
+          <h1 className="text-3xl font-extrabold text-gray-950 mt-1 font-headline">{editedTitle}</h1>
+          <p className="text-sm text-gray-500 mt-1">Generado automáticamente por SIKAI SOP Generator AI</p>
+        </div>
+        <div className="px-4 py-2 border-2 border-gray-200 rounded-xl text-center min-w-[120px]">
+          <span className="text-[10px] font-bold text-gray-400 block uppercase tracking-wider">ESTADO</span>
+          <span className="text-sm font-extrabold text-[#26d8c4] uppercase font-headline">Optimizado IA</span>
+        </div>
+      </div>
+
+      {/* SOP Sections */}
+      <div className="space-y-8">
+        {sopSections.map((section, idx) => {
+          const isStepByStep = section.title.toLowerCase().includes('paso') || section.title.toLowerCase().includes('procedimiento')
+          const steps = isStepByStep ? parseSteps(section.content) : []
+
+          return (
+            <div key={idx} className="border-b border-gray-100 pb-8 last:border-b-0">
+              <h2 className="text-xl font-bold text-gray-950 mb-4 flex items-center gap-2 border-l-4 border-[#1a88ff] pl-3 font-headline">
+                {section.title}
+              </h2>
+              
+              {isStepByStep && steps.length > 0 ? (
+                <div className="space-y-6 mt-4">
+                  {steps.map((step, sIdx) => (
+                    <div key={sIdx} className="border border-gray-150 rounded-xl p-5 bg-gray-50/50">
+                      <h4 className="text-base font-bold text-gray-950 mb-3 flex items-center gap-2 font-headline">
+                        <span className="w-6 h-6 rounded-full bg-[#1a88ff]/10 text-[#1a88ff] border border-[#1a88ff]/20 flex items-center justify-center font-bold text-xs">
+                          {step.number}
+                        </span>
+                        {step.title}
+                      </h4>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+                        {step.accion && (
+                          <div className="bg-white rounded-lg p-3 border border-gray-250 shadow-sm">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#1a88ff] block mb-1">
+                              Acción
+                            </span>
+                            <p className="text-sm text-gray-800 font-medium">
+                              {step.accion}
+                            </p>
+                          </div>
+                        )}
+                        
+                        {step.herramienta && (
+                          <div className="bg-white rounded-lg p-3 border border-gray-250 shadow-sm">
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-[#26d8c4] block mb-1">
+                              Herramienta
+                            </span>
+                            <p className="text-sm text-gray-800 font-medium">
+                              {step.herramienta}
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                      
+                      {step.descripcion && (
+                        <div className="bg-white rounded-lg p-3 border border-gray-250 shadow-sm mt-3">
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500 block mb-1">
+                            Descripción
+                          </span>
+                          <p className="text-sm text-gray-700 leading-relaxed font-body">
+                            {step.descripcion}
+                          </p>
+                        </div>
+                      )}
+
+                      {!step.accion && !step.herramienta && !step.descripcion && step.rawContent && (
+                        <div className="prose prose-sm max-w-none text-gray-700 mt-2 whitespace-pre-line">
+                          <ReactMarkdown>{step.rawContent}</ReactMarkdown>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="prose prose-sm max-w-none text-gray-700 leading-relaxed whitespace-pre-line">
+                  <ReactMarkdown>{formatMarkdownSubpoints(section.content)}</ReactMarkdown>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Mermaid Process Diagram */}
+      {sanitizedFlowCode && (
+        <div className="print-page-break mt-12 border-t pt-8">
+          <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-l-4 border-[#26d8c4] pl-3 font-headline">
+            Diagrama de Procesos (SIKAI Flow)
+          </h2>
+          <div className="flex justify-center items-center p-4 bg-white border border-gray-200 rounded-xl shadow-inner min-h-[300px]">
+            <pre className="mermaid text-center w-full" key={`print-${theme}-${sanitizedFlowCode}`}>
+              {sanitizedFlowCode}
+            </pre>
+          </div>
+        </div>
+      )}
+
+      {/* Boost Strategies */}
+      {hasBoostRecs && (
+        <div className="print-page-break mt-12 border-t pt-8">
+          <h2 className="text-xl font-bold text-[#7c3aed] mb-6 flex items-center gap-2 border-l-4 border-[#7c3aed] pl-3 font-headline">
+            Estrategias de Optimización (SIKAI Boost)
+          </h2>
+          {boostIntro && (
+            <div className="mb-6 text-gray-700 leading-relaxed text-sm">
+              <ReactMarkdown>{boostIntro}</ReactMarkdown>
+            </div>
+          )}
+          <div className="space-y-6">
+            {boostRecommendations.map((rec, idx) => (
+              <div key={idx} className="border border-gray-200 rounded-xl p-5 bg-white shadow-sm">
+                <h4 className="text-lg font-bold text-[#7c3aed] mb-3 flex items-center gap-2 font-headline">
+                  <span className="w-6 h-6 rounded-full bg-purple-100 text-purple-800 flex items-center justify-center font-bold text-xs">
+                    {rec.number}
+                  </span>
+                  {rec.title}
+                </h4>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                  {rec.cuelloBotella && (
+                    <div className="bg-red-50 rounded-xl p-4 border border-red-100">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-red-700 block mb-1">
+                        Cuello de Botella
+                      </span>
+                      <p className="text-sm text-gray-800 font-medium">
+                        {rec.cuelloBotella}
+                      </p>
+                    </div>
+                  )}
+                  {rec.mejora && (
+                    <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-100">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-700 block mb-1">
+                        Mejora Propuesta
+                      </span>
+                      <p className="text-sm text-gray-800 font-medium">
+                        {rec.mejora}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                
+                {rec.details && (
+                  <div className="prose prose-sm max-w-none text-gray-700 bg-gray-50 p-4 rounded-xl border border-gray-100 whitespace-pre-line">
+                    <ReactMarkdown>{rec.details}</ReactMarkdown>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  </>
   )
 }
 

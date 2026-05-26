@@ -5,7 +5,7 @@ import { ClipboardList } from "lucide-react";
 
 export default function Navbar() {
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-black/5 dark:border-white/10 bg-[#09101d]/85 dark:bg-[#09101d]/85 light:bg-[#ffffff]/85 backdrop-blur-md transition-all duration-300">
+    <nav className="fixed top-0 left-0 right-0 z-50 border-b border-black/5 dark:border-white/10 bg-white/85 dark:bg-[#16181d]/85 backdrop-blur-md transition-all duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Logo + Brand */}
@@ -22,7 +22,7 @@ export default function Navbar() {
 
           {/* Navigation Links & CTA */}
           <div className="flex items-center gap-4">
-            <Link href="/dashboard" className="text-sm font-medium text-gray-300 dark:text-gray-300 hover:text-white dark:hover:text-white transition-colors">
+            <Link href="/dashboard" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors">
               Dashboard
             </Link>
             <Link href="/login" className="bg-gradient-to-r from-[#1a88ff] to-[#26d8c4] text-white px-4 py-2 rounded-lg text-sm font-bold shadow-[0_0_15px_rgba(26,136,255,0.5)] hover:shadow-[0_0_25px_rgba(38,216,196,0.6)] transition-all transform hover:-translate-y-0.5 active:translate-y-0 duration-200">

@@ -6,22 +6,22 @@
 /* ── CSS Variables ── */
 :root {
   color-scheme: dark;
-  --background: #09101d; /* Deeper black/blue identical to SIKAI Finance */
+  --background: #16181d; /* Deeper black/dark-gray premium color */
   --foreground: #e0e6ed;
   --primary: #1a88ff;
   --primary-glow: rgba(26, 136, 255, 0.5);
   --primary-cyan: #26d8c4;
   --cyan-glow: rgba(38, 216, 196, 0.5);
-  --glass-bg: rgba(22, 24, 29, 0.7);
+  --glass-bg: rgba(31, 31, 33, 0.75); /* Modern glassmorphism dark color */
   --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 .light {
   color-scheme: light;
-  --background: #f0f6fc; /* Light blue nuance identical to SIKAI Finance */
-  --foreground: #1f2937;
-  --glass-bg: rgba(255, 255, 255, 0.85);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --background: #faf6fd; /* Premium SIKAI CX Light violet nuance */
+  --foreground: #16181d; /* Deep premium contrast text */
+  --glass-bg: rgba(255, 255, 255, 0.88);
+  --glass-border: rgba(26, 136, 255, 0.1);
 }
 
 /* ── Base ── */
@@ -248,8 +248,42 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ── Print styles ── */
+.print-only {
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  width: 100%;
+  height: auto;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
 @media print {
-  body { background: white !important; color: black !important; }
-  .glass, .glass-card { background: white !important; border: 1px solid #ddd !important; box-shadow: none !important; backdrop-filter: none !important; }
-  .bg-blob, header, footer, .no-print { display: none !important; }
+  body { 
+    background: white !important; 
+    color: black !important; 
+  }
+  .glass, .glass-card { 
+    background: white !important; 
+    border: 1px solid #ddd !important; 
+    box-shadow: none !important; 
+    backdrop-filter: none !important; 
+  }
+  .bg-blob, header, footer, .no-print, .screen-only { 
+    display: none !important; 
+  }
+  .print-only {
+    position: static !important;
+    left: auto !important;
+    top: auto !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    display: block !important;
+    width: 100% !important;
+  }
+  .print-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
 }
