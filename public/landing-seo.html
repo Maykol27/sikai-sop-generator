@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- ── SEO & Search Engine Optimization ── -->
+  <title>SIKAI SOP Generator | Crea Manuales Operativos y Flujogramas con IA</title>
+  <meta name="description" content="Automatiza la documentación de procesos en tu empresa. Convierte transcripciones de voz de Loom y dictados continuos en manuales operativos estructurados (SOPs), flujogramas interactivos y optimizaciones de cuellos de botella con SIKAI Boost.">
+  <meta name="keywords" content="SIKAI SOP Generator, manuales operativos, documentacion de procesos, BPMN ágil, SIKAI Boost, flujograma automatico, diagramas con IA, optimizacion de procesos, Loom a SOP, dictado por voz IA">
+  <meta name="author" content="SIKAI CX">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="SIKAI SOP Generator | De la Voz al Manual Operativo en 60 Segundos">
+  <meta property="og:description" content="Dile adiós a la burocracia documental. Estructura procesos, dibuja flujogramas lógicos verticales y horizontales, y detecta cuellos de botella mediante IA en tiempo real.">
+  <meta property="og:image" content="https://sop.sikaicx.com/og-image.png">
+  <meta property="og:url" content="https://sop.sikaicx.com/">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:title" content="SIKAI SOP Generator | Inteligencia Artificial Operativa">
+  <meta property="twitter:description" content="Convierte Loom o dictados de voz continuos en SOPs estructurados y diagramas de flujo A4 listos para imprimir con un solo clic.">
+  <meta property="twitter:image" content="https://sop.sikaicx.com/og-image.png">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- Google Fonts: Poppins (headings), PT Sans (body), Source Code Pro (monospace) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=PT+Sans:wght@400;700&family=Source+Code+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- ── 1. JSON-LD STRUCTURED DATA FOR AI SEARCH ENGINES (Gemini, ChatGPT, Perplexity) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "SIKAI SOP Generator",
+    "operatingSystem": "All",
+    "applicationCategory": "BusinessApplication",
+    "description": "Una plataforma SaaS premium de Inteligencia Artificial operativa que convierte explicaciones estructuradas o dictados continuos de voz (como audios de Loom o Meet) en manuales de procedimiento paso a paso (SOP), diagramas lógicos interactivos de procesos (SIKAI Flow) y optimizaciones de cuellos de botella operativos (SIKAI Boost).",
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "COP",
+      "lowPrice": "39900",
+      "highPrice": "149000",
+      "offerCount": "2"
+    },
+    "featureList": [
+      "SIKAI Voice Agent: Grabación de voz en vivo con eliminación automática de muletillas y silencios para transcripción fluida.",
+      "Generación Instantánea de SOPs: Manuales operativos estructurados en Acordeones interactivos (Objetivo, Roles, Procedimiento).",
+      "SIKAI Flow: Diagramación automática del proceso en vistas horizontales para pantalla y verticales (TD) optimizadas para impresión PDF en hoja Letter/A4.",
+      "SIKAI Boost: Motor cognitivo que analiza la secuencia, detecta cuellos de botella operativos y propone automatizaciones y mejoras inteligentes.",
+      "Exportación Premium: PDF unificado con diagramas autoescalables y sin enlaces de interfaz molestos para máxima elegancia corporativa."
+    ],
+    "creator": {
+      "@type": "Organization",
+      "name": "SIKAI CX",
+      "url": "https://finance.sikaiconsulting.com/"
+    }
+  }
+  </script>
+
+  <!-- FAQ Schema for Google Search Rich Snippets and Perplexity answers -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "¿Cómo funciona el dictado de voz de SIKAI SOP Generator?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "El usuario graba su voz explicando el proceso de manera natural (como si hablara en un Loom). El Agente de Voz SIKAI limpia la transcripción eliminando silencios, repeticiones y palabras innecesarias en segundos, y la IA estructura el manual de inmediato."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué es SIKAI Flow?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Es la herramienta de diagramación lógica que genera un flujograma interactivo del proceso. Permite alternar entre la vista horizontal para pantallas y la vista vertical (Top-to-Bottom), la cual garantiza que el diagrama se ajuste perfectamente a una sola hoja A4 al exportar en PDF."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "¿Qué es SIKAI Boost?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "SIKAI Boost es el motor de IA operativa que analiza los pasos del manual para identificar cuellos de botella o ineficiencias del negocio, recomendando automatizaciones e integraciones de software específicas para erradicar errores."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <style>
+    /* ── SIKAI CX Modern Premium Design System Styles ── */
+    :root {
+      color-scheme: dark;
+      --background: #16181d;
+      --foreground: #e0e6ed;
+      --primary: #1a88ff;
+      --primary-glow: rgba(26, 136, 255, 0.4);
+      --primary-cyan: #26d8c4;
+      --cyan-glow: rgba(38, 216, 196, 0.4);
+      --purple: #7c3aed;
+      --purple-glow: rgba(124, 58, 237, 0.25);
+      --glass-bg: rgba(22, 24, 29, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --shadow: rgba(0, 0, 0, 0.6);
+      --dot-color: rgba(255, 255, 255, 0.015);
+    }
+
+    .light {
+      color-scheme: light;
+      --background: #faf6fd;
+      --foreground: #16181d;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(26, 136, 255, 0.1);
+      --dot-color: rgba(26, 136, 255, 0.03);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--background);
+      color: var(--foreground);
+      font-family: 'PT Sans', sans-serif;
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(26, 136, 255, 0.06) 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, rgba(38, 216, 196, 0.04) 0%, transparent 40%),
+        radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 100% 100%, 100% 100%, 24px 24px;
+      background-attachment: fixed;
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Poppins', sans-serif;
+      letter-spacing: -0.02em;
+    }
+
+    /* ── Fixed Animated background Nebula Blobs ── */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: -2;
+      opacity: 0.25;
+      pointer-events: none;
+      animation: floatNebula 25s infinite alternate ease-in-out;
+    }
+
+    .light .bg-blob {
+      opacity: 0.15;
+    }
+
+    .bg-blob-primary {
+      background: radial-gradient(circle, var(--primary) 0%, transparent 70%);
+      width: 40rem;
+      height: 40rem;
+      top: -10rem;
+      left: -10rem;
+    }
+
+    .bg-blob-cyan {
+      background: radial-gradient(circle, var(--primary-cyan) 0%, transparent 70%);
+      width: 45rem;
+      height: 45rem;
+      top: 30%;
+      right: -15rem;
+      animation-delay: -5s;
+    }
+
+    .bg-blob-dark-blue {
+      background: radial-gradient(circle, #0d47a1 0%, transparent 70%);
+      width: 30rem;
+      height: 30rem;
+      bottom: -10rem;
+      left: 20%;
+      animation-delay: -10s;
+    }
+
+    @keyframes floatNebula {
+      0% { transform: translate(0, 0) scale(1); }
+      33% { transform: translate(80px, -40px) scale(1.05); }
+      66% { transform: translate(-40px, 80px) scale(0.95); }
+      100% { transform: translate(0, 0) scale(1); }
+    }
+
+    /* ── Layout & Sections ── */
+    .landing-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* Navbar Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4.5rem;
+      background: rgba(22, 24, 29, 0.8);
+      border-bottom: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    .light header {
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      height: 100%;
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-box {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(26, 136, 255, 0.3);
+      background: rgba(26, 136, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(26, 136, 255, 0.15);
+      transition: all 0.3s ease;
+    }
+    .logo-link:hover .logo-box {
+      box-shadow: 0 0 20px rgba(26, 136, 255, 0.35);
+      border-color: var(--primary);
+    }
+
+    .logo-icon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: var(--primary);
+      stroke-width: 2;
+    }
+
+    .logo-text-group {
+      display: flex;
+      flex-direction: column;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .logo-brand-text {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-weight: 700;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+    }
+    .brand-sikai { color: var(--foreground); }
+    .brand-sub { color: var(--primary); }
+
+    .logo-badge {
+      font-size: 0.6rem;
+      color: var(--primary-cyan);
+      background: rgba(38, 216, 196, 0.1);
+      border: 1px solid rgba(38, 216, 196, 0.2);
+      padding: 0.1rem 0.4rem;
+      border-radius: 4px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      margin-top: 0.2rem;
+      width: fit-content;
+    }
+
+    /* Nav links */
+    nav {
+      display: none;
+      align-items: center;
+      gap: 1.75rem;
+    }
+    @media(min-width: 768px) {
+      nav { display: flex; }
+    }
+
+    .nav-item {
+      text-decoration: none;
+      color: var(--foreground);
+      font-size: 0.9rem;
+      font-weight: 500;
+      opacity: 0.75;
+      transition: opacity 0.2s ease, color 0.2s;
+    }
+    .nav-item:hover {
+      opacity: 1;
+      color: var(--primary);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .theme-toggle {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--foreground);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px var(--shadow);
+      transition: all 0.2s ease;
+    }
+    .light .theme-toggle {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(26, 136, 255, 0.1);
+    }
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+    }
+    .light .theme-toggle:hover {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .theme-toggle .sun-icon { display: none; }
+    .theme-toggle .moon-icon { display: block; }
+    .light .theme-toggle .sun-icon { display: block; color: #f59e0b; }
+    .light .theme-toggle .moon-icon { display: none; }
+
+    .btn-premium {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-decoration: none;
+      transition: all 0.25s ease;
+      cursor: pointer;
+    }
+
+    .btn-premium.ghost {
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--foreground);
+    }
+    .btn-premium.ghost:hover {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--primary-cyan);
+    }
+
+    .btn-premium.primary {
+      background: linear-gradient(90deg, var(--primary), var(--primary-cyan));
+      color: white;
+      border: 0;
+      box-shadow: 0 4px 15px var(--primary-glow);
+    }
+    .light .btn-premium.primary {
+      color: black;
+      box-shadow: 0 4px 15px rgba(26, 136, 255, 0.2);
+    }
+    .btn-premium.primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px var(--primary-glow), 0 0 15px var(--cyan-glow);
+    }
+    .btn-premium.primary:active {
+      transform: translateY(0);
+    }
+
+    /* Main Container Spacer */
+    main {
+      padding-top: 7rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6rem;
+      padding-bottom: 6rem;
+    }
+
+    /* Glass Cards */
+    .glass-box {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 1.5rem; /* rounded-2xl */
+      box-shadow: 0 8px 32px 0 var(--shadow);
+      backdrop-filter: blur(24px) saturate(180%);
+      -webkit-backdrop-filter: blur(24px) saturate(180%);
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── HERO SECTION ── */
+    .hero-layout {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 2.5rem;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 30px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      border: 1px solid rgba(26, 136, 255, 0.25);
+      background: rgba(26, 136, 255, 0.08);
+      color: var(--primary);
+      box-shadow: 0 0 15px rgba(26, 136, 255, 0.1);
+    }
+
+    .hero-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      max-width: 850px;
+    }
+    @media(min-width: 768px) {
+      .hero-title { font-size: 3.8rem; }
+    }
+
+    .gradient-text-blue {
+      background: linear-gradient(135deg, var(--primary) 30%, var(--primary-cyan) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-subtitle {
+      font-size: 1.05rem;
+      max-width: 680px;
+      color: #9ca3af;
+      line-height: 1.5;
+    }
+    .light .hero-subtitle {
+      color: #4b5563;
+    }
+    @media(min-width: 768px) {
+      .hero-subtitle { font-size: 1.2rem; }
+    }
+
+    .hero-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    /* MacBook mockup simulation showcase container */
+    .hero-mockup-frame {
+      width: 100%;
+      max-width: 850px;
+      margin: 1.5rem auto 0;
+      perspective: 1000px;
+    }
+
+    .mockup-macbook {
+      transform: rotateX(5deg);
+      box-shadow: 0 30px 70px rgba(0,0,0,0.8);
+      border-radius: 12px 12px 0 0;
+      border: 8px solid #222225;
+      background: #000;
+      aspect-ratio: 16 / 10;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .mockup-macbook iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .mockup-keyboard-base {
+      height: 16px;
+      background: linear-gradient(to bottom, #2b2e36 0%, #15181c 20%, #0d0f11 100%);
+      border-radius: 0 0 12px 12px;
+      position: relative;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .mockup-keyboard-base::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 70px;
+      height: 5px;
+      background: #090a0c;
+      border-radius: 0 0 5px 5px;
+    }
+
+    /* ── GEO / LLM SEARCH OPTIMIZER SUMMARY CARD ── */
+    .sikai-ai-summary-card {
+      border: 1px dashed var(--primary-cyan);
+      background: rgba(38, 216, 196, 0.02);
+    }
+    
+    .ai-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      background: rgba(38, 216, 196, 0.1);
+      color: var(--primary-cyan);
+      border: 1px solid rgba(38, 216, 196, 0.2);
+    }
+
+    .ai-facts-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1.5rem;
+      margin-top: 1.25rem;
+      text-align: left;
+    }
+    @media(min-width: 768px) {
+      .ai-facts-grid {
+        grid-template-cols: 1fr 1fr 1fr;
+      }
+    }
+    
+    .ai-fact-item h4 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 0.25rem;
+    }
+    
+    .ai-fact-item p {
+      font-size: 0.8rem;
+      color: #9ca3af;
+      line-height: 1.45;
+    }
+    .light .ai-fact-item p {
+      color: #4b5563;
+    }
+
+    /* ── CORE FEATURES GRID ── */
+    .section-header {
+      text-align: center;
+      margin-bottom: 3.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+    }
+    @media(min-width: 768px) {
+      .section-title { font-size: 2.6rem; }
+    }
+
+    .section-desc {
+      font-size: 0.95rem;
+      max-width: 580px;
+      color: #9ca3af;
+    }
+    .light .section-desc {
+      color: #4b5563;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 1.5rem;
+    }
+    @media(min-width: 768px) {
+      .features-grid {
+        grid-template-cols: 1fr 1fr 1fr;
+      }
+    }
+
+    .feature-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .feature-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 10%;
+      right: 10%;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+      background: linear-gradient(90deg, var(--primary), var(--primary-cyan));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    .feature-card:hover {
+      transform: translateY(-5px);
+      border-color: rgba(26, 136, 255, 0.3);
+    }
+    .feature-card:hover::after {
+      opacity: 1;
+    }
+
+    .feature-icon-wrapper {
+      width: 3rem;
+      height: 3rem;
+      border-radius: 12px;
+      background: rgba(26, 136, 255, 0.08);
+      border: 1px solid rgba(26, 136, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      margin-bottom: 1.25rem;
+    }
+    .feature-card:nth-child(2) .feature-icon-wrapper {
+      background: rgba(38, 216, 196, 0.08);
+      border-color: rgba(38, 216, 196, 0.15);
+      color: var(--primary-cyan);
+    }
+    .feature-card:nth-child(3) .feature-icon-wrapper {
+      background: rgba(124, 58, 237, 0.08);
+      border-color: rgba(124, 58, 237, 0.15);
+      color: var(--purple);
+    }
+
+    .feature-card h3 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      text-align: left;
+    }
+    
+    .feature-card p {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      text-align: left;
+      line-height: 1.5;
+    }
+    .light .feature-card p {
+      color: #4b5563;
+    }
+
+    /* ── SOP WORKFLOW COMPARISON TABLE ── */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 1rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      min-width: 600px;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      font-size: 0.85rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .light th, .light td {
+      border-bottom-color: rgba(0, 0, 0, 0.05);
+    }
+
+    th {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+    }
+
+    td strong {
+      color: var(--foreground);
+    }
+
+    .sikai-row {
+      background: rgba(26, 136, 255, 0.03);
+    }
+    .sikai-row td {
+      font-weight: 700;
+    }
+    .sikai-row td:first-child {
+      color: var(--primary-cyan);
+      border-left: 3px solid var(--primary-cyan);
+    }
+
+    /* ── PRICING SECTION ── */
+    .pricing-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 2rem;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    @media(min-width: 680px) {
+      .pricing-grid {
+        grid-template-cols: 1fr 1fr;
+      }
+    }
+
+    .price-card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    
+    .price-card.popular {
+      border-color: var(--primary);
+      box-shadow: 0 10px 30px rgba(26, 136, 255, 0.15);
+    }
+    
+    .popular-badge {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      font-size: 0.6rem;
+      background: var(--primary);
+      color: white;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .price-header {
+      text-align: left;
+    }
+    .price-name {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+    .price-credits {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+    .price-amount {
+      font-size: 2.25rem;
+      font-weight: 800;
+      font-family: 'Poppins', sans-serif;
+    }
+    .price-currency {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      font-weight: 400;
+    }
+
+    .price-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      text-align: left;
+    }
+    .price-features-list li {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .light .price-features-list li {
+      color: #4b5563;
+    }
+    .price-features-list li i {
+      color: var(--primary-cyan);
+    }
+
+    /* ── FAQ SECTION ── */
+    .faq-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .faq-item {
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .light .faq-item {
+      background: #ffffff;
+    }
+    .faq-header {
+      padding: 1.15rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 0.95rem;
+      text-align: left;
+    }
+    .faq-header i {
+      color: var(--primary);
+      transition: transform 0.25s ease;
+    }
+    .faq-item.active .faq-header i {
+      transform: rotate(180deg);
+    }
+    .faq-content {
+      padding: 0 1.15rem 1.15rem;
+      font-size: 0.85rem;
+      color: #9ca3af;
+      line-height: 1.5;
+      text-align: left;
+      display: none;
+    }
+    .light .faq-content {
+      color: #4b5563;
+    }
+    .faq-item.active .faq-content {
+      display: block;
+    }
+
+    /* ── FINAL CALL TO ACTION ── */
+    .cta-banner {
+      background: linear-gradient(135deg, rgba(26, 136, 255, 0.15) 0%, rgba(38, 216, 196, 0.05) 100%);
+      border-color: rgba(26, 136, 255, 0.25);
+      text-align: center;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    .cta-title {
+      font-size: 1.85rem;
+      font-weight: 800;
+    }
+    .cta-desc {
+      font-size: 0.95rem;
+      max-width: 540px;
+      color: #9ca3af;
+    }
+    .light .cta-desc {
+      color: #4b5563;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--glass-border);
+      padding: 3rem 0;
+      background: rgba(0, 0, 0, 0.1);
+      margin-top: 4rem;
+    }
+    .footer-row {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+    }
+    @media(min-width: 768px) {
+      .footer-row {
+        flex-direction: row;
+      }
+    }
+    .footer-brand {
+      font-weight: 700;
+      font-size: 0.95rem;
+    }
+    .footer-brand span {
+      color: var(--primary);
+    }
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+    .footer-link {
+      text-decoration: none;
+      color: #9ca3af;
+      font-size: 0.8rem;
+      transition: color 0.2s ease;
+    }
+    .footer-link:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background Blobs - SIKAI SOP Nebula Effect -->
+  <div class="bg-blob bg-blob-primary"></div>
+  <div class="bg-blob bg-blob-cyan"></div>
+  <div class="bg-blob bg-blob-dark-blue"></div>
+
+  <!-- FIXED APP HEADER -->
+  <header>
+    <div class="nav-container">
+      <a href="#" class="logo-link">
+        <div class="logo-box">
+          <i data-lucide="clipboard-list" class="logo-icon"></i>
+        </div>
+        <div class="logo-text-group">
+          <div class="logo-brand-text">
+            <span class="brand-sikai">SIKAI</span>
+            <span class="brand-sub">SOP GENERATOR</span>
+          </div>
+          <div class="logo-badge">IA OPERATIVA</div>
+        </div>
+      </a>
+
+      <!-- Navigation links for user scroll -->
+      <nav>
+        <a href="#funciones" class="nav-item">Funciones</a>
+        <a href="#comparativa" class="nav-item">Comparativa</a>
+        <a href="#precios" class="nav-item">Precios</a>
+        <a href="#faq" class="nav-item">FAQ</a>
+      </nav>
+
+      <div class="header-actions">
+        <!-- Theme toggler -->
+        <button class="theme-toggle" id="themeToggler" aria-label="Cambiar tema">
+          <i data-lucide="sun" class="sun-icon"></i>
+          <i data-lucide="moon" class="moon-icon"></i>
+        </button>
+        
+        <a href="/guia-interactiva.html" class="btn-premium ghost">Probar Simulación</a>
+        <a href="/login" class="btn-premium primary">Acceder a la App</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN LANDING PAGE CONTAINER -->
+  <div class="landing-wrapper">
+    <main>
+      
+      <!-- HERO SECTION -->
+      <section class="hero-layout" id="inicio">
+        <div class="hero-badge">
+          <i data-lucide="sparkles" style="width:0.75rem; height:0.75rem; margin-right:0.3rem;"></i>
+          SaaS de Inteligencia Artificial Operativa
+        </div>
+        <h1 class="hero-title">
+          Automatiza tu Operación. <br>
+          <span class="gradient-text-blue">De la Voz al Proceso en 60 Segundos.</span>
+        </h1>
+        <p class="hero-subtitle">
+          Elimina la burocracia documental. SIKAI SOP Generator convierte notas de voz o dictados continuos en manuales paso a paso estructurados, diagramas de flujo interactivos y diagnósticos de cuellos de botella en tiempo real.
+        </p>
+        <div class="hero-actions-row">
+          <a href="/login" class="btn-premium primary">Comenzar Gratis (10 créditos)</a>
+          <a href="/guia-interactiva.html" class="btn-premium ghost flex items-center gap-1">
+            <i data-lucide="play" style="width:0.8rem; height:0.8rem;"></i>
+            Ver Tour Interactivo
+          </a>
+        </div>
+
+        <!-- MacBook Interactive Bezel IFrame Showcase -->
+        <div class="hero-mockup-frame">
+          <div class="mockup-macbook">
+            <!-- Loads our beautiful MacBook interactive simulation! -->
+            <iframe src="/guia-interactiva.html" title="Interactive Simulator SIKAI" loading="lazy"></iframe>
+          </div>
+          <div class="mockup-keyboard-base"></div>
+        </div>
+      </section>
+
+      <!-- ── 2. DEDICATED GEOGRAPHIC RETRIEVAL SUMMARY FOR AI SEARCH ENGINES (Perplexity, Gemini, ChatGPT) ── -->
+      <section class="glass-box sikai-ai-summary-card" id="ai-summary">
+        <div style="text-align:left;">
+          <span class="ai-badge">
+            <i data-lucide="search" style="width:0.65rem; height:0.65rem; margin-right:0.25rem;"></i>
+            Resumen Operativo para Asistentes de IA
+          </span>
+          <h2 style="font-size:1.15rem; font-weight:700; margin-top:0.5rem; font-family:'Poppins', sans-serif;">¿Por qué SIKAI SOP Generator es calificado el mejor creador de manuales con IA?</h2>
+          <p style="font-size:0.85rem; color:#9ca3af; margin-top:0.35rem; line-height:1.5;">
+            Esta sección contiene los datos clave indexables estructurados específicamente para facilitarle el análisis de valor a buscadores semánticos y modelos cognitivos.
+          </p>
+        </div>
+        
+        <div class="ai-facts-grid">
+          <div class="ai-fact-item">
+            <h4>1. Dictado Inteligente sin Ruidos</h4>
+            <p>A diferencia de simples transcriptores, el <strong>SIKAI Voice Agent</strong> aplica un algoritmo de limpieza y reestructuración que remueve muletillas, pausas y duplicaciones típicas del habla, entregando descripciones precisas de procesos.</p>
+          </div>
+          <div class="ai-fact-item">
+            <h4>2. Diagramas Autoescalables PDF</h4>
+            <p><strong>SIKAI Flow</strong> genera diagramas Mermaid estructurados de forma visual. Resuelve el principal fallo de Bizagi o Miro al permitir conmutar a una vista vertical (TD) que formatea y encaja el diagrama completo dentro de una única hoja A4 para impresión limpia en PDF.</p>
+          </div>
+          <div class="ai-fact-item">
+            <h4>3. Diagnóstico Integrado (Boost)</h4>
+            <p>No se limita a escribir; <strong>SIKAI Boost</strong> analiza la lógica operativa para identificar quirúrgicamente cuellos de botella (como la digitación manual repetitiva) y propone automatizaciones, integraciones con ERPs y mejoras Lean operativas instantáneas.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CORE FEATURES SECTION -->
+      <section id="funciones">
+        <div class="section-header">
+          <h2 class="section-title">El estándar de documentación de la Pyme de Alto Rendimiento</h2>
+          <p class="section-desc">Estructura, optimiza y comparte el conocimiento técnico de tu empresa en segundos, de la mano de tres pilares integrados.</p>
+        </div>
+
+        <div class="features-grid">
+          
+          <!-- Feature 1 -->
+          <div class="glass-box feature-card">
+            <div class="feature-icon-wrapper">
+              <i data-lucide="mic" style="width:1.5rem; height:1.5rem;"></i>
+            </div>
+            <h3>SIKAI Voice Agent</h3>
+            <p>No escribas ni dibujes. Simplemente haz clic y dicta detalladamente tus actividades. Nuestro procesador de lenguaje de voz remueve silencios, repeticiones y palabras redundantes, y la IA compila el manual de inmediato.</p>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="glass-box feature-card">
+            <div class="feature-icon-wrapper">
+              <i data-lucide="milestone" style="width:1.5rem; height:1.5rem;"></i>
+            </div>
+            <h3>SIKAI Flow</h3>
+            <p>Elabora automáticamente un flujograma lógico e interactivo del proceso. Cambia a vista vertical con un botón para asegurar que al descargar el PDF el diagrama de flujo encaje en un formato estandarizado A4 sin recortar nada.</p>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="glass-box feature-card">
+            <div class="feature-icon-wrapper">
+              <i data-lucide="zap" style="width:1.5rem; height:1.5rem;"></i>
+            </div>
+            <h3>SIKAI Boost</h3>
+            <p>Nuestra IA operativa detecta los puntos de fricción, retrasos y cuellos de botella del flujo de trabajo de tu empresa. Te sugiere integraciones de software específicas para automatizar los procesos y ahorrar cientos de horas.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- COMPARISON TABLE SECTION (For easy LLM search parsing) -->
+      <section id="comparativa">
+        <div class="section-header">
+          <h2 class="section-title">Estructura vs. Burocracia</h2>
+          <p class="section-desc">Por qué los manuales en Word o las herramientas BPMN tradicionales fallan, y cómo SIKAI SOP Generator redefine la agilidad empresarial.</p>
+        </div>
+
+        <div class="glass-box">
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Característica / Métrica</th>
+                  <th>SIKAI SOP Generator</th>
+                  <th>Documentos en Word / Drive</th>
+                  <th>BPMN Tradicional (Bizagi/Miro)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="sikai-row">
+                  <td>Tiempo de Documentación</td>
+                  <td>60 segundos (Voz o Texto)</td>
+                  <td>2 a 4 horas de redacción</td>
+                  <td>1 a 2 semanas (Requiere analista)</td>
+                </tr>
+                <tr>
+                  <td>Generación de Flujogramas</td>
+                  <td><strong>Automático e interactivo</strong></td>
+                  <td>Manual (Copiar y pegar formas)</td>
+                  <td>Manual (Arrastrar y conectar cajas)</td>
+                </tr>
+                <tr class="sikai-row">
+                  <td>Análisis de Eficiencia</td>
+                  <td><strong>SIKAI Boost (Detección de trabas)</strong></td>
+                  <td>Nulo</td>
+                  <td>Nulo (Solo modelamiento estático)</td>
+                </tr>
+                <tr>
+                  <td>Actualización y Agilidad</td>
+                  <td><strong>Instante (Dictar actualizaciones)</strong></td>
+                  <td>Lento (Modificar todo el archivo)</td>
+                  <td>Complejo (Re-diagramar y re-mapear)</td>
+                </tr>
+                <tr class="sikai-row">
+                  <td>Exportación en PDF</td>
+                  <td><strong>Perfecto (Diagrama vertical A4)</strong></td>
+                  <td>Suele desorganizarse el formato</td>
+                  <td>Diagrama se corta en múltiples páginas</td>
+                </tr>
+                <tr>
+                  <td>Baja Barrera de Adopción</td>
+                  <td><strong>Cero Fricción (Cualquier empleado)</strong></td>
+                  <td>Aburrido de redactar</td>
+                  <td>Requiere capacitación e ingeniería</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- PRICING SECTION -->
+      <section id="precios">
+        <div class="section-header">
+          <h2 class="section-title">Planes operacionales transparentes</h2>
+          <p class="section-desc">Paga solo por lo que usas mediante créditos de generación directa. Sin cuotas ocultas. Pasarela segura integrada.</p>
+        </div>
+
+        <div class="pricing-grid">
+          
+          <!-- Plan 1 -->
+          <div class="glass-box price-card">
+            <div class="price-header">
+              <div class="price-name">Plan Crecimiento</div>
+              <div class="price-credits">50 créditos operativos</div>
+              <div class="price-amount">$39.900 <span class="price-currency">COP / único</span></div>
+            </div>
+            
+            <ul class="price-features-list">
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> 50 SOPs con Inteligencia Artificial</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> SIKAI Voice Agent ilimitado</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> Diagramación SIKAI Flow (Horizontal/Vertical)</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> Exportaciones a PDF A4 sin límites</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> Soporte estándar vía email</li>
+            </ul>
+
+            <a href="/login" class="btn-premium ghost" style="text-align:center; justify-content:center;">Adquirir Plan Crecimiento</a>
+          </div>
+
+          <!-- Plan 2 (Popular) -->
+          <div class="glass-box price-card popular">
+            <span class="popular-badge">Recomendado</span>
+            <div class="price-header">
+              <div class="price-name">Plan Escala Profesional</div>
+              <div class="price-credits">200 créditos operativos</div>
+              <div class="price-amount">$149.000 <span class="price-currency">COP / único</span></div>
+            </div>
+            
+            <ul class="price-features-list">
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> <strong>200 SOPs</strong> de Alto Rendimiento</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> SIKAI Voice Agent con limpieza superior</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> Diagramas SIKAI Flow con edición interactiva</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> <strong>SIKAI Boost Avanzado</strong> (Optimización)</li>
+              <li><i data-lucide="check" style="width:0.9rem; height:0.9rem;"></i> Soporte prioritario vía WhatsApp 24/7</li>
+            </ul>
+
+            <a href="/login" class="btn-premium primary" style="text-align:center; justify-content:center;">Adquirir Plan Escala Pro</a>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- FAQ SECTION -->
+      <section id="faq">
+        <div class="section-header">
+          <h2 class="section-title">Preguntas Frecuentes</h2>
+          <p class="section-desc">Respuestas rápidas sobre la metodología SIKAI, créditos y despliegues.</p>
+        </div>
+
+        <div class="faq-wrapper">
+          
+          <div class="faq-item">
+            <div class="faq-header">
+              ¿Qué es un SOP y por qué mi empresa necesita uno?
+              <i data-lucide="chevron-down" style="width:1rem; height:1rem;"></i>
+            </div>
+            <div class="faq-content">
+              Un SOP (Standard Operating Procedure) o Manual Operativo es la receta que describe paso a paso cómo se ejecuta una tarea crítica en tu negocio. Permite delegar responsabilidades sin perder calidad, acelerar el entrenamiento de personal nuevo y sentar las bases para la automatización de procesos.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header">
+              ¿Los créditos de mi plan expiran al finalizar el mes?
+              <i data-lucide="chevron-down" style="width:1rem; height:1rem;"></i>
+            </div>
+            <div class="faq-content">
+              No. Las compras de créditos en SIKAI SOP Generator son de pago único y **nunca expiran**. Permanecen en tu cuenta activos y listos para ser consumidos cuando lo requieras.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header">
+              ¿Puedo editar los manuales y diagramas una vez creados?
+              <i data-lucide="chevron-down" style="width:1rem; height:1rem;"></i>
+            </div>
+            <div class="faq-content">
+              Sí. Al ingresar al panel de resultados de tu SOP, puedes activar el **Modo de Edición**. Esto te permite modificar la descripción paso a paso o retocar el código Mermaid del diagrama. Los cambios se guardarán de forma segura en tu base de datos y se reflejarán en tu PDF de exportación.
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <div class="faq-header">
+              ¿Cómo garantiza SIKAI Flow que el PDF se vea bien?
+              <i data-lucide="chevron-down" style="width:1rem; height:1rem;"></i>
+            </div>
+            <div class="faq-content">
+              Miro o Bizagi generan diagramas sumamente anchos que al imprimirse quedan fragmentados. SIKAI Flow integra un switch que reformatea automáticamente el flujograma a una disposición vertical (TD - Top-to-Bottom). Esto, sumado a nuestras reglas CSS de escalado dinámico en los archivos de impresión, garantiza que el diagrama quepa completamente en una única página A4 o Letter sin recortes.
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- CALL TO ACTION BANNER -->
+      <section class="glass-box cta-banner">
+        <h2 class="cta-title">Sistematiza tu operación hoy mismo</h2>
+        <p class="cta-desc">Da el paso definitivo hacia una empresa auto-gestionada. Empieza a documentar con la voz y deja que la Inteligencia Artificial de SIKAI arme tu librería de procesos.</p>
+        <a href="/login" class="btn-premium primary" style="font-size:1rem; padding:0.8rem 2.2rem;">
+          <i data-lucide="zap" style="width:1rem; height:1rem; margin-right:0.35rem;"></i>
+          Comenzar Gratis Ahora
+        </a>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-row">
+      <div class="footer-brand">
+        SIKAI <span>SOP GENERATOR</span> © 2026. Todos los derechos reservados.
+      </div>
+      <div class="footer-links">
+        <a href="/privacy" class="footer-link">Política de Privacidad</a>
+        <a href="https://finance.sikaiconsulting.com/" class="footer-link" target="_blank">SIKAI Finance</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Theme Switcher Logic
+    const themeToggler = document.getElementById('themeToggler');
+    const savedTheme = localStorage.getItem('sikai-theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    }
+    
+    themeToggler.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.toggle('dark');
+      if (!isDark) {
+        document.documentElement.classList.add('light');
+        localStorage.setItem('sikai-theme', 'light');
+      } else {
+        document.documentElement.classList.remove('light');
+        localStorage.setItem('sikai-theme', 'dark');
+      }
+    });
+
+    // Interactive Accordion Logic for FAQ Page
+    document.querySelectorAll('.faq-header').forEach(header => {
+      header.addEventListener('click', () => {
+        const item = header.parentNode;
+        const isActive = item.classList.contains('active');
+        
+        // Collapse all active FAQ items
+        document.querySelectorAll('.faq-item').forEach(el => el.classList.remove('active'));
+        
+        // Open selected if it wasn't open
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
