@@ -22,6 +22,25 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
   const [showDropdown, setShowDropdown] = useState(false);
   const [liveCredits, setLiveCredits] = useState(credits);
 
+  // Clean name helper to ensure we show a premium formatted name, not an email
+  const cleanDisplayName = (() => {
+    if (!fullName) return 'Usuario';
+    
+    // Check if the name looks like an email or has dots/digits/underscores
+    if (fullName.includes('@') || fullName.includes('.') || fullName.includes('_') || /\d/.test(fullName)) {
+      const emailPrefix = fullName.includes('@') ? fullName.split('@')[0] : fullName;
+      const parts = emailPrefix.split(/[._]/);
+      const cleanParts = parts
+        .map(part => part.charAt(0).toUpperCase() + part.slice(1).replace(/\d+/g, ''))
+        .filter(Boolean);
+      
+      if (cleanParts.length > 0) {
+        return cleanParts.join(' ');
+      }
+    }
+    return fullName;
+  })();
+
   useEffect(() => {
     setLiveCredits(credits);
   }, [credits]);
@@ -128,16 +147,17 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
             {/* Left: Logo + Brand */}
             <Link href="/dashboard" className="flex items-center gap-3 group select-none">
               {/* SIKAI Process/SOP outline icon - Styled exactly like SIKAI Finance */}
-              <div className="w-9 h-9 rounded-xl border border-[#1a88ff]/30 bg-[#1a88ff]/10 flex items-center justify-center shadow-[0_0_12px_rgba(26,136,255,0.15)] group-hover:shadow-[0_0_20px_rgba(26,136,255,0.35)] group-hover:border-[#1a88ff]/60 transition-all duration-300 flex-shrink-0">
-                <ClipboardList className="w-5 h-5 text-[#1a88ff] stroke-[1.75]" />
-              </div>
+              <ClipboardList className="w-6 h-6 text-[#1a88ff] stroke-[2.25] transition-all duration-300 group-hover:scale-110 filter drop-shadow-[0_0_6px_rgba(26,136,255,0.4)] flex-shrink-0" />
               <div className="flex flex-col leading-none">
                 <div className="flex items-center gap-1.5 font-bold text-base tracking-tight font-headline">
                   <span className="text-gray-900 dark:text-white">SIKAI</span>
-                  <span className="text-[#1a88ff]">SOP GENERATOR</span>
+                  <span className="text-[#1a88ff]">
+                    <span className="hidden sm:inline">SOP GENERATOR</span>
+                    <span className="inline sm:hidden">SOP</span>
+                  </span>
                 </div>
                 <span className="text-[10px] text-gray-500 dark:text-gray-400 font-medium mt-1">
-                  Hola, {fullName.split(' ')[0]} 👋
+                  Hola, {cleanDisplayName.split(' ')[0]} 👋
                 </span>
               </div>
             </Link>
@@ -190,14 +210,14 @@ export default function DashboardShell({ children, credits, fullName, userId }: 
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="w-9 h-9 rounded-full bg-gradient-to-br from-[#1a88ff] to-[#26d8c4] flex items-center justify-center text-white font-bold text-sm shadow-[0_0_12px_rgba(26,136,255,0.4)] hover:shadow-[0_0_20px_rgba(38,216,196,0.6)] hover:scale-105 active:scale-95 transition-all duration-300"
                 >
-                  {getInitials(fullName)}
+                  {getInitials(cleanDisplayName)}
                 </button>
 
                 {showDropdown && (
                   <div className="absolute right-0 mt-3 w-56 glass rounded-2xl p-2 shadow-2xl border border-black/10 dark:border-white/10 animate-in fade-in slide-in-from-top-3 duration-200 z-50">
                     {/* Header */}
                     <div className="px-3 py-2 border-b border-black/5 dark:border-white/5 mb-1">
-                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{fullName}</p>
+                      <p className="text-xs font-bold text-gray-900 dark:text-white truncate">{cleanDisplayName}</p>
                       <div className="flex items-center gap-1 mt-1 text-[10px] text-gray-500 dark:text-gray-400">
                         <Coins className="w-3 h-3 text-[#1a88ff]" />
                         <span>{liveCredits} créditos disponibles</span>
