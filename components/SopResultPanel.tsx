@@ -935,7 +935,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
 
       {/* Mermaid Process Diagram */}
       {printFlowCode && (
-        <div className="print-page-break mt-12 border-t pt-8">
+        <div className="print-page-break mt-12 border-t pt-8 mermaid-print-container">
           <h2 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2 border-l-4 border-[#26d8c4] pl-3 font-headline">
             Diagrama de Procesos (SIKAI Flow)
           </h2>

@@ -288,9 +288,17 @@ h1, h2, h3, h4, h5, h6 {
     page-break-before: always;
     break-before: page;
   }
-  /* Scale down Mermaid SVG in print mode to prevent overflow */
-  .print-only .mermaid svg {
+  /* Enforce diagram block stays on a single sheet of paper */
+  .print-only .mermaid-print-container {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    max-height: 240mm !important; /* Fit within standard printable A4/Letter height */
+    overflow: hidden !important;
+  }
+  .print-only .mermaid-print-container svg {
     max-width: 100% !important;
+    max-height: 200mm !important; /* Constrain SVG height so it never spills over */
     height: auto !important;
+    width: auto !important;
   }
 }
