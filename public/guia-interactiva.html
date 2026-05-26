@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tour Guiado & Presentador · SIKAI SOP Generator</title>
+  <title>Tour Guiado Interactivo · SIKAI SOP Generator</title>
   
   <!-- Google Fonts: Outfit & Plus Jakarta Sans -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,25 +12,39 @@
   
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
+
   <style>
-    /* CSS VARIABLES - BRANDING SIKAI CX */
+    /* ── Brand Design System (SIKAI CX Colors) ── */
     :root {
+      color-scheme: dark;
+      --bg-studio: #0b0c10;
+      --bg-panel: #16181d;
+      --bg-card: #1f1f21;
+      --fg: #f3f4f6;
+      --fg-muted: #9ca3af;
       --primary: #1a88ff;
-      --primary-cyan: #26d8c4;
-      --primary-grad: linear-gradient(135deg, #1a88ff 0%, #26d8c4 100%);
-      --bg-dark-base: #090a0c;
-      --bg-dark-panel: #16181d;
-      --bg-dark-card: #1f1f21;
-      --border-dark: rgba(255, 255, 255, 0.08);
-      --text-white: #ffffff;
-      --text-gray: #a3a3a3;
-      --text-muted: #6b7280;
-      
-      --phone-titanium: #8e8d8a;
-      --phone-black: #1c1c1e;
-      --phone-blue: #3b5064;
-      --phone-gold: #e5d3b3;
+      --primary-glow: rgba(26, 136, 255, 0.45);
+      --cyan: #26d8c4;
+      --cyan-glow: rgba(38, 216, 196, 0.45);
+      --purple: #7c3aed;
+      --purple-glow: rgba(124, 58, 237, 0.35);
+      --glass-bg: rgba(31, 31, 33, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.08);
+      --shadow: rgba(0, 0, 0, 0.65);
+      --dot-color: rgba(255, 255, 255, 0.015);
+    }
+
+    .light {
+      color-scheme: light;
+      --bg-studio: #faf6fd;
+      --bg-panel: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.85);
+      --fg: #16181d;
+      --fg-muted: #6b7280;
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --glass-border: rgba(26, 136, 255, 0.12);
+      --shadow: rgba(31, 38, 135, 0.06);
+      --dot-color: rgba(26, 136, 255, 0.04);
     }
 
     * {
@@ -40,1093 +54,1736 @@
     }
 
     body {
+      background-color: var(--bg-studio);
+      color: var(--fg);
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg-dark-base);
-      color: var(--text-white);
+      background-image: 
+        radial-gradient(circle at 10% 10%, rgba(26, 136, 255, 0.07) 0%, transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(38, 216, 196, 0.05) 0%, transparent 45%),
+        radial-gradient(var(--dot-color) 1.5px, transparent 1.5px);
+      background-size: 100% 100%, 100% 100%, 24px 24px;
       min-height: 100vh;
-      overflow: hidden;
-      display: flex;
-      position: relative;
-    }
-
-    /* Ambient Lighting background */
-    .ambient-glow-1 {
-      position: absolute;
-      top: -20%;
-      left: -15%;
-      width: 600px;
-      height: 600px;
-      background: rgba(26, 136, 255, 0.12);
-      border-radius: 50%;
-      filter: blur(120px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .ambient-glow-2 {
-      position: absolute;
-      bottom: -20%;
-      right: -15%;
-      width: 700px;
-      height: 700px;
-      background: rgba(38, 216, 196, 0.12);
-      border-radius: 50%;
-      filter: blur(140px);
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    /* CHROMA KEY BACKDROP MODES */
-    body.chroma-green {
-      background: #00ff00 !important;
-      background-image: none !important;
-    }
-    body.chroma-green .ambient-glow-1,
-    body.chroma-green .ambient-glow-2 {
-      display: none !important;
-    }
-
-    body.chroma-blue {
-      background: #0000ff !important;
-      background-image: none !important;
-    }
-    body.chroma-blue .ambient-glow-1,
-    body.chroma-blue .ambient-glow-2 {
-      display: none !important;
-    }
-
-    body.gray-minimal {
-      background: radial-gradient(circle at center, #2e3035 0%, #0e1012 100%) !important;
-    }
-
-    /* APP LAYOUT */
-    .presenter-layout {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-      position: relative;
-      z-index: 10;
-    }
-
-    /* SIDEBARS COMMON */
-    .sidebar {
-      width: 380px;
-      height: 100%;
-      background: rgba(22, 24, 29, 0.85);
-      backdrop-filter: blur(25px);
-      border-right: 1px solid var(--border-dark);
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
-      z-index: 30;
-      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), width 0.4s ease;
-      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .sidebar-right {
-      border-right: none;
-      border-left: 1px solid var(--border-dark);
-      width: 340px;
-      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-    }
-
-    .sidebar-header {
-      padding: 24px;
-      border-bottom: 1px solid var(--border-dark);
-      display: flex;
-      align-items: center;
       justify-content: space-between;
     }
 
-    .logo-container {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo-badge {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: var(--primary-grad);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 15px rgba(26, 136, 255, 0.6);
-      color: white;
-    }
-
-    .logo-text {
+    h1, h2, h3, h4 {
       font-family: 'Outfit', sans-serif;
-      font-size: 20px;
-      font-weight: 800;
-      background: var(--primary-grad);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      letter-spacing: 0.5px;
-    }
-
-    .sidebar-scrollable {
-      flex: 1;
-      overflow-y: auto;
-      padding: 24px;
-    }
-
-    /* Scrollbar Styling */
-    .sidebar-scrollable::-webkit-scrollbar {
-      width: 5px;
-    }
-    .sidebar-scrollable::-webkit-scrollbar-track {
-      background: transparent;
-    }
-    .sidebar-scrollable::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 10px;
-    }
-    .sidebar-scrollable::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.25);
-    }
-
-    /* SCRIPT ACCORDIONS & CHECKLISTS */
-    .script-step {
-      background: rgba(31, 31, 33, 0.5);
-      border: 1px solid var(--border-dark);
-      border-radius: 14px;
-      margin-bottom: 16px;
-      overflow: hidden;
-      transition: all 0.3s ease;
-    }
-
-    .script-step:hover {
-      border-color: rgba(26, 136, 255, 0.3);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-    }
-
-    .script-step.active {
-      border-color: var(--primary);
-      background: rgba(26, 136, 255, 0.05);
-    }
-
-    .step-header {
-      padding: 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .step-checkbox {
-      width: 20px;
-      height: 20px;
-      border-radius: 6px;
-      border: 2px solid var(--text-gray);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: transparent;
-    }
-
-    .step-checkbox.checked {
-      background: var(--primary-cyan);
-      border-color: var(--primary-cyan);
-      box-shadow: 0 0 10px rgba(38, 216, 196, 0.4);
-    }
-
-    .step-checkbox i {
-      font-size: 12px;
-      color: var(--bg-dark-base);
-      font-weight: bold;
-    }
-
-    .step-title-area {
-      flex: 1;
-    }
-
-    .step-time {
-      font-size: 11px;
-      color: var(--primary-cyan);
       font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 2px;
+      letter-spacing: -0.02em;
     }
 
-    .step-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-white);
-    }
-
-    .step-content {
-      padding: 0 16px 16px 48px;
-      font-size: 13px;
-      line-height: 1.6;
-      color: var(--text-gray);
-      border-top: 1px solid rgba(255, 255, 255, 0.03);
-      display: none;
-    }
-
-    .script-step.expanded .step-content {
-      display: block;
-      animation: slideDown 0.25s ease-out;
-    }
-
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .step-note {
-      background: rgba(26, 136, 255, 0.1);
-      border-left: 3px solid var(--primary);
-      padding: 10px;
-      border-radius: 0 8px 8px 0;
-      margin-top: 12px;
-      color: #dfebff;
-      font-size: 12px;
-    }
-
-    .step-action-badge {
-      display: inline-block;
-      padding: 3px 8px;
-      background: rgba(38, 216, 196, 0.15);
-      color: #bbf7f0;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      margin-top: 8px;
-      border: 1px solid rgba(38, 216, 196, 0.2);
-    }
-
-    /* CENTER SIMULATOR WORKSPACE */
-    .simulator-workspace {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      overflow: hidden;
-      padding: 40px;
-      z-index: 10;
-    }
-
-    /* PHONE CONTAINER */
-    .phone-container {
-      position: relative;
-      width: 393px;
-      height: 852px;
-      background: #000;
-      border-radius: 55px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8),
-                  0 0 100px rgba(26, 136, 255, 0.15);
-      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transform-origin: center center;
-    }
-
-    /* Phone colors */
-    .phone-container.color-titanium {
-      border: 12px solid var(--phone-titanium);
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1), 0 25px 60px rgba(0, 0, 0, 0.8);
-    }
-    .phone-container.color-black {
-      border: 12px solid var(--phone-black);
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.05), 0 25px 60px rgba(0, 0, 0, 0.8);
-    }
-    .phone-container.color-blue {
-      border: 12px solid var(--phone-blue);
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.08), 0 25px 60px rgba(0, 0, 0, 0.8);
-    }
-    .phone-container.color-gold {
-      border: 12px solid var(--phone-gold);
-      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.15), 0 25px 60px rgba(0, 0, 0, 0.8);
-    }
-
-    /* Screen inside the phone */
-    .phone-screen {
-      position: relative;
+    /* ── Main Container ── */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 0.5rem;
       width: 100%;
-      height: 100%;
-      background: #000205;
-      border-radius: 43px;
-      overflow: hidden;
+      flex-grow: 1;
       display: flex;
       flex-direction: column;
+      justify-content: space-between;
     }
 
-    /* Iframe wrapping the real app */
-    .phone-iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-      background: #000205;
-      flex: 1;
-      border-radius: 43px;
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.8rem 1.5rem;
+      border-radius: 20px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      box-shadow: 0 8px 32px 0 var(--shadow);
+      margin-bottom: 1.5rem;
+      z-index: 50;
+      position: relative;
     }
 
-    /* Home indicator */
-    .home-indicator {
-      position: absolute;
-      bottom: 8px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 140px;
-      height: 5px;
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 10px;
-      z-index: 100;
-      pointer-events: none;
-    }
-
-    /* Physical buttons details */
-    .phone-button {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 4px;
-      z-index: -1;
-    }
-    
-    /* Action button */
-    .btn-action {
-      top: 140px;
-      left: -15px;
-      width: 4px;
-      height: 25px;
-    }
-    /* Vol Up */
-    .btn-vol-up {
-      top: 185px;
-      left: -15px;
-      width: 4px;
-      height: 50px;
-    }
-    /* Vol Down */
-    .btn-vol-down {
-      top: 250px;
-      left: -15px;
-      width: 4px;
-      height: 50px;
-    }
-    /* Power Button */
-    .btn-power {
-      top: 220px;
-      right: -15px;
-      width: 4px;
-      height: 85px;
-      cursor: pointer;
-    }
-    .btn-power:active {
-      transform: scale(0.9);
-    }
-
-    /* Screen reflection overlay */
-    .screen-glare {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0) 41%);
-      pointer-events: none;
-      z-index: 95;
-      border-radius: 43px;
-    }
-
-    /* LANDSCAPE MODIFIERS */
-    .phone-container.landscape {
-      width: 852px;
-      height: 393px;
-      border-radius: 55px;
-    }
-    .phone-container.landscape .phone-screen {
-      border-radius: 43px;
-    }
-    .phone-container.landscape .home-indicator {
-      bottom: auto;
-      right: 8px;
-      left: auto;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 5px;
-      height: 140px;
-    }
-    .phone-container.landscape .btn-action {
-      left: auto;
-      top: -15px;
-      left: 140px;
-      width: 25px;
-      height: 4px;
-    }
-    .phone-container.landscape .btn-vol-up {
-      left: auto;
-      top: -15px;
-      left: 185px;
-      width: 50px;
-      height: 4px;
-    }
-    .phone-container.landscape .btn-vol-down {
-      left: auto;
-      top: -15px;
-      left: 250px;
-      width: 50px;
-      height: 4px;
-    }
-    .phone-container.landscape .btn-power {
-      top: auto;
-      right: auto;
-      bottom: -15px;
-      left: 220px;
-      width: 85px;
-      height: 4px;
-    }
-
-    /* POINTER SIMULATOR */
-    .pointer-layer {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      z-index: 99;
-      border-radius: 43px;
-      overflow: hidden;
-    }
-
-    .virtual-cursor {
-      position: absolute;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(26, 136, 255, 0.4);
-      border: 2px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 0 15px rgba(26, 136, 255, 0.6);
-      transform: translate(-50%, -50%) scale(1);
-      transition: transform 0.1s ease, background 0.15s ease, opacity 0.2s ease;
-      opacity: 0;
-    }
-
-    .virtual-cursor.active {
-      transform: translate(-50%, -50%) scale(0.75);
-      background: rgba(38, 216, 196, 0.6);
-      border-color: #ffffff;
-      box-shadow: 0 0 20px rgba(38, 216, 196, 0.9);
-    }
-
-    .virtual-cursor.visible {
-      opacity: 1;
-    }
-
-    /* CONTROL PANELS (RIGHT SIDEBAR) */
-    .control-group {
-      margin-bottom: 24px;
-    }
-
-    .control-label {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--text-gray);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
+    .logo-link {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
     }
 
-    .control-label i {
+    .logo-icon {
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: 10px;
+      border: 1px solid rgba(26, 136, 255, 0.3);
+      background: rgba(26, 136, 255, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: var(--primary);
     }
 
-    /* Buttons inside controls */
-    .btn-row {
-      display: grid;
-      grid-template-cols: repeat(2, 1fr);
-      gap: 10px;
+    .logo-text {
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .logo-text span {
+      color: var(--primary);
     }
 
-    .control-btn {
-      background: rgba(31, 31, 33, 0.6);
-      border: 1px solid var(--border-dark);
-      padding: 10px 12px;
-      border-radius: 10px;
-      color: var(--text-white);
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
+    .theme-toggle {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--glass-border);
+      color: var(--fg);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--shadow);
       transition: all 0.2s ease;
     }
+    .theme-toggle:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--primary);
+    }
+    .theme-toggle .sun-icon { display: none; }
+    .theme-toggle .moon-icon { display: block; }
+    .light .theme-toggle .sun-icon { display: block; color: #f59e0b; }
+    .light .theme-toggle .moon-icon { display: none; }
 
-    .control-btn:hover {
-      border-color: rgba(255, 255, 255, 0.15);
-      background: rgba(255, 255, 255, 0.05);
+    /* ── HIGH-FIDELITY MACBOOK PRO CABINET ── */
+    .laptop-cabinet {
+      position: relative;
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto 1.5rem;
+      z-index: 20;
     }
 
-    .control-btn.active {
-      background: var(--primary-grad);
-      border-color: transparent;
-      font-weight: 600;
-      box-shadow: 0 4px 15px rgba(26, 136, 255, 0.35);
+    /* Laptop Screen (MacBook Bezel) */
+    .laptop-screen {
+      background: #000000;
+      border-radius: 22px 22px 0 0;
+      border: 14px solid #1c1d22;
+      border-bottom: none;
+      aspect-ratio: 16 / 10;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), inset 0 0 0 1px rgba(255,255,255,0.05);
+      display: flex;
+      flex-direction: column;
     }
 
-    .control-btn i {
+    /* MacBook Webcam Dot */
+    .laptop-screen::before {
+      content: '';
+      position: absolute;
+      top: -9px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #0d1e3d;
+      border: 1px solid #333;
+      z-index: 100;
+    }
+
+    /* Laptop Base Recess Recoil (Aluminium Keyboard Base) */
+    .laptop-base {
+      background: linear-gradient(to bottom, #2b2e36 0%, #15181c 20%, #0d0f11 100%);
+      height: 20px;
+      border-radius: 0 0 20px 20px;
+      position: relative;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1);
+      border-bottom: 2px solid #050608;
+    }
+    .light .laptop-base {
+      background: linear-gradient(to bottom, #e2e8f0 0%, #cbd5e1 20%, #94a3b8 100%);
+      border-bottom: 2px solid #64748b;
+    }
+
+    /* Center notch key lift recess */
+    .laptop-base::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 95px;
+      height: 7px;
+      background: #090a0c;
+      border-radius: 0 0 8px 8px;
+    }
+
+    /* ── HIGH FIDELITY SIMULATED APP INNER WRAPPER ── */
+    .simulated-browser {
+      width: 100%;
+      height: 100%;
+      background: var(--bg-panel);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
       font-size: 14px;
     }
 
-    /* Chassis Color buttons */
-    .color-picker {
+    /* Browser Header URL & controls */
+    .browser-header-row {
+      height: 2.25rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.2);
       display: flex;
-      gap: 12px;
-      background: rgba(31, 31, 33, 0.6);
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border-dark);
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1rem;
+    }
+    .light .browser-header-row {
+      background: rgba(0, 0, 0, 0.03);
     }
 
-    .color-dot {
-      width: 24px;
-      height: 24px;
+    .mac-dots {
+      display: flex;
+      gap: 6px;
+    }
+    .mac-dot {
+      width: 9px;
+      height: 9px;
       border-radius: 50%;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      position: relative;
-      border: 2px solid transparent;
+    }
+    .dot-close { background-color: #ff5f56; }
+    .dot-minimize { background-color: #ffbd2e; }
+    .dot-expand { background-color: #27c93f; }
+
+    .browser-url-input-field {
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid var(--glass-border);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      color: var(--fg-muted);
+      padding: 0.15rem 2rem;
+      width: 45%;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .light .browser-url-input-field {
+      background: rgba(255, 255, 255, 0.6);
     }
 
-    .color-dot.active {
-      transform: scale(1.15);
-      border-color: var(--text-white);
+    /* App Nav */
+    .sim-app-navbar {
+      height: 3.25rem;
+      border-bottom: 1px solid var(--glass-border);
+      background: rgba(0, 0, 0, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.25rem;
+    }
+    .light .sim-app-navbar {
+      background: rgba(255, 255, 255, 0.4);
     }
 
-    .dot-titanium { background-color: var(--phone-titanium); }
-    .dot-black { background-color: #111; }
-    .dot-blue { background-color: var(--phone-blue); }
-    .dot-gold { background-color: var(--phone-gold); }
+    .sim-app-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 800;
+      font-size: 0.9rem;
+    }
+    .sim-app-brand i {
+      color: var(--primary);
+    }
 
-    /* Custom range slider */
-    .range-slider-container {
-      background: rgba(31, 31, 33, 0.6);
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--border-dark);
+    .sim-app-user-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .sim-credits-capsule {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.25rem 0.55rem;
+      background: rgba(26, 136, 255, 0.1);
+      border: 1px solid rgba(26, 136, 255, 0.2);
+      border-radius: 20px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .sim-user-avatar {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--cyan));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 0.65rem;
+      font-weight: 700;
+    }
+
+    /* Scrollable Desktop Body */
+    .sim-app-body {
+      flex-grow: 1;
+      padding: 1.25rem;
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      overflow-y: auto;
+      position: relative;
     }
 
-    .slider-info {
+    /* ── Loader spinner ── */
+    .sim-spinner-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.95);
+      z-index: 200;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      animation: fade 0.25s ease;
+    }
+    .light .sim-spinner-overlay {
+      background: rgba(250, 246, 253, 0.95);
+    }
+    .sim-spinner-overlay.active {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text-gray);
     }
-
-    .custom-range {
-      width: 100%;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 3px;
-      outline: none;
-      -webkit-appearance: none;
-      cursor: pointer;
-    }
-
-    .custom-range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
+    .sim-spinner-ring {
+      width: 48px;
+      height: 48px;
+      border: 3.5px solid rgba(26, 136, 255, 0.1);
+      border-top-color: var(--primary);
+      border-right-color: var(--cyan);
       border-radius: 50%;
-      background: var(--primary-cyan);
-      box-shadow: 0 0 10px var(--primary-cyan);
-      transition: all 0.1s ease;
+      animation: spin 1s infinite linear;
+    }
+    .sim-spinner-text {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--cyan);
+      font-family: 'JetBrains Mono', monospace;
     }
 
-    .custom-range::-webkit-slider-thumb:hover {
-      transform: scale(1.2);
-    }
-
-    /* URL Bar */
-    .url-bar-container {
-      background: rgba(31, 31, 33, 0.6);
-      padding: 12px;
-      border-radius: 12px;
-      border: 1px solid var(--border-dark);
+    /* ── SOP Form Creator ── */
+    .sim-creator-view {
       display: flex;
-      gap: 8px;
+      flex-direction: column;
+      gap: 1rem;
+      animation: fadeUp 0.3s ease;
     }
 
-    .url-input {
-      flex: 1;
-      background: rgba(0, 0, 0, 0.4);
-      border: 1px solid var(--border-dark);
+    .sim-header-block h2 {
+      font-size: 1.35rem;
+      font-weight: 800;
+    }
+    .sim-header-block p {
+      font-size: 0.78rem;
+      color: var(--fg-muted);
+    }
+
+    /* Switch buttons */
+    .sim-mode-switches {
+      display: flex;
+      gap: 0.4rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--glass-border);
+      padding: 0.18rem;
+      border-radius: 10px;
+      width: fit-content;
+    }
+    .light .sim-mode-switches {
+      background: rgba(0,0,0,0.04);
+    }
+
+    .sim-tab-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.4rem 0.85rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border: 0;
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
       border-radius: 8px;
-      padding: 8px 12px;
-      color: var(--text-white);
-      font-size: 12px;
-      font-family: monospace;
-      outline: none;
+    }
+    .sim-tab-btn.active {
+      background: var(--primary);
+      color: white;
     }
 
-    .url-input:focus {
+    /* Grid Fields */
+    .sim-fields-box {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .sim-row-2 {
+      display: grid;
+      grid-template-cols: 1.2fr 1fr;
+      gap: 0.8rem;
+    }
+
+    .sim-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      text-align: left;
+    }
+    .sim-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 0.05em;
+    }
+    .sim-field {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.78rem;
+      color: var(--fg);
+      outline: none;
+      font-family: inherit;
+    }
+    .light .sim-field {
+      background: #ffffff;
+    }
+    .sim-field:focus {
       border-color: var(--primary);
     }
 
-    .btn-icon-only {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--border-dark);
-      color: var(--text-white);
-      cursor: pointer;
+    /* Steps list mock */
+    .sim-steps-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 0.45rem;
+    }
+    .sim-step-item {
+      display: flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+    .sim-step-num {
+      width: 1.45rem;
+      height: 1.45rem;
+      border-radius: 6px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--glass-border);
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: all 0.2s ease;
+      font-size: 0.68rem;
+      font-weight: 800;
+      color: var(--fg-muted);
     }
-
-    .btn-icon-only:hover {
-      background: rgba(255,255,255,0.1);
-      color: var(--primary-cyan);
+    .light .sim-step-num {
+      background: rgba(0,0,0,0.02);
     }
-
-    /* FLOATING COLLAPSE SIDEBAR BUTTONS */
-    .btn-collapse {
-      position: absolute;
-      top: 24px;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: rgba(22, 24, 29, 0.9);
-      border: 1px solid var(--border-dark);
-      color: var(--text-white);
-      cursor: pointer;
+    .sim-step-del-btn {
+      width: 1.75rem;
+      height: 1.75rem;
+      border-radius: 6px;
+      background: rgba(239, 68, 68, 0.08);
+      border: 1px solid rgba(239, 68, 68, 0.15);
+      color: #ef4444;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-      z-index: 40;
-      transition: all 0.3s ease;
+      cursor: pointer;
     }
 
-    .btn-collapse:hover {
-      background: var(--primary);
-      box-shadow: 0 0 15px rgba(26, 136, 255, 0.5);
-      transform: scale(1.05);
-    }
-
-    #collapse-left {
-      left: 360px;
-    }
-
-    #collapse-right {
-      right: 320px;
-    }
-
-    /* Collapsed sidebar states */
-    .sidebar.collapsed-left {
-      transform: translateX(-100%);
-      width: 0px !important;
-      overflow: hidden;
-      padding: 0 !important;
-      border: none;
-    }
-
-    .sidebar.collapsed-right {
-      transform: translateX(100%);
-      width: 0px !important;
-      overflow: hidden;
-      padding: 0 !important;
-      border: none;
-    }
-
-    body.sidebar-left-hidden #collapse-left {
-      left: 16px;
-    }
-
-    body.sidebar-right-hidden #collapse-right {
-      right: 16px;
-    }
-
-    .quick-tip {
-      font-size: 11px;
-      line-height: 1.5;
-      color: var(--text-gray);
+    .sim-add-step-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.75rem;
       background: rgba(255,255,255,0.02);
-      border: 1px dashed var(--border-dark);
-      padding: 12px;
+      border: 1px dashed var(--glass-border);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--fg-muted);
+      cursor: pointer;
+      width: fit-content;
+    }
+    .light .sim-add-step-btn {
+      background: #ffffff;
+    }
+
+    .sim-submit-bar {
+      margin-top: 0.75rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .sim-submit-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      padding: 0.55rem 1.35rem;
       border-radius: 10px;
-      margin-top: 10px;
+      border: 0;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      color: white;
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+      box-shadow: 0 4px 12px var(--primary-glow);
     }
 
-    /* Highlight pulse animations on the phone */
-    @keyframes pulseGlow {
-      0% { box-shadow: 0 0 0 0 rgba(38, 216, 196, 0.7); }
-      70% { box-shadow: 0 0 0 15px rgba(38, 216, 196, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(38, 216, 196, 0); }
-    }
-
-    .pulse-highlighter {
+    /* ── Voice dictation Overlay modal ── */
+    .sim-voice-overlay {
       position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 120px;
-      height: 120px;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.96);
+      z-index: 150;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      padding: 1.5rem;
+      animation: fade 0.3s ease;
+    }
+    .light .sim-voice-overlay {
+      background: rgba(250, 246, 253, 0.96);
+    }
+    .sim-voice-overlay.active {
+      display: flex;
+    }
+
+    .sim-voice-header {
+      text-align: center;
+    }
+    .sim-voice-header h3 { font-size: 1.1rem; }
+    .sim-voice-header p { font-size: 0.7rem; color: var(--cyan); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+
+    .sim-voice-orb {
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      border: 2px solid var(--primary-cyan);
-      pointer-events: none;
-      z-index: 98;
+      background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+      cursor: pointer;
+      z-index: 10;
+    }
+    .sim-voice-orb.recording {
+      animation: micPulse 1.2s infinite alternate ease-in-out;
+    }
+
+    /* Waves container */
+    .sim-waves-box {
+      display: flex;
+      align-items: center;
+      gap: 3.5px;
+      height: 22px;
+    }
+    .sim-wave-bar {
+      width: 2.5px;
+      height: 6px;
+      background: var(--cyan);
+      border-radius: 1px;
+    }
+    .sim-wave-bar.active-wave {
+      animation: waveBounce 0.5s infinite alternate ease-in-out;
+    }
+    .sim-wave-bar:nth-child(2) { animation-delay: 0.1s; }
+    .sim-wave-bar:nth-child(3) { animation-delay: 0.2s; }
+    .sim-wave-bar:nth-child(4) { animation-delay: 0.15s; }
+    .sim-wave-bar:nth-child(5) { animation-delay: 0.05s; }
+
+    .sim-voice-transcript-wrapper {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 0.75rem;
+      min-height: 65px;
+    }
+    .light .sim-voice-transcript-wrapper {
+      background: #ffffff;
+    }
+    .sim-voice-transcript-text {
+      font-size: 0.72rem;
+      color: var(--fg-muted);
+      text-align: center;
+      line-height: 1.4;
+    }
+    .sim-voice-transcript-text.filled {
+      color: var(--fg);
+      text-align: left;
+    }
+
+    .sim-voice-timer-stamp {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--fg-muted);
+    }
+
+    .sim-voice-actions {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .sim-voice-btn {
+      padding: 0.45rem 1.15rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      background: transparent;
+      color: var(--fg);
+    }
+    .sim-voice-btn.submit {
+      background: var(--cyan);
+      color: black;
+      border: 0;
+      font-weight: 800;
+    }
+
+    /* ── SCREEN B: Results Panel Mock ── */
+    .sim-results-view {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+      animation: fadeUp 0.3s ease;
+    }
+    .sim-results-view.active {
+      display: flex;
+    }
+
+    .sim-results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 0.65rem;
+    }
+    .sim-results-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--fg);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 55%;
+    }
+
+    .sim-results-buttons {
+      display: flex;
+      gap: 0.45rem;
+    }
+    .sim-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--fg);
+    }
+    .light .sim-action-btn {
+      background: #ffffff;
+    }
+    .sim-action-btn.pdf {
+      background: rgba(26, 136, 255, 0.1);
+      border-color: rgba(26, 136, 255, 0.2);
+      color: var(--primary);
+    }
+
+    .sim-results-tabs {
+      display: flex;
+      gap: 0.3rem;
+      background: rgba(0, 0, 0, 0.15);
+      border: 1px solid var(--glass-border);
+      padding: 0.15rem;
+      border-radius: 8px;
+      width: fit-content;
+    }
+    .light .sim-results-tabs {
+      background: rgba(0,0,0,0.04);
+    }
+    .sim-results-tab {
+      padding: 0.35rem 0.7rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      border: 0;
+      background: transparent;
+      color: var(--fg-muted);
+      cursor: pointer;
+      border-radius: 6px;
+    }
+    .sim-results-tab.active {
+      background: var(--primary);
+      color: white;
+    }
+    .sim-results-tab.active.flow {
+      background: var(--cyan);
+      color: black;
+    }
+    .sim-results-tab.active.boost {
+      background: var(--purple);
+    }
+
+    .sim-results-tab-viewport {
+      min-height: 240px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Accordions SOP view */
+    .sim-accordion-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+    .sim-accordion-item {
+      border: 1px solid var(--glass-border);
+      background: rgba(255, 255, 255, 0.01);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .light .sim-accordion-item {
+      background: #ffffff;
+    }
+    .sim-accordion-header {
+      padding: 0.55rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      background: rgba(0,0,0,0.04);
+    }
+    .sim-accordion-title {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.72rem;
+      font-weight: 700;
+    }
+    .sim-accordion-title i { color: var(--primary); }
+    .sim-accordion-arrow { font-size: 0.7rem; color: var(--fg-muted); transition: transform 0.2s ease; }
+    .sim-accordion-item.expanded .sim-accordion-arrow { transform: rotate(180deg); }
+
+    .sim-accordion-content {
+      padding: 0.75rem;
+      font-size: 0.72rem;
+      color: var(--fg-muted);
+      line-height: 1.45;
+      border-top: 1px solid var(--glass-border);
       display: none;
     }
-
-    .pulse-highlighter.active {
+    .sim-accordion-item.expanded .sim-accordion-content {
       display: block;
-      animation: pulseGlow 1.5s infinite;
     }
 
+    /* Timeline sub timeline inside accordion */
+    .sim-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      position: relative;
+      padding-left: 0.65rem;
+      margin-top: 0.25rem;
+    }
+    .sim-timeline::before {
+      content: '';
+      position: absolute;
+      left: 2px;
+      top: 4px;
+      bottom: 4px;
+      width: 1.5px;
+      background: var(--glass-border);
+    }
+    .sim-timeline-node {
+      position: relative;
+    }
+    .sim-timeline-node::before {
+      content: '';
+      position: absolute;
+      left: -8px;
+      top: 4px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--primary);
+    }
+    .sim-node-title { font-weight: 700; color: var(--fg); font-size: 0.7rem; margin-bottom: 0.15rem; }
+    .sim-node-fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.1rem;
+      background: rgba(0,0,0,0.12);
+      border: 1px solid var(--glass-border);
+      padding: 0.35rem 0.55rem;
+      border-radius: 6px;
+    }
+    .light .sim-node-fields { background: rgba(0,0,0,0.02); }
+    .sim-node-field { font-size: 0.65rem; }
+    .sim-node-field span { font-weight: 700; color: var(--primary); }
+
+    /* SOP Flow Diagram view */
+    .sim-flow-view {
+      display: none;
+      flex-direction: column;
+      gap: 0.65rem;
+    }
+    .sim-flow-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sim-flow-bar span { font-size: 0.68rem; font-weight: 700; color: var(--cyan); }
+    .sim-flow-switches {
+      display: flex;
+      gap: 0.15rem;
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      padding: 0.15rem;
+      border-radius: 6px;
+    }
+    .sim-flow-dir-btn {
+      padding: 0.15rem 0.45rem;
+      font-size: 0.58rem;
+      font-weight: 700;
+      background: transparent;
+      border: 0;
+      color: var(--fg-muted);
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    .sim-flow-dir-btn.active {
+      background: var(--cyan);
+      color: black;
+    }
+
+    .sim-flow-canvas {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--glass-border);
+      border-radius: 10px;
+      min-height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .light .sim-flow-canvas { background: #ffffff; }
+
+    .sim-flow-nodes {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      transition: all 0.3s ease;
+    }
+    .sim-flow-nodes.vertical {
+      flex-direction: column;
+      gap: 0.85rem;
+    }
+    .sim-flow-node {
+      background: rgba(38, 216, 196, 0.08);
+      border: 1px solid var(--cyan);
+      border-radius: 6px;
+      padding: 0.35rem 0.65rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: var(--cyan);
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      position: relative;
+    }
+    .sim-flow-node::after {
+      content: '➔';
+      position: absolute;
+      right: -1.15rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--primary);
+      font-size: 0.68rem;
+    }
+    .sim-flow-nodes.vertical .sim-flow-node::after {
+      content: '▼';
+      right: auto;
+      left: 50%;
+      top: auto;
+      bottom: -0.85rem;
+      transform: translateX(-50%);
+    }
+    .sim-flow-node:last-child::after { display: none; }
+
+    /* SOP Boost Recommendations view */
+    .sim-boost-view {
+      display: none;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .sim-boost-intro { font-size: 0.68rem; color: var(--fg-muted); }
+    .sim-boost-grid {
+      display: grid;
+      grid-template-cols: 1fr;
+      gap: 0.75rem;
+    }
+    @media(min-width: 540px) {
+      .sim-boost-grid {
+        grid-template-cols: 1fr 1fr;
+      }
+    }
+    .sim-boost-card {
+      border: 1px solid var(--glass-border);
+      padding: 0.75rem;
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: left;
+    }
+    .sim-boost-card.bottleneck {
+      background: rgba(239, 68, 68, 0.03);
+      border-color: rgba(239, 68, 68, 0.15);
+    }
+    .sim-boost-card.bottleneck.highlighted {
+      border-color: #ef4444;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.25);
+    }
+    .sim-boost-card.improvement {
+      background: rgba(124, 58, 237, 0.03);
+      border-color: rgba(124, 58, 237, 0.15);
+    }
+    .sim-boost-card.improvement.highlighted {
+      border-color: var(--purple);
+      box-shadow: 0 0 12px rgba(124, 58, 237, 0.25);
+    }
+    .sim-boost-tag {
+      font-size: 0.55rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+    .sim-boost-card.bottleneck .sim-boost-tag { color: #ef4444; }
+    .sim-boost-card.improvement .sim-boost-tag { color: var(--purple); }
+    .sim-boost-text { font-size: 0.7rem; line-height: 1.4; color: var(--fg); }
+
+    /* PDF Success confirmation alert */
+    .sim-pdf-alert {
+      position: absolute;
+      inset: 0;
+      background: rgba(22, 24, 29, 0.95);
+      z-index: 180;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      animation: fadeScale 0.25s ease;
+    }
+    .light .sim-pdf-alert { background: rgba(250, 246, 253, 0.95); }
+    .sim-pdf-alert.active { display: flex; }
+    .sim-pdf-circle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      border: 2px solid #10b981;
+      color: #10b981;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.2);
+    }
+    .sim-pdf-close-btn {
+      padding: 0.4rem 1rem;
+      background: #10b981;
+      color: white;
+      border: 0;
+      font-size: 0.72rem;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    /* ── TOUR FLOATING GLASSMORPHIC TOOLTIPS ── */
+    .tour-tooltip-card {
+      position: absolute;
+      background: rgba(22, 26, 38, 0.85);
+      border: 1.5px solid var(--cyan);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      width: 260px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--cyan-glow);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 250;
+      pointer-events: none;
+      opacity: 0;
+      transform: scale(0.9) translateY(5px);
+      transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      text-align: left;
+    }
+    .tour-tooltip-card.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+
+    /* Custom Purple glowing border for specific tools */
+    .tour-tooltip-card.purple-glow {
+      border-color: var(--purple);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 15px var(--purple-glow);
+    }
+
+    .tooltip-arrow {
+      position: absolute;
+      width: 0;
+      height: 0;
+      border-style: solid;
+    }
+    /* Arrow placements */
+    .tour-tooltip-card.arrow-top .tooltip-arrow {
+      top: -10px; left: 30px;
+      border-width: 0 10px 10px 10px;
+      border-color: transparent transparent var(--cyan) transparent;
+    }
+    .tour-tooltip-card.arrow-bottom .tooltip-arrow {
+      bottom: -10px; left: 30px;
+      border-width: 10px 10px 0 10px;
+      border-color: var(--cyan) transparent transparent transparent;
+    }
+    .tour-tooltip-card.arrow-left .tooltip-arrow {
+      left: -10px; top: 30px;
+      border-width: 10px 10px 10px 0;
+      border-color: transparent var(--cyan) transparent transparent;
+    }
+    .tour-tooltip-card.arrow-right .tooltip-arrow {
+      right: -10px; top: 30px;
+      border-width: 10px 0 10px 10px;
+      border-color: transparent transparent transparent var(--cyan);
+    }
+    
+    .tour-tooltip-card.purple-glow.arrow-top .tooltip-arrow { border-bottom-color: var(--purple); }
+    .tour-tooltip-card.purple-glow.arrow-bottom .tooltip-arrow { border-top-color: var(--purple); }
+
+    .tooltip-step-label {
+      font-size: 0.62rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--cyan);
+      margin-bottom: 0.15rem;
+    }
+    .tour-tooltip-card.purple-glow .tooltip-step-label { color: var(--purple); }
+
+    .tooltip-desc {
+      font-size: 0.72rem;
+      line-height: 1.45;
+      color: var(--fg);
+    }
+
+    /* ── AUTOMATED MOUSE POINTER ── */
+    .virtual-mouse {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+      z-index: 300;
+      opacity: 0;
+      transform: translate(-5px, -5px);
+      transition: opacity 0.3s ease;
+    }
+    .virtual-mouse.visible {
+      opacity: 1;
+    }
+
+    /* Click circle pulse effect */
+    .mouse-click-pulse {
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2.5px solid var(--cyan);
+      box-shadow: 0 0 10px var(--cyan-glow);
+      transform: translate(-50%, -50%) scale(0);
+      pointer-events: none;
+      z-index: 299;
+      opacity: 0;
+    }
+    .mouse-click-pulse.pulse-trigger {
+      animation: clickRipple 0.5s ease-out;
+    }
+
+    @keyframes clickRipple {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 0; }
+    }
+
+    /* ── BOTTOM VIDEO PLAYER CONTROLLER ── */
+    .studio-scrubber-bar {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 0.85rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.85rem;
+      box-shadow: 0 10px 30px var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      width: 100%;
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    /* Scrubber track */
+    .scrub-track-slider {
+      position: relative;
+      width: 100%;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    .light .scrub-track-slider {
+      background: rgba(0, 0, 0, 0.08);
+    }
+    .scrub-progress-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+
+    /* pins */
+    .pin-marker {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #4b5563;
+      border: 2px solid var(--bg-studio);
+      z-index: 10;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+    .pin-marker.active-pin {
+      background: var(--cyan);
+      transform: translate(-50%, -50%) scale(1.2);
+    }
+
+    /* controls row */
+    .player-controls-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .player-action-btns {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .player-btn {
+      background: transparent;
+      border: 0;
+      color: var(--fg);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+    .player-btn:hover {
+      opacity: 0.85;
+      transform: scale(1.08);
+    }
+    .player-btn:active {
+      transform: scale(0.92);
+    }
+
+    .main-trigger-btn {
+      width: 2.35rem;
+      height: 2.35rem;
+      border-radius: 50%;
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+    .digital-clock {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: var(--fg-muted);
+      font-weight: 700;
+    }
+
+    /* badge */
+    .tour-mode-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      background: rgba(239, 68, 68, 0.08);
+      color: #ef4444;
+      animation: pulseAlert 1.5s infinite alternate ease-in-out;
+    }
+    .tour-mode-badge.sandbox {
+      border-color: rgba(16, 185, 129, 0.25);
+      background: rgba(16, 185, 129, 0.08);
+      color: #10b981;
+      animation: pulseAlertGreen 1.5s infinite alternate ease-in-out;
+    }
+
+    @keyframes pulseAlert {
+      0% { transform: scale(1); box-shadow: 0 0 5px rgba(239, 68, 68, 0.05); }
+      100% { transform: scale(1.02); box-shadow: 0 0 12px rgba(239, 68, 68, 0.15); }
+    }
+    @keyframes pulseAlertGreen {
+      0% { transform: scale(1); box-shadow: 0 0 5px rgba(16, 185, 129, 0.05); }
+      100% { transform: scale(1.02); box-shadow: 0 0 12px rgba(16, 185, 129, 0.15); }
+    }
+
+    /* Explanatory CTA Block */
+    .guide-cta-section {
+      text-align: center;
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      box-shadow: 0 8px 32px var(--shadow);
+    }
+    .guide-cta-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      margin-bottom: 0.4rem;
+      background: linear-gradient(135deg, var(--fg) 50%, var(--primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .guide-cta-desc {
+      font-size: 0.8rem;
+      color: var(--fg-muted);
+      margin-bottom: 1rem;
+    }
+    .guide-cta-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.5rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+      border-radius: 10px;
+      text-decoration: none;
+      background: linear-gradient(90deg, var(--primary), var(--cyan));
+      color: white;
+      box-shadow: 0 4px 12px var(--primary-glow);
+    }
+    .light .guide-cta-button { color: black; box-shadow: 0 4px 12px rgba(26,136,255,0.25); }
+
+    /* Mechanics */
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+    @keyframes fadeUp { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
+    @keyframes fade { from { opacity:0; } to { opacity:1; } }
+    @keyframes fadeScale { from { opacity:0; transform: scale(0.97); } to { opacity:1; transform: scale(1); } }
+    @keyframes micPulse { 0% { transform: scale(1); } 100% { transform: scale(1.08); } }
+    @keyframes waveBounce { 0% { height: 6px; } 100% { height: 22px; } }
   </style>
 </head>
 <body>
 
-  <!-- Background Ambient Glows -->
-  <div class="ambient-glow-1"></div>
-  <div class="ambient-glow-2"></div>
-
-  <!-- Left Float Toggle Button -->
-  <button id="collapse-left" class="btn-collapse" title="Ocultar Guion">
-    <i data-lucide="chevron-left" id="icon-left"></i>
-  </button>
-  
-  <!-- Right Float Toggle Button -->
-  <button id="collapse-right" class="btn-collapse" title="Ocultar Configuración">
-    <i data-lucide="chevron-right" id="icon-right"></i>
-  </button>
-
-  <div class="presenter-layout">
-
-    <!-- LEFT SIDEBAR: TOUR STEPS & SCRIPT -->
-    <aside class="sidebar" id="sidebar-left">
-      <div class="sidebar-header">
-        <div class="logo-container">
-          <div class="logo-badge">
-            <i data-lucide="youtube" style="color: #fff; width: 18px; height: 18px;"></i>
-          </div>
-          <div>
-            <h1 class="logo-text">SIKAI SOP</h1>
-            <span style="font-size: 9px; text-transform: uppercase; color: var(--primary-cyan); font-weight: 700; letter-spacing: 0.5px;">Video Presenter Suite</span>
-          </div>
+  <div class="container">
+    
+    <!-- Header row logo + theme toggler -->
+    <header>
+      <a href="#" class="logo-link">
+        <div class="logo-icon">
+          <i data-lucide="clipboard-list" style="width: 1.25rem; height: 1.25rem; stroke-width: 2;"></i>
         </div>
-      </div>
+        <div class="logo-text">SIKAI <span>SOP GENERATOR</span></div>
+      </a>
       
-      <div class="sidebar-scrollable">
-        <h2 style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="scroll-text" style="color: var(--primary-cyan); width: 18px;"></i>
-          Guión del Presentador
-        </h2>
-        <p style="font-size: 12px; color: var(--text-gray); margin-bottom: 20px; line-height: 1.5;">
-          Usa este checklist interactivo para grabar tu pantalla o guiar la demostración en vivo. Haz clic en cada paso para ver la guía de oratoria.
-        </p>
-
-        <!-- SCRIPT STEPS CONTAINER -->
-        <div id="steps-container">
-
-          <!-- Paso 1 -->
-          <div class="script-step expanded active" id="step-1">
-            <div class="step-header" onclick="toggleStep(1)">
-              <div class="step-checkbox" id="chk-1" onclick="checkStep(1, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">0:00 - 1:00</div>
-                <div class="step-title">Intro & Dashboard SIKAI</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Gancho (Primeros 10s)</strong>: "¿Sigues documentando manualmente los procesos contables de tu empresa? Hoy te mostraré cómo crear un manual operativo completo con Inteligencia Artificial en segundos..."</p>
-              <div class="step-note">
-                💡 <strong>Consejo</strong>: Inicia en el Dashboard principal. Muestra las tarjetas de créditos de la marca SIKAI CX, el historial de SOPs anteriores y haz scroll rápido para destacar el acabado ultra fluido y premium de la interfaz.
-              </div>
-              <div class="step-action-badge">Acción: Mostrar Dashboard e Historial</div>
-            </div>
-          </div>
-
-          <!-- Paso 2 -->
-          <div class="script-step" id="step-2">
-            <div class="step-header" onclick="toggleStep(2)">
-              <div class="step-checkbox" id="chk-2" onclick="checkStep(2, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">1:00 - 2:30</div>
-                <div class="step-title">Formulario de Estructura Manual</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Narrativa</strong>: Explica cómo funciona el Formulario Manual de SIKAI. Destaca los campos de título, objetivo, roles y herramientas que guían al usuario paso a paso de manera profesional.</p>
-              <div class="step-note">
-                📝 <strong>Consejo</strong>: Escribe un título como "Cierre de Caja Mensual", define los roles y pulsa "Agregar Paso" dos veces para demostrar lo fácil que es expandir la lista de procedimientos.
-              </div>
-              <div class="step-action-badge">Acción: Rellenar Formulario y Agregar Pasos</div>
-            </div>
-          </div>
-
-          <!-- Paso 3 -->
-          <div class="script-step" id="step-3">
-            <div class="step-header" onclick="toggleStep(3)">
-              <div class="step-checkbox" id="chk-3" onclick="checkStep(3, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">2:30 - 4:15</div>
-                <div class="step-title">Dictado SIKAI Voice Agent</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Narrativa</strong>: Muestra el dictado por voz continuo. La Inteligencia Artificial avanzada de SIKAI detecta la voz del micrófono en tiempo real, eliminando palabras repetidas, balbuceos y pausas contables automáticamente.</p>
-              <div class="step-note">
-                🎙️ <strong>Prueba en Vivo</strong>: Abre el modal, presiona el micrófono gigante y dicta: <em>"Primero conciliamos saldos y luego... eh... registramos en HubSpot..."</em>. Verás cómo la pantalla escribe y filtra las repeticiones.
-              </div>
-              <div class="step-action-badge">Acción: Activar SIKAI Voice y simular dictado</div>
-            </div>
-          </div>
-
-          <!-- Paso 4 -->
-          <div class="script-step" id="step-4">
-            <div class="step-header" onclick="toggleStep(4)">
-              <div class="step-checkbox" id="chk-4" onclick="checkStep(4, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">4:15 - 5:45</div>
-                <div class="step-title">Flujograma Lógico (SIKAI Flow)</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Narrativa</strong>: Explica que la app compila un diagrama de flujo de procesos en tiempo real. Esto permite visualizar el recorrido lógico del SOP en pantalla.</p>
-              <div class="step-note">
-                📊 <strong>Consejo Pro</strong>: Cambia la orientación a <strong>Vertical (TD)</strong> con el botón interactivo. Explica que esto asegura que el gráfico quepa perfectamente en una sola hoja A4 al imprimir.
-              </div>
-              <div class="step-action-badge">Acción: Mostrar Diagrama y Alternar Orientación</div>
-            </div>
-          </div>
-
-          <!-- Paso 5 -->
-          <div class="script-step" id="step-5">
-            <div class="step-header" onclick="toggleStep(5)">
-              <div class="step-checkbox" id="chk-5" onclick="checkStep(5, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">5:45 - 7:00</div>
-                <div class="step-title">Optimización con SIKAI Boost</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Narrativa</strong>: Abre la pestaña SIKAI Boost. Muestra cómo la Inteligencia Artificial analiza el procedimiento, detecta cuellos de botella críticos (rojo) y recomienda automatizaciones idóneas (púrpura).</p>
-              <div class="step-note">
-                ⚡ <strong>Consejo</strong>: Resalta cómo estas optimizaciones en lote ayudan a reducir el tiempo operativo de una empresa hasta en un 80%.
-              </div>
-              <div class="step-action-badge">Acción: Mostrar Diagnóstico SIKAI Boost</div>
-            </div>
-          </div>
-
-          <!-- Paso 6 -->
-          <div class="script-step" id="step-6">
-            <div class="step-header" onclick="toggleStep(6)">
-              <div class="step-checkbox" id="chk-6" onclick="checkStep(6, event)">
-                <i data-lucide="check" style="display:none; width: 12px; height: 12px;"></i>
-              </div>
-              <div class="step-title-area">
-                <div class="step-time">7:00 - 8:30</div>
-                <div class="step-title">Exportación PDF Premium & Outro</div>
-              </div>
-            </div>
-            <div class="step-content">
-              <p><strong>Narrativa</strong>: Exporta a PDF. Explica que el sistema oculta los botones del sistema, mantiene todas las pestañas expandidas y ajusta el diagrama de flujo a una sola hoja para un acabado corporativo.</p>
-              <div class="step-note">
-                📄 <strong>Llamado a la Acción</strong>: "Si quieres sistematizar tu empresa y ahorrar miles de dólares al año, crea tu cuenta de SIKAI SOP hoy mismo. ¡Like y suscríbete!"
-              </div>
-              <div class="step-action-badge">Acción: Exportar PDF contable y Cierre</div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="quick-tip">
-          💡 <strong>Tip Pro</strong>: Cambia al fondo "Croma Verde" en el menú de la derecha para grabar y superponer este celular flotante sobre ti en tu editor de video de forma espectacular.
-        </div>
+      <div class="header-actions">
+        <!-- Theme switcher conmutador -->
+        <button class="theme-toggle" id="themeToggler" aria-label="Cambiar tema">
+          <i data-lucide="sun" class="sun-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+          <i data-lucide="moon" class="moon-icon" style="width: 1.25rem; height: 1.25rem;"></i>
+        </button>
       </div>
-    </aside>
+    </header>
 
-    <!-- CENTER AREA: DEVICE PREVIEW WORKSPACE -->
-    <main class="simulator-workspace">
+    <!-- CENTER PIECE: THE LAPTOP SIMULATOR -->
+    <div class="laptop-cabinet" id="laptopCabinet">
       
-      <!-- Pulse visual flashlight indicator (triggered by panel buttons) -->
-      <div class="pulse-highlighter" id="highlighter"></div>
-
-      <!-- Smartphone mockup device frame -->
-      <div class="phone-container color-titanium" id="smartphone">
+      <!-- Screen container MacBook Bezel -->
+      <div class="laptop-screen" id="laptopScreen">
         
-        <!-- Physical hardware button mockups -->
-        <div class="phone-button btn-action"></div>
-        <div class="phone-button btn-vol-up"></div>
-        <div class="phone-button btn-vol-down"></div>
-        <div class="phone-button btn-power" onclick="reloadIframe()" title="Reiniciar App"></div>
-
-        <!-- Phone screen cabinet -->
-        <div class="phone-screen">
-          <!-- Screen glare reflection overlay glass -->
-          <div class="screen-glare" id="glare-ref"></div>
-
-          <!-- Pointer finger touch emulator layer -->
-          <div class="pointer-layer" id="pointer-layer">
-            <div class="virtual-cursor" id="virtual-cursor"></div>
-          </div>
-
-          <!-- Nested real application iframe -->
-          <iframe id="app-iframe" class="phone-iframe" src="/dashboard"></iframe>
-
-          <!-- Apple touch bar indicator -->
-          <div class="home-indicator"></div>
-        </div>
-
-      </div>
-    </main>
-
-    <!-- RIGHT SIDEBAR: ESTUDIO DE GRABACIÓN & PERSONALIZACIÓN -->
-    <aside class="sidebar sidebar-right" id="sidebar-right">
-      <div class="sidebar-header">
-        <h2 style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: var(--text-white); display: flex; align-items: center; gap: 8px;">
-          <i data-lucide="sliders" style="color: var(--primary); width: 18px;"></i>
-          Estudio de Grabación
-        </h2>
-      </div>
-
-      <div class="sidebar-scrollable">
+        <!-- Virtual Mouse Cursor pointer dot overlay -->
+        <img class="virtual-mouse" id="virtualMouse" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='white' stroke='black' stroke-width='2'><path d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/></svg>" alt="Mouse">
         
-        <!-- URL APP CONTROLS -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="globe"></i> Dirección de la App
-          </label>
-          <div class="url-bar-container">
-            <input type="text" id="url-input" class="url-input" value="http://localhost:3000/dashboard">
-            <button class="btn-icon-only" onclick="applyCustomUrl()" title="Ir a la URL">
-              <i data-lucide="play" style="width: 14px; height: 14px;"></i>
-            </button>
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <button class="control-btn" style="flex:1; padding: 6px;" onclick="navigateIframe('back')" title="Atrás">
-              <i data-lucide="arrow-left" style="width: 12px; height: 12px;"></i>
-            </button>
-            <button class="control-btn" style="flex:1; padding: 6px;" onclick="reloadIframe()" title="Recargar">
-              <i data-lucide="refresh-cw" style="width: 12px; height: 12px;"></i>
-            </button>
-            <button class="control-btn" style="flex:1; padding: 6px;" onclick="navigateIframe('forward')" title="Adelante">
-              <i data-lucide="arrow-right" style="width: 12px; height: 12px;"></i>
-            </button>
+        <!-- Click circle pulse ripple overlay -->
+        <div class="mouse-click-pulse" id="mousePulse"></div>
+
+        <!-- DYNAMIC FLOATING TOOLTIP CAPTIONS -->
+        
+        <!-- Tooltip 1: Credits -->
+        <div class="tour-tooltip-card arrow-top" id="tooltipCredits" style="top: 60px; right: 140px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 1: Tu cuenta SIKAI CX</div>
+          <div class="tooltip-desc">
+            Cada generación de SOP consume <strong>1 crédito</strong>. Aquí visualizas el saldo disponible en tu plan operativo en tiempo real.
           </div>
         </div>
 
-        <!-- ORIENTATION SWITCHER -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="smartphone"></i> Pantalla y Rotación
-          </label>
-          <div class="btn-row">
-            <button class="control-btn active" id="btn-portrait" onclick="setOrientation('portrait')">
-              <i data-lucide="smartphone"></i> Vertical
-            </button>
-            <button class="control-btn" id="btn-landscape" onclick="setOrientation('landscape')">
-              <i data-lucide="smartphone" style="transform: rotate(90deg);"></i> Horizontal
-            </button>
+        <!-- Tooltip 2: Manual Form inputs -->
+        <div class="tour-tooltip-card arrow-bottom" id="tooltipForm" style="bottom: 120px; left: 40px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 2: Formulario de Estructura</div>
+          <div class="tooltip-desc">
+            Digita campos clave como <strong>Título, Objetivo, Roles y Herramientas</strong>. Ayuda a estructurar la información secuencialmente antes de dársela a la IA.
           </div>
         </div>
 
-        <!-- RESIZING ESCALA SLIDER -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="zoom-in"></i> Escala del Celular
-          </label>
-          <div class="range-slider-container">
-            <div class="slider-info">
-              <span>Tamaño</span>
-              <span id="scale-value">1.0x</span>
+        <!-- Tooltip 3: Voice Orb -->
+        <div class="tour-tooltip-card arrow-bottom" id="tooltipVoice" style="bottom: 240px; left: 240px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 3: SIKAI Voice Agent</div>
+          <div class="tooltip-desc">
+            ¿No quieres teclear? <strong>Dicta de forma continua</strong>. La IA filtra automáticamente palabras repetidas y pausas de tu voz en segundos.
+          </div>
+        </div>
+
+        <!-- Tooltip 4: Tabs Results -->
+        <div class="tour-tooltip-card arrow-top" id="tooltipResults" style="top: 130px; left: 80px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 4: Manual Documentado</div>
+          <div class="tooltip-desc">
+            El manual operativo final se divide en acordeones de <strong>Objetivo, Roles y un timeline detallado Paso a Paso</strong>.
+          </div>
+        </div>
+
+        <!-- Tooltip 5: SIKAI Flow switch -->
+        <div class="tour-tooltip-card arrow-top" id="tooltipFlow" style="top: 140px; right: 120px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 5: Diagramación Lógica</div>
+          <div class="tooltip-desc">
+            La IA compila un flujograma interactivo. Activa el modo <strong>Vertical (TD)</strong> para asegurar una impresión perfecta en A4.
+          </div>
+        </div>
+
+        <!-- Tooltip 6: SIKAI Boost optimizations -->
+        <div class="tour-tooltip-card purple-glow arrow-bottom" id="tooltipBoost" style="bottom: 180px; left: 320px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 6: SIKAI Boost IA</div>
+          <div class="tooltip-desc">
+            Detecta quirúrgicamente los <strong>cuellos de botella</strong> operativos y te propone automatizaciones y mejoras inteligentes.
+          </div>
+        </div>
+
+        <!-- Tooltip 7: PDF export buttons -->
+        <div class="tour-tooltip-card arrow-top" id="tooltipPdf" style="top: 130px; right: 40px;">
+          <div class="tooltip-arrow"></div>
+          <div class="tooltip-step-label">Paso 7: Exportación Premium</div>
+          <div class="tooltip-desc">
+            Descarga un reporte PDF impecable. <strong>Oculta enlaces de pantalla</strong> y ajusta el diagrama de procesos a una sola hoja.
+          </div>
+        </div>
+
+        <!-- THE SIMULATED APPLICATION VIEWPORT -->
+        <div class="simulated-browser">
+          
+          <!-- Hologram loader -->
+          <div class="sim-spinner-overlay" id="simLoader">
+            <div class="sim-spinner-ring"></div>
+            <div class="sim-spinner-text" id="simLoaderText">Sincronizando con GPT-4...</div>
+          </div>
+
+          <!-- PDF alert popups success modal -->
+          <div class="sim-pdf-alert" id="simPdfAlert">
+            <div class="sim-pdf-circle">
+              <i data-lucide="check" style="width:1.5rem; height:1.5rem; stroke-width:3.5;"></i>
             </div>
-            <input type="range" class="custom-range" id="scale-range" min="0.50" max="1.30" step="0.05" value="1.0">
+            <h4 style="font-size:0.95rem; font-weight:800;">Manual Contable Guardado</h4>
+            <p style="font-size:0.72rem; color:var(--fg-muted); text-align:center; max-width:260px;">El documento PDF ha sido descargado y optimizado en orientación A4 con diagrama vertical.</p>
+            <button class="sim-pdf-close-btn" id="simPdfAlertClose">Cerrar Ventana</button>
           </div>
-        </div>
 
-        <!-- CHASSIS MATTE SELECTION -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="palette"></i> Acabado del Teléfono
-          </label>
-          <div class="color-picker">
-            <div class="color-dot dot-titanium active" onclick="setChassisColor('titanium', this)" title="Titanio Natural"></div>
-            <div class="color-dot dot-black" onclick="setChassisColor('black', this)" title="Negro Espacial"></div>
-            <div class="color-dot dot-blue" onclick="setChassisColor('blue', this)" title="Azul Sierra"></div>
-            <div class="color-dot dot-gold" onclick="setChassisColor('gold', this)" title="Oro Sunset"></div>
+          <!-- Browser url bar -->
+          <div class="browser-header-row">
+            <div class="mac-dots">
+              <span class="mac-dot dot-close"></span>
+              <span class="mac-dot dot-minimize"></span>
+              <span class="mac-dot dot-expand"></span>
+            </div>
+            <div class="browser-url-input-field" id="browserUrlField">https://sop.sikaicx.com/dashboard</div>
+            <div style="width:34px;"></div>
           </div>
-        </div>
 
-        <!-- RECORDING BACKGROUND SETTINGS -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="layout"></i> Fondo de Grabación
-          </label>
-          <div class="btn-row" style="margin-bottom: 8px;">
-            <button class="control-btn active" id="bg-btn-ambient" onclick="setBackgroundMode('ambient')">
-              Ambiente Glow
-            </button>
-            <button class="control-btn" id="bg-btn-green" onclick="setBackgroundMode('chroma-green')">
-              Croma Verde
-            </button>
+          <!-- App navbar -->
+          <div class="sim-app-navbar">
+            <div class="sim-app-brand" id="targetNavBrand">
+              <i data-lucide="clipboard-list" style="width: 1rem; height: 1rem;"></i>
+              <span>SIKAI SOP</span>
+            </div>
+            <div class="sim-app-user-actions">
+              <div class="sim-credits-capsule" id="targetNavCredits">
+                <i data-lucide="coins" style="width: 0.75rem; height: 0.75rem;"></i>
+                <span>12 créditos</span>
+              </div>
+              <div class="sim-user-avatar">MS</div>
+            </div>
           </div>
-          <div class="btn-row">
-            <button class="control-btn" id="bg-btn-blue" onclick="setBackgroundMode('chroma-blue')">
-              Croma Azul
-            </button>
-            <button class="control-btn" id="bg-btn-gray" onclick="setBackgroundMode('gray-minimal')">
-              Gris Estudio
-            </button>
-          </div>
-        </div>
 
-        <!-- PRESENTATION AIDS -->
-        <div class="control-group">
-          <label class="control-label">
-            <i data-lucide="sparkles"></i> Ayudas Visuales
-          </label>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="control-btn active" id="btn-glare" onclick="toggleGlare()" style="justify-content: flex-start; width: 100%;">
-              <i data-lucide="sun"></i> Reflejos de Pantalla: ON
-            </button>
-            <button class="control-btn" id="btn-pointer" onclick="togglePointer()" style="justify-content: flex-start; width: 100%;">
-              <i data-lucide="mouse-pointer"></i> Puntero Táctil Virtual: OFF
-            </button>
-            <button class="control-btn" onclick="triggerHighlight()" style="justify-content: flex-start; width: 100%;">
-              <i data-lucide="focus"></i> Destacar Celular (Flash)
-            </button>
-          </div>
-        </div>
+          <!-- App body -->
+          <div class="sim-app-body" id="simAppBody">
+            
+            <!-- SCREEN A: Form inputs screen view -->
+            <div class="sim-creator-view" id="simCreator">
+              
+              <div class="sim-header-block">
+                <h2>Crear nuevo SIKAI SOP</h2>
+                <p>Describe tu proceso manualmente o utiliza el dictado por voz de precisión.</p>
+              </div>
 
-        <!-- VOCAL SUGGESTIONS -->
-        <div class="quick-tip" style="border-color: rgba(26,136,255,0.2); background: rgba(26,136,255,0.02); color: #c4d7f5;">
-          🎤 <strong>Consejo del Grabador</strong>: Si vas a doblar tu voz, puedes leer el guion expandido de la izquierda cómodamente en tiempo real mientras grabas.
+              <!-- manual/voice tabs -->
+              <div class="sim-mode-switches" id="targetTabSelector">
+                <button class="sim-tab-btn active" id="simManualSwitchBtn">
+                  <i data-lucide="edit-3" style="width: 0.72rem; height: 0.72rem;"></i> Formulario Manual
+                </button>
+                <button class="sim-tab-btn" id="simVoiceSwitchBtn">
+                  <i data-lucide="mic" style="width: 0.72rem; height: 0.72rem;"></i> Agente de Voz SIKAI
+                </button>
+              </div>
+
+              <!-- Manual inputs fields -->
+              <div class="sim-fields-box">
+                <div class="sim-row-2">
+                  <div class="sim-input-group" id="targetFieldTitle">
+                    <label class="sim-label">Título del Proceso</label>
+                    <input type="text" class="sim-field" id="simTitleVal" placeholder="Ej. Cierre de Caja Mensual">
+                  </div>
+                  <div class="sim-input-group">
+                    <label class="sim-label">Roles y Responsables</label>
+                    <input type="text" class="sim-field" id="simRolesVal" placeholder="Ej. Contador, Tesorero">
+                  </div>
+                </div>
+
+                <div class="sim-input-group" id="targetFieldObjective">
+                  <label class="sim-label">Objetivo Principal</label>
+                  <textarea class="sim-field" id="simObjectiveVal" rows="2" placeholder="Ej. Conciliar las cuentas fiscales del mes vencido..."></textarea>
+                </div>
+
+                <div class="sim-input-group">
+                  <label class="sim-label">Herramientas o Softwares Utilizados</label>
+                  <input type="text" class="sim-field" id="simToolsVal" placeholder="Ej. Excel, HubSpot ERP, SAP">
+                </div>
+
+                <div class="sim-input-group">
+                  <label class="sim-label">Cuellos de Botella (Problemas Actuales)</label>
+                  <textarea class="sim-field" id="simBottlenecksVal" rows="2" placeholder="Ej. El registro manual de facturas genera demoras."></textarea>
+                </div>
+
+                <!-- Steps row -->
+                <div class="sim-input-group">
+                  <label class="sim-label">Procedimiento Paso a Paso</label>
+                  <div class="sim-steps-wrapper" id="simStepsList">
+                    <div class="sim-step-item">
+                      <span class="sim-step-num">1</span>
+                      <input type="text" class="sim-field" id="simStepInput1" placeholder="Paso 1 del proceso...">
+                      <div class="sim-step-del-btn"><i data-lucide="trash-2" style="width:0.7rem; height:0.7rem;"></i></div>
+                    </div>
+                  </div>
+                  <button class="sim-add-step-btn" id="simAddStepBtn">
+                    <i data-lucide="plus" style="width:0.7rem;"></i> Agregar Paso
+                  </button>
+                </div>
+              </div>
+
+              <!-- Submit -->
+              <div class="sim-submit-bar">
+                <button class="sim-submit-btn" id="simGenerateBtn">
+                  <i data-lucide="sparkles" style="width:0.78rem; height:0.78rem;"></i>
+                  Generar SIKAI SOP
+                </button>
+              </div>
+
+              <!-- Voice Dictation Modal overlay -->
+              <div class="sim-voice-overlay" id="simVoiceModal">
+                <div class="sim-voice-header">
+                  <h3>Agente de Voz SIKAI</h3>
+                  <p id="simVoiceStatus">Escuchando micrófono...</p>
+                </div>
+
+                <!-- Mic Orb -->
+                <div class="sim-voice-orb" id="simVoiceOrb">
+                  <i data-lucide="mic" style="width:1.5rem; height:1.5rem;"></i>
+                </div>
+
+                <!-- Waves visual -->
+                <div class="sim-waves-box" id="simVoiceWaves">
+                  <div class="sim-wave-bar active-wave"></div>
+                  <div class="sim-wave-bar active-wave"></div>
+                  <div class="sim-wave-bar active-wave"></div>
+                  <div class="sim-wave-bar active-wave"></div>
+                  <div class="sim-wave-bar active-wave"></div>
+                </div>
+
+                <!-- Live transcript -->
+                <div class="sim-voice-transcript-wrapper">
+                  <div class="sim-voice-transcript-text" id="simVoiceText">Escribe lo que digas aquí en tiempo real...</div>
+                </div>
+
+                <div class="sim-voice-timer-stamp" id="simVoiceTimer">00:00 / 08:00</div>
+
+                <div class="sim-voice-actions">
+                  <button class="sim-voice-btn" id="simVoiceCancel">Cancelar</button>
+                  <button class="sim-voice-btn submit" id="simVoiceSubmit">Generar con Voz</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- SCREEN B: SOP Results page panel -->
+            <div class="sim-results-view" id="simResults">
+              
+              <!-- Result header -->
+              <div class="sim-results-header">
+                <div class="sim-results-title" id="simResultTitle">Cierre de Caja Mensual</div>
+                <div class="sim-results-buttons">
+                  <button class="sim-action-btn" id="simCopyBtn">
+                    <i data-lucide="copy" style="width: 0.72rem; height: 0.72rem;"></i> Copiar
+                  </button>
+                  <button class="sim-action-btn pdf" id="simPdfBtn">
+                    <i data-lucide="download" style="width: 0.72rem; height: 0.72rem;"></i> Exportar PDF
+                  </button>
+                </div>
+              </div>
+
+              <!-- tabs -->
+              <div class="sim-results-tabs" id="targetResultTabs">
+                <button class="sim-results-tab active" id="tabSopTrigger">SIKAI SOP</button>
+                <button class="sim-results-tab flow" id="tabFlowTrigger">SIKAI Flow</button>
+                <button class="sim-results-tab boost" id="tabBoostTrigger">SIKAI Boost</button>
+              </div>
+
+              <!-- Tab contents -->
+              <div class="sim-results-tab-viewport">
+                
+                <!-- Tab 1: SOP Accordions -->
+                <div class="sim-accordion-list" id="simAccordionView">
+                  
+                  <div class="sim-accordion-item expanded" id="simTargetObjective">
+                    <div class="sim-accordion-header">
+                      <div class="sim-accordion-title">
+                        <i data-lucide="target" style="width:0.75rem; height:0.75rem;"></i>
+                        <span>1. Objetivo Principal</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="sim-accordion-arrow"></i>
+                    </div>
+                    <div class="sim-accordion-content">
+                      Conciliar con precisión absoluta todas las cuentas contables, facturas físicas y saldos virtuales de la empresa correspondientes al periodo del mes vencido, asegurando el orden fiscal y financiero de la marca.
+                    </div>
+                  </div>
+
+                  <div class="sim-accordion-item">
+                    <div class="sim-accordion-header">
+                      <div class="sim-accordion-title">
+                        <i data-lucide="users" style="width:0.75rem; height:0.75rem;"></i>
+                        <span>2. Roles y Responsables</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="sim-accordion-arrow"></i>
+                    </div>
+                    <div class="sim-accordion-content">
+                      <ul>
+                        <li><strong>Contador General:</strong> Recopila, revisa y concilia las facturas.</li>
+                        <li><strong>Gerente de Administración:</strong> Supervisa y aprueba el cierre contable mensual.</li>
+                      </ul>
+                    </div>
+                  </div>
+
+                  <div class="sim-accordion-item">
+                    <div class="sim-accordion-header">
+                      <div class="sim-accordion-title">
+                        <i data-lucide="milestone" style="width:0.75rem; height:0.75rem;"></i>
+                        <span>3. Procedimiento Paso a Paso</span>
+                      </div>
+                      <i data-lucide="chevron-down" class="sim-accordion-arrow"></i>
+                    </div>
+                    <div class="sim-accordion-content" style="padding: 1rem 0.75rem;">
+                      
+                      <!-- Steps timeline -->
+                      <div class="sim-timeline">
+                        <div class="sim-timeline-node">
+                          <div class="sim-node-title">Paso 1: Recopilación de Recibos</div>
+                          <div class="sim-node-fields">
+                            <div class="sim-node-field"><span>Acción:</span> Reunir todas las facturas y comprobantes físicos en caja.</div>
+                            <div class="sim-node-field"><span>Herramienta:</span> Archivo manual y escáner digital.</div>
+                          </div>
+                        </div>
+                        <div class="sim-timeline-node">
+                          <div class="sim-node-title">Paso 2: Registro Contable</div>
+                          <div class="sim-node-fields">
+                            <div class="sim-node-field"><span>Acción:</span> Digitar y contrastar saldos contra la cuenta de HubSpot.</div>
+                            <div class="sim-node-field"><span>Herramienta:</span> HubSpot ERP.</div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Tab 2: Flow diagram logical Process flowchart -->
+                <div class="sim-flow-view" id="simFlowView">
+                  <div class="sim-flow-bar">
+                    <span>Visor de Diagramas SIKAI Flow</span>
+                    <div class="sim-flow-switches" id="targetFlowDirSwitch">
+                      <button class="sim-flow-dir-btn active" id="simFlowDirLR">Horizontal</button>
+                      <button class="sim-flow-dir-btn" id="simFlowDirTD">Vertical (PDF)</button>
+                    </div>
+                  </div>
+                  <div class="sim-flow-canvas">
+                    <div class="sim-flow-nodes" id="simFlowNodesBox">
+                      <div class="sim-flow-node"><i data-lucide="play" style="width:0.6rem;"></i> Inicio</div>
+                      <div class="sim-flow-node"><i data-lucide="file-text" style="width:0.6rem;"></i> Recopilar</div>
+                      <div class="sim-flow-node"><i data-lucide="activity" style="width:0.6rem;"></i> Registrar ERP</div>
+                      <div class="sim-flow-node"><i data-lucide="award" style="width:0.6rem;"></i> Fin</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Tab 3: SIKAI Boost AI optimizations -->
+                <div class="sim-boost-view" id="simBoostView">
+                  <div class="sim-boost-intro">Análisis Inteligente de Procesos (IA)</div>
+                  
+                  <div class="sim-boost-grid" id="targetBoostGrid">
+                    
+                    <div class="sim-boost-card bottleneck" id="simBCard1">
+                      <div class="sim-boost-tag">
+                        <i data-lucide="alert-triangle" style="width:0.7rem; height:0.7rem;"></i> Cuello de Botella
+                      </div>
+                      <div class="sim-boost-text">
+                        El proceso de digitar manualmente los recibos físicos en HubSpot es lento y propenso a errores tipográficos.
+                      </div>
+                    </div>
+
+                    <div class="sim-boost-card improvement" id="simBCard2">
+                      <div class="sim-boost-tag">
+                        <i data-lucide="zap" style="width:0.7rem; height:0.7rem;"></i> SIKAI Boost Mejora
+                      </div>
+                      <div class="sim-boost-text">
+                        Implementar un escaneo automático con OCR en lote para extraer valores y subirlos a HubSpot directamente en segundos.
+                      </div>
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
         </div>
 
       </div>
-    </aside>
+
+      <!-- Laptop Lower Keyboard Aluminium Base -->
+      <div class="laptop-base"></div>
+
+    </div>
+
+    <!-- BOTTOM VIDEO CONTROLLER SCUBBER TIMELINE -->
+    <div class="studio-scrubber-bar">
+      
+      <!-- Scrubber track -->
+      <div class="scrub-track-slider" id="scrubberTrack">
+        <div class="scrub-progress-fill" id="scrubberProgress"></div>
+        
+        <!-- dot pins -->
+        <div class="pin-marker active-pin" style="left: 0%;" id="pin0"></div>
+        <div class="pin-marker" style="left: 17%;" id="pin15"></div>
+        <div class="pin-marker" style="left: 41%;" id="pin35"></div>
+        <div class="pin-marker" style="left: 65%;" id="pin55"></div>
+        <div class="pin-marker" style="left: 82%;" id="pin70"></div>
+      </div>
+
+      <!-- Actions row -->
+      <div class="player-controls-row">
+        
+        <div class="player-action-btns">
+          <!-- Play / Pause -->
+          <button class="player-btn main-trigger-btn" id="playBtn" aria-label="Play/Pause">
+            <i data-lucide="play" id="playIcon"></i>
+          </button>
+          
+          <!-- Rewind -->
+          <button class="player-btn" id="rewindBtn" aria-label="Rebobinar">
+            <i data-lucide="rotate-ccw" style="width: 1.1rem; height: 1.1rem;"></i>
+          </button>
+
+          <!-- digital timestamp -->
+          <div class="digital-clock" id="digitalClock">00:00 / 01:25</div>
+        </div>
+
+        <!-- Mode badge -->
+        <div class="tour-mode-badge" id="tourModeBadge">
+          <i data-lucide="tv-2" style="width: 0.8rem; height: 0.8rem; margin-right: 0.35rem;" id="badgeIcon"></i>
+          <span id="badgeText">REPRODUCIENDO TOUR GUIADO</span>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Explanatory Branding CTA footer -->
+    <div class="guide-cta-section">
+      <h2 class="guide-cta-title">Sistematiza tu Operación Empresarial</h2>
+      <p class="guide-cta-desc">Elabora manuales operativos y diagramas lógicos en segundos a partir de texto o dictados de voz continuos.</p>
+      <a href="/dashboard" class="guide-cta-button">
+        <i data-lucide="zap" style="width: 0.85rem; height: 0.85rem;"></i>
+        Comenzar Ahora Gratis
+      </a>
+    </div>
 
   </div>
 
@@ -1134,241 +1791,697 @@
     // Initialize Lucide Icons
     lucide.createIcons();
 
-    // DOM Reference nodes
-    const smartphone = document.getElementById('smartphone');
-    const appIframe = document.getElementById('app-iframe');
-    const scaleRange = document.getElementById('scale-range');
-    const scaleValue = document.getElementById('scale-value');
-    const glareOverlay = document.getElementById('glare-ref');
-    const urlInput = document.getElementById('url-input');
-    const stepsContainer = document.getElementById('steps-container');
-    
-    // Virtual Cursor Variables
-    const pointerLayer = document.getElementById('pointer-layer');
-    const virtualCursor = document.getElementById('virtual-cursor');
-    let pointerEnabled = false;
+    // ── Universal Light/Dark Theme Switcher ──
+    const themeToggler = document.getElementById('themeToggler');
+    const savedTheme = localStorage.getItem('sikai-theme') || 'dark';
+    if (savedTheme === 'light') {
+      document.documentElement.classList.add('light');
+    }
+    themeToggler.addEventListener('click', () => {
+      const isLight = document.documentElement.classList.toggle('light');
+      localStorage.setItem('sikai-theme', isLight ? 'light' : 'dark');
+    });
 
-    // Load URL automatically based on server context
-    window.addEventListener('load', () => {
-      if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-        const origin = window.location.origin;
-        appIframe.src = origin + '/dashboard';
-        urlInput.value = origin + '/dashboard';
+    // ── PLAYBACK TIMELINE CONTROLLER ──
+    const totalDuration = 85; // 1:25 in seconds
+    let currentTime = 0;
+    let isPlaying = false;
+    let tourPlaybackInterval = null;
+
+    const playBtn = document.getElementById('playBtn');
+    const playIcon = document.getElementById('playIcon');
+    const rewindBtn = document.getElementById('rewindBtn');
+    const digitalClock = document.getElementById('digitalClock');
+    const scrubberProgress = document.getElementById('scrubberProgress');
+    const tourModeBadge = document.getElementById('tourModeBadge');
+    const badgeText = document.getElementById('badgeText');
+    const badgeIcon = document.getElementById('badgeIcon');
+    const scrubberTrack = document.getElementById('scrubberTrack');
+
+    // MacBook Frame simulated elements
+    const virtualMouse = document.getElementById('virtualMouse');
+    const mousePulse = document.getElementById('mousePulse');
+
+    // App screen views references
+    const simCreator = document.getElementById('simCreator');
+    const simResults = document.getElementById('simResults');
+    const simLoader = document.getElementById('simLoader');
+    const simLoaderText = document.getElementById('simLoaderText');
+    const simPdfAlert = document.getElementById('simPdfAlert');
+    const simPdfAlertClose = document.getElementById('simPdfAlertClose');
+
+    // Form switches references
+    const simManualSwitchBtn = document.getElementById('simManualSwitchBtn');
+    const simVoiceSwitchBtn = document.getElementById('simVoiceSwitchBtn');
+    const simVoiceModal = document.getElementById('simVoiceModal');
+    const simVoiceTimer = document.getElementById('simVoiceTimer');
+    const simVoiceText = document.getElementById('simVoiceText');
+    const simVoiceStatus = document.getElementById('simVoiceStatus');
+    const simVoiceWaves = document.getElementById('simVoiceWaves');
+
+    // Results Tab Switches
+    const tabSopTrigger = document.getElementById('tabSopTrigger');
+    const tabFlowTrigger = document.getElementById('tabFlowTrigger');
+    const tabBoostTrigger = document.getElementById('tabBoostTrigger');
+
+    const simAccordionView = document.getElementById('simAccordionView');
+    const simFlowView = document.getElementById('simFlowView');
+    const simBoostView = document.getElementById('simBoostView');
+
+    // SIKAI Flow logical switches
+    const simFlowDirLR = document.getElementById('simFlowDirLR');
+    const simFlowDirTD = document.getElementById('simFlowDirTD');
+    const simFlowNodesBox = document.getElementById('simFlowNodesBox');
+
+    // SIKAI Boost cards references
+    const simBCard1 = document.getElementById('simBCard1');
+    const simBCard2 = document.getElementById('simBCard2');
+
+    // Tooltips pointers nodes
+    const tooltips = {
+      credits: document.getElementById('tooltipCredits'),
+      form: document.getElementById('tooltipForm'),
+      voice: document.getElementById('tooltipVoice'),
+      results: document.getElementById('tooltipResults'),
+      flow: document.getElementById('tooltipFlow'),
+      boost: document.getElementById('tooltipBoost'),
+      pdf: document.getElementById('tooltipPdf')
+    };
+
+    // Automated text strings
+    const autoMockTexts = {
+      title: "Cierre de Caja Mensual",
+      roles: "Contador, Gerente",
+      objective: "Conciliar las cuentas contables y facturas del mes vencido.",
+      tools: "Excel, HubSpot ERP, SAP",
+      bottlenecks: "El registro manual de comprobantes físicos en caja genera retrasos.",
+      stepText1: "Reunir todas las facturas contables del mes..."
+    };
+
+    const autoVoiceScriptTexts = [
+      "Para cerrar la caja... eh... sí...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego... ejem... registramos en HubSpot ERP...",
+      "Para cerrar la caja mensual primero recopilamos los recibos físicos y luego registramos en HubSpot ERP. (Transcripción limpia sin duplicados por la IA)"
+    ];
+
+    // Format clock timestamp
+    function formatTime(secs) {
+      const mins = Math.floor(secs / 60);
+      const remainingSecs = secs % 60;
+      return `${mins.toString().padStart(2, '0')}:${remainingSecs.toString().padStart(2, '0')}`;
+    }
+
+    // Playback control
+    function play() {
+      if (isPlaying) return;
+      isPlaying = true;
+      playIcon.setAttribute('data-lucide', 'pause');
+      lucide.createIcons();
+
+      // Show mouse cursor
+      virtualMouse.classList.add('visible');
+
+      // Update badge
+      tourModeBadge.classList.remove('sandbox');
+      badgeText.innerText = "REPRODUCIENDO TOUR GUIADO";
+      badgeIcon.setAttribute('data-lucide', 'tv-2');
+      lucide.createIcons();
+
+      tourPlaybackInterval = setInterval(() => {
+        currentTime++;
+        if (currentTime > totalDuration) {
+          currentTime = 0; // loop
+        }
+        updateTimelineProgress();
+      }, 1000);
+    }
+
+    function pause() {
+      if (!isPlaying) return;
+      isPlaying = false;
+      playIcon.setAttribute('data-lucide', 'play');
+      lucide.createIcons();
+
+      // Hide mouse cursor & tooltips in paused sandbox mode
+      virtualMouse.classList.remove('visible');
+      hideAllTooltips();
+
+      // Update badge to sandbox
+      tourModeBadge.classList.add('sandbox');
+      badgeText.innerText = "MODO INTERACTIVO (SANDBOX) ACTIVO";
+      badgeIcon.setAttribute('data-lucide', 'gamepad-2');
+      lucide.createIcons();
+
+      clearInterval(tourPlaybackInterval);
+    }
+
+    // Timeline Scrubbing click
+    scrubberTrack.addEventListener('click', (e) => {
+      const rect = scrubberTrack.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickedPercent = clickX / rect.width;
+      currentTime = Math.floor(clickedPercent * totalDuration);
+      updateTimelineProgress();
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        pause();
       } else {
-        // Fallback relative url for web deployment
-        appIframe.src = '/dashboard';
-        urlInput.value = window.location.origin + '/dashboard';
+        play();
       }
     });
 
-    // STEP NARRATIVE ACCORDION TOGGLERS
-    function toggleStep(stepNum) {
-      const steps = document.querySelectorAll('.script-step');
-      steps.forEach(step => {
-        if (step.id !== `step-${stepNum}`) {
-          step.classList.remove('expanded');
+    rewindBtn.addEventListener('click', () => {
+      currentTime = 0;
+      updateTimelineProgress();
+    });
+
+    // Scrubber chapter pins click jumping
+    document.querySelectorAll('.pin-marker').forEach(pin => {
+      pin.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const pinPercent = parseFloat(pin.style.left);
+        currentTime = Math.floor((pinPercent / 100) * totalDuration);
+        updateTimelineProgress();
+        play();
+      });
+    });
+
+    // Hide tooltips helper
+    function hideAllTooltips() {
+      Object.values(tooltips).forEach(tooltip => tooltip.classList.remove('active'));
+    }
+
+    // ── PROGRESSIVE SCREEN WORKFLOW ANIMATOR ──
+    function updateTimelineProgress() {
+      const percent = (currentTime / totalDuration) * 100;
+      scrubberProgress.style.width = `${percent}%`;
+
+      // digital stamp clock
+      digitalClock.innerText = `${formatTime(currentTime)} / ${formatTime(totalDuration)}`;
+
+      // Sync pin nodes glow
+      document.querySelectorAll('.pin-marker').forEach(pin => {
+        const pinId = parseInt(pin.id.replace('pin', ''), 10);
+        if (currentTime >= pinId) {
+          pin.classList.add('active-pin');
+        } else {
+          pin.classList.remove('active-pin');
         }
       });
-      
-      const targetStep = document.getElementById(`step-${stepNum}`);
-      targetStep.classList.toggle('expanded');
-      
-      steps.forEach(step => step.classList.remove('active'));
-      if (targetStep.classList.contains('expanded')) {
-        targetStep.classList.add('active');
-      }
+
+      // Clear full overlays in default playing status
+      simLoader.classList.remove('active');
+      simPdfAlert.classList.remove('active');
+
+      // Sync tour scripts & cursor coordinates
+      animateAutoplayScript();
     }
 
-    function checkStep(stepNum, event) {
-      event.stopPropagation(); // Stop parent click event
-      const checkbox = document.getElementById(`chk-${stepNum}`);
-      const checkIcon = checkbox.querySelector('i');
-      
-      checkbox.classList.toggle('checked');
-      if (checkbox.classList.contains('checked')) {
-        checkIcon.style.display = 'block';
-        // Auto-expand next step sequentially
-        if (stepNum < 6) {
-          setTimeout(() => toggleStep(stepNum + 1), 350);
-        }
-      } else {
-        checkIcon.style.display = 'none';
-      }
+    // Cursor click trigger visual helper
+    function triggerVirtualClick(x, y) {
+      mousePulse.style.left = `${x}px`;
+      mousePulse.style.top = `${y}px`;
+      mousePulse.classList.remove('pulse-trigger');
+      void mousePulse.offsetWidth; // reflow
+      mousePulse.classList.add('pulse-trigger');
     }
 
-    // IFRAME BACKEND COMMANDS
-    function reloadIframe() {
-      appIframe.src = appIframe.src;
-      triggerHighlight();
-    }
+    // Autoplay narrative sequence
+    function animateAutoplayScript() {
+      hideAllTooltips();
 
-    function navigateIframe(direction) {
-      try {
-        if (direction === 'back') {
-          appIframe.contentWindow.history.back();
+      if (currentTime >= 0 && currentTime < 12) {
+        // STEP 1: Intro / Dashboard credits
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard";
+        simCreator.style.display = 'flex';
+        simResults.classList.remove('active');
+        simVoiceModal.classList.remove('active');
+        simManualSwitchBtn.classList.add('active');
+        simVoiceSwitchBtn.classList.remove('active');
+
+        // Target: credits badge in navbar
+        const targetCoord = { x: 800, y: 55 }; // Credits position
+        virtualMouse.style.left = `${targetCoord.x}px`;
+        virtualMouse.style.top = `${targetCoord.y}px`;
+
+        tooltips.credits.classList.add('active');
+
+        // Clear values
+        document.getElementById('simTitleVal').value = "";
+        document.getElementById('simRolesVal').value = "";
+        document.getElementById('simObjectiveVal').value = "";
+        document.getElementById('simToolsVal').value = "";
+        document.getElementById('simBottlenecksVal').value = "";
+
+      } else if (currentTime >= 12 && currentTime < 24) {
+        // STEP 2: Manual Form inputs
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard";
+        simCreator.style.display = 'flex';
+        simResults.classList.remove('active');
+        simVoiceModal.classList.remove('active');
+        simManualSwitchBtn.classList.add('active');
+        simVoiceSwitchBtn.classList.remove('active');
+
+        const offset = currentTime - 12;
+
+        // Typewriter fields filling progressively
+        document.getElementById('simTitleVal').value = offset > 1 ? autoMockTexts.title : "";
+        document.getElementById('simRolesVal').value = offset > 3 ? autoMockTexts.roles : "";
+        document.getElementById('simObjectiveVal').value = offset > 6 ? autoMockTexts.objective : "";
+        document.getElementById('simToolsVal').value = offset > 8 ? autoMockTexts.tools : "";
+        document.getElementById('simBottlenecksVal').value = offset > 10 ? autoMockTexts.bottlenecks : "";
+
+        // Target: manual form container
+        const targetCoord = { x: 300, y: 160 }; // Form input title position
+        virtualMouse.style.left = `${targetCoord.x}px`;
+        virtualMouse.style.top = `${targetCoord.y}px`;
+
+        tooltips.form.classList.add('active');
+
+      } else if (currentTime >= 24 && currentTime < 45) {
+        // STEP 3: Voice dictation modal active
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard?voice=active";
+        simCreator.style.display = 'flex';
+        simResults.classList.remove('active');
+        simVoiceModal.classList.add('active');
+        simManualSwitchBtn.classList.remove('active');
+        simVoiceSwitchBtn.classList.add('active');
+
+        const offset = currentTime - 24;
+        simVoiceTimer.innerText = `00:${offset.toString().padStart(2, '0')} / 08:00`;
+
+        // Waves & transcript typing progression
+        if (offset < 4) {
+          simVoiceText.innerText = autoVoiceScriptTexts[0];
+          simVoiceText.classList.add('filled');
+          simVoiceStatus.innerText = "Escuchando micrófono...";
+        } else if (offset < 10) {
+          simVoiceText.innerText = autoVoiceScriptTexts[1];
+          simVoiceStatus.innerText = "Escuchando micrófono...";
+        } else if (offset < 16) {
+          simVoiceText.innerText = autoVoiceScriptTexts[2];
+          simVoiceStatus.innerText = "Escuchando micrófono...";
         } else {
-          appIframe.contentWindow.history.forward();
+          simVoiceText.innerText = autoVoiceScriptTexts[3];
+          simVoiceStatus.innerText = "Limpieza Inteligente Completada ✓";
+          // Disable waves at the end
+          simVoiceWaves.querySelectorAll('.sim-wave-bar').forEach(b => b.classList.remove('active-wave'));
         }
-      } catch (e) {
-        console.warn("Iframe history navigation blocked by same-origin security policies.", e);
+
+        if (offset < 16) {
+          simVoiceWaves.querySelectorAll('.sim-wave-bar').forEach(b => b.classList.add('active-wave'));
+        }
+
+        // Target: Microphone orb
+        const targetCoord = { x: 480, y: 220 }; // Voice mic position
+        virtualMouse.style.left = `${targetCoord.x}px`;
+        virtualMouse.style.top = `${targetCoord.y}px`;
+
+        tooltips.voice.classList.add('active');
+
+      } else if (currentTime >= 45 && currentTime < 58) {
+        // STEP 4: SIKAI Flow Logical diagram Tab active
+        simCreator.style.display = 'none';
+        simResults.classList.add('active');
+
+        tabSopTrigger.classList.remove('active');
+        tabFlowTrigger.classList.add('active');
+        tabBoostTrigger.classList.remove('active');
+
+        simAccordionView.style.display = 'none';
+        simFlowView.style.display = 'flex';
+        simBoostView.style.display = 'none';
+
+        const offset = currentTime - 45;
+
+        // Toggle flowchart directions automatically
+        if (offset > 7) {
+          browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow-pdf";
+          simFlowDirLR.classList.remove('active');
+          simFlowDirTD.classList.add('active');
+          simFlowNodesBox.classList.add('vertical');
+          
+          // Target: Vertical TD flujograma switch button
+          const targetCoord = { x: 860, y: 195 }; // TD selector switch
+          virtualMouse.style.left = `${targetCoord.x}px`;
+          virtualMouse.style.top = `${targetCoord.y}px`;
+        } else {
+          browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow";
+          simFlowDirLR.classList.add('active');
+          simFlowDirTD.classList.remove('active');
+          simFlowNodesBox.classList.remove('vertical');
+
+          // Target: Flow tab trigger button
+          const targetCoord = { x: 260, y: 145 }; // Flow tab position
+          virtualMouse.style.left = `${targetCoord.x}px`;
+          virtualMouse.style.top = `${targetCoord.y}px`;
+        }
+
+        tooltips.flow.classList.add('active');
+
+      } else if (currentTime >= 58 && currentTime < 70) {
+        // STEP 5: SIKAI Boost optimization cards active
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#boost";
+        simCreator.style.display = 'none';
+        simResults.classList.add('active');
+
+        tabSopTrigger.classList.remove('active');
+        tabFlowTrigger.classList.remove('active');
+        tabBoostTrigger.classList.add('active');
+
+        simAccordionView.style.display = 'none';
+        simFlowView.style.display = 'none';
+        simBoostView.style.display = 'flex';
+
+        const offset = currentTime - 58;
+
+        // Highlights glow cards
+        if (offset > 7) {
+          simBCard1.classList.remove('highlighted');
+          simBCard2.classList.add('highlighted');
+          
+          // Target: IA suggestion improvement card
+          const targetCoord = { x: 680, y: 280 }; // Improvement card position
+          virtualMouse.style.left = `${targetCoord.x}px`;
+          virtualMouse.style.top = `${targetCoord.y}px`;
+        } else if (offset > 2) {
+          simBCard1.classList.add('highlighted');
+          simBCard2.classList.remove('highlighted');
+
+          // Target: bottleneck card
+          const targetCoord = { x: 280, y: 280 }; // Bottleneck card position
+          virtualMouse.style.left = `${targetCoord.x}px`;
+          virtualMouse.style.top = `${targetCoord.y}px`;
+        } else {
+          simBCard1.classList.remove('highlighted');
+          simBCard2.classList.remove('highlighted');
+        }
+
+        tooltips.boost.classList.add('purple-glow');
+        tooltips.boost.classList.add('active');
+
+      } else if (currentTime >= 70 && currentTime < 85) {
+        // STEP 6: PDF Export alerts
+        simCreator.style.display = 'none';
+        simResults.classList.add('active');
+
+        tabSopTrigger.classList.add('active');
+        tabFlowTrigger.classList.remove('active');
+        tabBoostTrigger.classList.remove('active');
+
+        simAccordionView.style.display = 'flex';
+        simFlowView.style.display = 'none';
+        simBoostView.style.display = 'none';
+
+        const offset = currentTime - 70;
+        
+        // Show success alert modal dialog triggers automatically at the end
+        if (offset > 7 && offset < 13) {
+          browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1?print=exporting";
+          simPdfAlert.classList.add('active');
+        } else {
+          browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+          simPdfAlert.classList.remove('active');
+        }
+
+        // Target: PDF Button
+        const targetCoord = { x: 880, y: 100 }; // Export PDF button
+        virtualMouse.style.left = `${targetCoord.x}px`;
+        virtualMouse.style.top = `${targetCoord.y}px`;
+
+        tooltips.pdf.classList.add('active');
       }
     }
 
-    function applyCustomUrl() {
-      let url = urlInput.value.trim();
-      if (!url.startsWith('http://') && !url.startsWith('https://')) {
-        url = 'http://' + url;
-      }
-      appIframe.src = url;
-      urlInput.value = url;
-    }
+    // ── SANDBOX PLAYGROUND OPERATIONS (Free clicks when paused) ──
 
-    // SCREEN LAYOUT ROTATIONS
-    function setOrientation(mode) {
-      document.getElementById('btn-portrait').classList.remove('active');
-      document.getElementById('btn-landscape').classList.remove('active');
-      
-      if (mode === 'portrait') {
-        document.getElementById('btn-portrait').classList.add('active');
-        smartphone.classList.remove('landscape');
-      } else {
-        document.getElementById('btn-landscape').classList.add('active');
-        smartphone.classList.add('landscape');
-      }
-    }
-
-    // PHONE CHASSIS SCALING
-    scaleRange.addEventListener('input', (e) => {
-      const scale = e.target.value;
-      scaleValue.innerText = `${parseFloat(scale).toFixed(2)}x`;
-      smartphone.style.transform = `scale(${scale})`;
+    // 1. Switches form tabs
+    simManualSwitchBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simVoiceModal.classList.remove('active');
+      simManualSwitchBtn.classList.add('active');
+      simVoiceSwitchBtn.classList.remove('active');
+      browserUrlField.innerText = "https://sop.sikaicx.com/dashboard";
     });
 
-    // PHONE SURFACE MATTE COLOR FINISH
-    function setChassisColor(color, element) {
-      document.querySelectorAll('.color-dot').forEach(dot => dot.classList.remove('active'));
-      element.classList.add('active');
-
-      smartphone.classList.remove('color-titanium', 'color-black', 'color-blue', 'color-gold');
-      smartphone.classList.add(`color-${color}`);
-    }
-
-    // CHROMA KEY BACKDROP ROTATIONS
-    function setBackgroundMode(mode) {
-      document.body.classList.remove('chroma-green', 'chroma-blue', 'gray-minimal');
+    simVoiceSwitchBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simVoiceModal.classList.add('active');
+      simManualSwitchBtn.classList.remove('active');
+      simVoiceSwitchBtn.classList.add('active');
+      browserUrlField.innerText = "https://sop.sikaicx.com/dashboard?voice=active";
       
-      document.getElementById('bg-btn-ambient').classList.remove('active');
-      document.getElementById('bg-btn-green').classList.remove('active');
-      document.getElementById('bg-btn-blue').classList.remove('active');
-      document.getElementById('bg-btn-gray').classList.remove('active');
+      // Sandbox placeholders
+      simVoiceText.innerText = "Haz clic en el orbe del micrófono rojo para iniciar el reconocimiento de voz real...";
+      simVoiceText.classList.remove('filled');
+      simVoiceStatus.innerText = "Reconocimiento de Voz Listo";
+      simVoiceTimer.innerText = "00:00 / 08:00";
+    });
 
-      if (mode === 'ambient') {
-        document.getElementById('bg-btn-ambient').classList.add('active');
-      } else if (mode === 'chroma-green') {
-        document.body.classList.add('chroma-green');
-        document.getElementById('bg-btn-green').classList.add('active');
-      } else if (mode === 'chroma-blue') {
-        document.body.classList.add('chroma-blue');
-        document.getElementById('bg-btn-blue').classList.add('active');
-      } else if (mode === 'gray-minimal') {
-        document.body.classList.add('gray-minimal');
-        document.getElementById('bg-btn-gray').classList.add('active');
+    document.getElementById('simVoiceCancel').addEventListener('click', () => {
+      simVoiceModal.classList.remove('active');
+      simManualSwitchBtn.classList.add('active');
+      simVoiceSwitchBtn.classList.remove('active');
+      stopDictationRecording();
+    });
+
+    // 2. Real webkitSpeechRecognition API inside Sandbox Laptop Screen!
+    let liveSpeechInstance = null;
+    let liveTimerCount = 0;
+    let liveTimerInterval = null;
+
+    const simVoiceOrb = document.getElementById('simVoiceOrb');
+
+    simVoiceOrb.addEventListener('click', () => {
+      if (isPlaying) pause();
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("El dictado por voz real de tu navegador no es soportado. Por favor, utiliza Google Chrome o Microsoft Edge.");
+        return;
       }
-    }
 
-    // REFLECTION GLARES
-    function toggleGlare() {
-      const btn = document.getElementById('btn-glare');
-      if (glareOverlay.style.display === 'none') {
-        glareOverlay.style.display = 'block';
-        btn.classList.add('active');
-        btn.innerHTML = '<i data-lucide="sun"></i> Reflejos de Pantalla: ON';
+      if (liveSpeechInstance) {
+        stopDictationRecording();
       } else {
-        glareOverlay.style.display = 'none';
-        btn.classList.remove('active');
-        btn.innerHTML = '<i data-lucide="sun"></i> Reflejos de Pantalla: OFF';
+        // Start
+        liveSpeechInstance = new SpeechRecognition();
+        liveSpeechInstance.continuous = true;
+        liveSpeechInstance.interimResults = true;
+        liveSpeechInstance.lang = 'es-ES';
+
+        liveTimerCount = 0;
+        simVoiceTimer.innerText = "00:00 / 08:00";
+        simVoiceText.innerText = "Escuchando... Habla libremente.";
+        simVoiceText.classList.add('filled');
+        simVoiceStatus.innerText = "Reconocimiento en Vivo Activo";
+        simVoiceOrb.classList.add('recording');
+
+        liveSpeechInstance.onresult = (e) => {
+          let currentSpeech = '';
+          for (let i = 0; i < e.results.length; ++i) {
+            currentSpeech += e.results[i][0].transcript;
+          }
+          simVoiceText.innerText = currentSpeech;
+        };
+
+        liveSpeechInstance.onerror = (err) => {
+          console.error(err);
+          stopDictationRecording();
+        };
+
+        liveSpeechInstance.onend = () => {
+          stopDictationRecording();
+        };
+
+        liveSpeechInstance.start();
+
+        liveTimerInterval = setInterval(() => {
+          liveTimerCount++;
+          const mins = Math.floor(liveTimerCount / 60);
+          const secs = liveTimerCount % 60;
+          simVoiceTimer.innerText = `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')} / 08:00`;
+        }, 1000);
       }
-      lucide.createIcons();
+    });
+
+    function stopDictationRecording() {
+      if (liveSpeechInstance) {
+        liveSpeechInstance.stop();
+        liveSpeechInstance = null;
+      }
+      if (liveTimerInterval) {
+        clearInterval(liveTimerInterval);
+        liveTimerInterval = null;
+      }
+      simVoiceOrb.classList.remove('recording');
+      simVoiceStatus.innerText = "Dictado Optimizado por la IA ✓";
     }
 
-    // VIRTUAL CURSOR EMULATOR
-    function togglePointer() {
-      const btn = document.getElementById('btn-pointer');
-      pointerEnabled = !pointerEnabled;
+    document.getElementById('simVoiceSubmit').addEventListener('click', () => {
+      stopDictationRecording();
+      triggerMockSopCompilation("Dictado de voz contable...");
+    });
+
+    // 3. Dynamic steps adding inside Sandbox Creator Screen
+    const simAddStepBtn = document.getElementById('simAddStepBtn');
+    const simStepsList = document.getElementById('simStepsList');
+    let dynamicStepCounter = 1;
+
+    simAddStepBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      dynamicStepCounter++;
+      const stepItem = document.createElement('div');
+      stepItem.className = 'sim-step-item';
+      stepItem.innerHTML = `
+        <span class="sim-step-num">${dynamicStepCounter}</span>
+        <input type="text" class="sim-field" placeholder="Paso ${dynamicStepCounter} del proceso...">
+        <div class="sim-step-del-btn"><i data-lucide="trash-2" style="width:0.7rem; height:0.7rem;"></i></div>
+      `;
+      simStepsList.appendChild(stepItem);
+      lucide.createIcons();
+
+      // Bind delete click
+      stepItem.querySelector('.sim-step-del-btn').addEventListener('click', () => {
+        stepItem.remove();
+        recalcStepsOrder();
+      });
+    });
+
+    function recalcStepsOrder() {
+      const items = simStepsList.querySelectorAll('.sim-step-item');
+      dynamicStepCounter = items.length;
+      items.forEach((item, idx) => {
+        item.querySelector('.sim-step-num').innerText = idx + 1;
+      });
+    }
+
+    // 4. Generate SOP Loading overlay
+    const simGenerateBtn = document.getElementById('simGenerateBtn');
+    simGenerateBtn.addEventListener('click', () => {
+      const titleVal = document.getElementById('simTitleVal').value.trim();
+      triggerMockSopCompilation(titleVal || "Proceso de Operación");
+    });
+
+    function triggerMockSopCompilation(sopName) {
+      if (isPlaying) pause();
       
-      if (pointerEnabled) {
-        btn.classList.add('active');
-        btn.innerHTML = '<i data-lucide="mouse-pointer"></i> Puntero Táctil Virtual: ON';
-        virtualCursor.classList.add('visible');
-      } else {
-        btn.classList.remove('active');
-        btn.innerHTML = '<i data-lucide="mouse-pointer"></i> Puntero Táctil Virtual: OFF';
-        virtualCursor.classList.remove('visible');
-      }
-      lucide.createIcons();
-    }
+      // Trigger Loader
+      simLoader.classList.add('active');
+      simLoaderText.innerText = "Sincronizando con GPT-4...";
 
-    // CYBER FLASH HIGH LIGHT
-    function triggerHighlight() {
-      const highlighter = document.getElementById('highlighter');
-      highlighter.classList.add('active');
       setTimeout(() => {
-        highlighter.classList.remove('active');
-      }, 1500);
+        simLoaderText.innerText = "Estructurando pasos operativos...";
+      }, 1000);
+
+      setTimeout(() => {
+        simLoaderText.innerText = "Compilando diagrama de flujo SIKAI Flow...";
+      }, 2000);
+
+      setTimeout(() => {
+        simLoader.classList.remove('active');
+        simCreator.style.display = 'none';
+        simResults.classList.add('active');
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+        
+        document.getElementById('simResultTitle').innerText = sopName;
+        showSandboxResultsTab('sop');
+      }, 3000);
     }
 
-    // VIRTUAL TOUCH TRACKER
-    pointerLayer.addEventListener('mousemove', (e) => {
-      if (!pointerEnabled) return;
-      const rect = pointerLayer.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      
-      virtualCursor.style.left = `${x}px`;
-      virtualCursor.style.top = `${y}px`;
+    // 5. Results Tab Switched in Sandbox
+    tabSopTrigger.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showSandboxResultsTab('sop');
     });
 
-    pointerLayer.addEventListener('mouseenter', () => {
-      if (pointerEnabled) virtualCursor.classList.add('visible');
+    tabFlowTrigger.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showSandboxResultsTab('flow');
     });
 
-    pointerLayer.addEventListener('mouseleave', () => {
-      virtualCursor.classList.remove('visible');
+    tabBoostTrigger.addEventListener('click', () => {
+      if (isPlaying) pause();
+      showSandboxResultsTab('boost');
     });
 
-    pointerLayer.addEventListener('mousedown', () => {
-      if (pointerEnabled) virtualCursor.classList.add('active');
+    function showSandboxResultsTab(tabName) {
+      tabSopTrigger.classList.remove('active');
+      tabFlowTrigger.classList.remove('active');
+      tabBoostTrigger.classList.remove('active');
+
+      simAccordionView.style.display = 'none';
+      simFlowView.style.display = 'none';
+      simBoostView.style.display = 'none';
+
+      if (tabName === 'sop') {
+        tabSopTrigger.classList.add('active');
+        simAccordionView.style.display = 'flex';
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#details";
+      } else if (tabName === 'flow') {
+        tabFlowTrigger.classList.add('active');
+        simFlowView.style.display = 'flex';
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#flow";
+      } else if (tabName === 'boost') {
+        tabBoostTrigger.classList.add('active');
+        simBoostView.style.display = 'flex';
+        browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1#boost";
+      }
+    }
+
+    // 6. Accordions expand collapse
+    document.querySelectorAll('.sim-accordion-header').forEach(header => {
+      header.addEventListener('click', () => {
+        if (isPlaying) pause();
+        header.parentNode.classList.toggle('expanded');
+      });
     });
 
-    pointerLayer.addEventListener('mouseup', () => {
-      if (pointerEnabled) virtualCursor.classList.remove('active');
+    // 7. SIKAI Flow switch
+    simFlowDirLR.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simFlowDirLR.classList.add('active');
+      simFlowDirTD.classList.remove('active');
+      simFlowNodesBox.classList.remove('vertical');
     });
 
-    // PANEL COLLAPSIBILITES
-    const colLeftBtn = document.getElementById('collapse-left');
-    const colRightBtn = document.getElementById('collapse-right');
-    const sidebarLeft = document.getElementById('sidebar-left');
-    const sidebarRight = document.getElementById('sidebar-right');
+    simFlowDirTD.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simFlowDirTD.classList.add('active');
+      simFlowDirLR.classList.remove('active');
+      simFlowNodesBox.classList.add('vertical');
+    });
 
-    colLeftBtn.addEventListener('click', () => {
-      sidebarLeft.classList.toggle('collapsed-left');
-      document.body.classList.toggle('sidebar-left-hidden');
-      
-      const isCollapsed = sidebarLeft.classList.contains('collapsed-left');
-      const icon = document.getElementById('icon-left');
-      icon.setAttribute('data-lucide', isCollapsed ? 'chevron-right' : 'chevron-left');
+    // 8. PDF alert download triggered
+    simPdfBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simPdfAlert.classList.add('active');
+      browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1?print=exporting";
+    });
+
+    simPdfAlertClose.addEventListener('click', () => {
+      simPdfAlert.classList.remove('active');
+      browserUrlField.innerText = "https://sop.sikaicx.com/dashboard/sop/1";
+    });
+
+    // 9. Copy to clipboard button feedback
+    const simCopyBtn = document.getElementById('simCopyBtn');
+    simCopyBtn.addEventListener('click', () => {
+      if (isPlaying) pause();
+      simCopyBtn.innerHTML = `<i data-lucide="check" style="width:0.72rem; height:0.72rem; color:#10b981;"></i> Copiado`;
       lucide.createIcons();
+      setTimeout(() => {
+        simCopyBtn.innerHTML = `<i data-lucide="copy" style="width:0.72rem; height:0.72rem;"></i> Copiar`;
+        lucide.createIcons();
+      }, 2000);
     });
 
-    colRightBtn.addEventListener('click', () => {
-      sidebarRight.classList.toggle('collapsed-right');
-      document.body.classList.toggle('sidebar-right-hidden');
-      
-      const isCollapsed = sidebarRight.classList.contains('collapsed-right');
-      const icon = document.getElementById('icon-right');
-      icon.setAttribute('data-lucide', isCollapsed ? 'chevron-left' : 'chevron-right');
-      lucide.createIcons();
-    });
+    // ── INITIAL LOAD AND LAUNCH ──
+    updateTimelineProgress();
+    play(); // Autoplay the beautiful computer guided tour by default
 
   </script>
 </body>
