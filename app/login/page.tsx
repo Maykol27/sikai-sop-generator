@@ -161,18 +161,18 @@ export default function LoginPage() {
                         <ClipboardList className="w-5.5 h-5.5 text-[#1a88ff] stroke-[1.75]" />
                     </div>
                     <div className="flex items-center gap-1.5 font-bold text-lg tracking-tight font-headline">
-                        <span className="text-white">SIKAI</span>
+                        <span className="text-gray-900 dark:text-white">SIKAI</span>
                         <span className="text-[#1a88ff]">SOP GENERATOR</span>
                     </div>
                 </div>
             </div>
 
             {/* Card */}
-            <div className="w-full max-w-sm sm:max-w-md bg-[#121620]/60 backdrop-blur-md border border-white/8 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10">
+            <div className="w-full max-w-sm sm:max-w-md bg-white/80 dark:bg-[#121620]/60 backdrop-blur-md border border-gray-200 dark:border-white/8 rounded-2xl p-6 sm:p-8 shadow-2xl relative z-10">
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2/3 h-[1px] bg-gradient-to-r from-transparent via-[#1a88ff]/60 to-transparent" />
 
                 <div className="text-center mb-6">
-                    <h1 className="text-xl sm:text-2xl font-bold text-white mb-1 tracking-tight">
+                    <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">
                         {isMfaRequired
                             ? "Verificación en Dos Pasos"
                             : isForgotPassword
@@ -181,7 +181,7 @@ export default function LoginPage() {
                             ? "Crear Cuenta SIKAI SOP Generator"
                             : "Bienvenido de vuelta"}
                     </h1>
-                    <p className="text-gray-400 text-sm">
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">
                         {isMfaRequired
                             ? "Ingresa el código de tu app de autenticación"
                             : isForgotPassword
@@ -206,7 +206,7 @@ export default function LoginPage() {
                             maxLength={6}
                             value={mfaCode}
                             onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
-                            className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-4 py-4 text-center text-3xl font-mono tracking-[0.5em] text-[#26d8c4] focus:ring-1 focus:ring-[#26d8c4] focus:border-[#26d8c4] focus:outline-none transition-all"
+                            className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-4 text-center text-3xl font-mono tracking-[0.5em] text-[#26d8c4] focus:ring-1 focus:ring-[#26d8c4] focus:border-[#26d8c4] focus:outline-none transition-all"
                             placeholder="000000"
                             required
                             autoFocus
@@ -216,7 +216,7 @@ export default function LoginPage() {
                             {loading ? "Verificando..." : "Verificar e Ingresar"}
                         </button>
                         <button type="button" onClick={() => { setIsMfaRequired(false); supabase.auth.signOut(); }}
-                            className="w-full text-center text-xs text-gray-500 hover:text-white transition mt-2">
+                            className="w-full text-center text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition mt-2">
                             Cancelar y volver
                         </button>
                     </form>
@@ -225,9 +225,9 @@ export default function LoginPage() {
                 ) : isForgotPassword ? (
                     <form onSubmit={handleResetPassword} className="space-y-4">
                         <div>
-                            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email</label>
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Email</label>
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-600"
+                                className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                 placeholder="nombre@empresa.com" required autoFocus />
                         </div>
                         <button type="submit" disabled={loading || !email}
@@ -235,7 +235,7 @@ export default function LoginPage() {
                             {loading ? "Enviando..." : "Enviar enlace de recuperación"}
                         </button>
                         <button type="button" onClick={() => { setIsForgotPassword(false); setMsg(null); }}
-                            className="w-full text-center text-xs text-gray-500 hover:text-white transition mt-2">
+                            className="w-full text-center text-xs text-gray-500 hover:text-gray-900 dark:hover:text-white transition mt-2">
                             Volver al inicio de sesión
                         </button>
                     </form>
@@ -246,31 +246,31 @@ export default function LoginPage() {
                         {isRegistering && (
                             <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-400 mb-1.5">Nombre Completo</label>
+                                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Nombre Completo</label>
                                     <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)}
-                                        className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-600"
+                                        className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-3 py-3 text-gray-900 dark:text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                         placeholder="John Doe" required={isRegistering} />
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-semibold text-gray-400 mb-1.5">Edad</label>
+                                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Edad</label>
                                     <input type="number" value={age} onChange={(e) => setAge(e.target.value)}
                                         min="13" max="120"
-                                        className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-3 py-3 text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all"
+                                        className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-3 py-3 text-gray-900 dark:text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all"
                                         placeholder="25" required={isRegistering} />
                                 </div>
                             </div>
                         )}
 
                         <div>
-                            <label className="block text-xs font-semibold text-gray-400 mb-1.5">Email</label>
+                            <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 mb-1.5">Email</label>
                             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-600"
+                                className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                 placeholder="nombre@empresa.com" required />
                         </div>
 
                         <div>
                             <div className="flex justify-between items-center mb-1.5">
-                                <label className="block text-xs font-semibold text-gray-400">Contraseña</label>
+                                <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400">Contraseña</label>
                                 {!isRegistering && (
                                     <button type="button" onClick={() => { setIsForgotPassword(true); setMsg(null); }}
                                         className="text-xs text-[#1a88ff] hover:underline transition">
@@ -279,15 +279,15 @@ export default function LoginPage() {
                                 )}
                             </div>
                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                                className="w-full bg-[#0d0d0f] border border-white/10 rounded-xl px-4 py-3 text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-600"
+                                className="w-full bg-gray-100 dark:bg-[#0d0d0f] border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white text-sm focus:ring-1 focus:ring-[#1a88ff] focus:border-[#1a88ff] focus:outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                 placeholder="••••••••••••" required minLength={6} />
                         </div>
 
                         {isRegistering && (
-                            <div className="flex items-start gap-3 bg-white/3 p-3 rounded-xl border border-white/8">
+                            <div className="flex items-start gap-3 bg-gray-100 dark:bg-white/3 p-3 rounded-xl border border-gray-200 dark:border-white/8">
                                 <input type="checkbox" id="privacy" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}
                                     className="mt-0.5 w-4 h-4 rounded accent-[#1a88ff]" required={isRegistering} />
-                                <label htmlFor="privacy" className="text-xs text-gray-400 leading-tight cursor-pointer">
+                                <label htmlFor="privacy" className="text-xs text-gray-500 dark:text-gray-400 leading-tight cursor-pointer">
                                     He leído y acepto la Política de Tratamiento de Datos Personales
                                 </label>
                             </div>
@@ -299,9 +299,9 @@ export default function LoginPage() {
                         </button>
 
                         <div className="relative flex items-center py-2">
-                            <div className="flex-grow border-t border-white/8" />
-                            <span className="flex-shrink-0 mx-3 text-gray-600 text-[10px] uppercase tracking-widest">O</span>
-                            <div className="flex-grow border-t border-white/8" />
+                            <div className="flex-grow border-t border-gray-200 dark:border-white/8" />
+                            <span className="flex-shrink-0 mx-3 text-gray-400 dark:text-gray-600 text-[10px] uppercase tracking-widest">O</span>
+                            <div className="flex-grow border-t border-gray-200 dark:border-white/8" />
                         </div>
 
                         <button type="button" onClick={handleGoogleLogin} disabled={loading}
@@ -320,7 +320,7 @@ export default function LoginPage() {
                 {!isMfaRequired && !isForgotPassword && (
                     <div className="mt-6 text-center">
                         <button onClick={() => { setIsRegistering(!isRegistering); setMsg(null); }}
-                            className="text-gray-500 hover:text-white text-sm transition-colors">
+                            className="text-gray-500 hover:text-gray-900 dark:hover:text-white text-sm transition-colors">
                             {isRegistering
                                 ? <>¿Ya tienes cuenta? <span className="text-[#1a88ff] hover:underline font-medium">Inicia Sesión</span></>
                                 : <>¿No tienes cuenta? <span className="text-[#1a88ff] hover:underline font-medium">Regístrate</span></>
@@ -330,8 +330,8 @@ export default function LoginPage() {
                 )}
             </div>
 
-            <p className="mt-6 text-[10px] text-gray-700 uppercase tracking-widest relative z-10">
-                SIKAI SOP Generator · Powered by Gemini AI
+            <p className="mt-6 text-[10px] text-gray-400 dark:text-gray-700 uppercase tracking-widest relative z-10">
+                SIKAI SOP Generator
             </p>
         </div>
     );
