@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { sendNotificationEmail } from '@/utils/emailService'
 
 // Initialize Gemini
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '')
@@ -112,7 +113,24 @@ ${body.steps.map((step: string, i: number) => `${i + 1}. ${step}`).join('\n')}
       throw new Error("Error al guardar el SOP en la base de datos.")
     }
 
-    // 7. Return Result
+    // 7. Send email notification (non-blocking)
+    const { data: profileData } = await supabase
+      .from('profiles')
+      .select('credits, email')
+      .eq('id', user.id)
+      .single()
+
+    sendNotificationEmail({
+      type: 'sop_generated',
+      to: user.email ?? '',
+      name: user.user_metadata?.full_name || user.email || '',
+      data: {
+        sop_title: body.title || 'SIKAI SOP Generado',
+        credits_remaining: profileData?.credits ?? 0,
+      },
+    })
+
+    // 8. Return Result
     return NextResponse.json({ sopId: sop.id })
 
   } catch (error: any) {
