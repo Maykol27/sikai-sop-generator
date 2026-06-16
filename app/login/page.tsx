@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ClipboardList } from "lucide-react";
+import { PrivacyPolicyModal } from "@/components/PrivacyPolicyModal";
 
 export default function LoginPage() {
     const [email, setEmail] = useState("");
@@ -11,6 +12,7 @@ export default function LoginPage() {
     const [fullName, setFullName] = useState("");
     const [age, setAge] = useState("");
     const [acceptTerms, setAcceptTerms] = useState(false);
+    const [isPolicyOpen, setIsPolicyOpen] = useState(false);
     
     const [loading, setLoading] = useState(false);
     const [isRegistering, setIsRegistering] = useState(false);
@@ -286,9 +288,16 @@ export default function LoginPage() {
                         {isRegistering && (
                             <div className="flex items-start gap-3 bg-gray-100 dark:bg-white/3 p-3 rounded-xl border border-gray-200 dark:border-white/8">
                                 <input type="checkbox" id="privacy" checked={acceptTerms} onChange={(e) => setAcceptTerms(e.target.checked)}
-                                    className="mt-0.5 w-4 h-4 rounded accent-[#1a88ff]" required={isRegistering} />
+                                    className="mt-0.5 w-4 h-4 rounded accent-[#1a88ff] cursor-pointer" required={isRegistering} />
                                 <label htmlFor="privacy" className="text-xs text-gray-500 dark:text-gray-400 leading-tight cursor-pointer">
-                                    He leído y acepto la Política de Tratamiento de Datos Personales
+                                    He leído y acepto la{" "}
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsPolicyOpen(true)}
+                                        className="text-[#1a88ff] hover:text-[#26d8c4] hover:underline font-semibold transition-colors focus:outline-none cursor-pointer"
+                                    >
+                                        Política de Tratamiento de Datos Personales
+                                    </button>
                                 </label>
                             </div>
                         )}
@@ -333,6 +342,15 @@ export default function LoginPage() {
             <p className="mt-6 text-[10px] text-gray-400 dark:text-gray-700 uppercase tracking-widest relative z-10">
                 SIKAI SOP Generator
             </p>
+
+            <PrivacyPolicyModal
+                isOpen={isPolicyOpen}
+                onClose={() => setIsPolicyOpen(false)}
+                onAccept={() => {
+                    setAcceptTerms(true);
+                    setIsPolicyOpen(false);
+                }}
+            />
         </div>
     );
 }
