@@ -9,12 +9,12 @@ const supabase = createClient()
 const PACKAGES = [
   {
     id: 'starter',
-    name: 'SIKAI Básico',
+    name: 'SIKAI Starter',
     price: '7 USD',
     credits: 5,
     description: 'Ideal para comenzar y probar la plataforma con tus primeros procesos.',
     icon: Zap,
-    boldLink: 'https://checkout.bold.co/payment/LNK_STARTER', // Reemplaza con el link real de Bold para $7
+    boldLink: 'https://checkout.bold.co/payment/LNK_SBFT537YMT',
     color: '#1a88ff',
     popular: false,
   },
@@ -25,7 +25,7 @@ const PACKAGES = [
     credits: 10,
     description: 'El más popular. Perfecto para equipos que documentan procesos regularmente.',
     icon: Star,
-    boldLink: 'https://checkout.bold.co/payment/LNK_258VHAPJBM',
+    boldLink: 'https://checkout.bold.co/payment/LNK_3FPA318PX2',
     color: '#26d8c4',
     popular: true,
   },
@@ -36,7 +36,7 @@ const PACKAGES = [
     credits: 20,
     description: 'Para empresas con alto volumen de procesos. Máximo valor por crédito.',
     icon: Rocket,
-    boldLink: 'https://checkout.bold.co/payment/LNK_SCALE', // Reemplaza con el link real de Bold para $24
+    boldLink: 'https://checkout.bold.co/payment/LNK_Q7H3WK2VH3',
     color: '#a855f7',
     popular: false,
   },
