@@ -654,7 +654,7 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
               />
             </div>
           ) : (
-            <div className="relative flex flex-col bg-black/5 dark:bg-[#09101d]/80 rounded-2xl border border-black/5 dark:border-white/5 p-6 shadow-inner min-h-[500px]">
+            <div className="relative flex flex-col bg-black/5 dark:bg-[#09101d]/80 rounded-2xl border border-black/5 dark:border-white/5 shadow-inner" style={{ minHeight: '500px' }}>
               
               {/* Zoom Controls Overlay (Top Right) */}
               <div className="absolute top-4 right-4 z-20 flex items-center gap-2 bg-black/40 dark:bg-black/60 backdrop-blur-md px-3 py-1.5 rounded-xl border border-white/10 shadow-lg">
@@ -686,13 +686,23 @@ export default function SopResultPanel({ sop }: SopResultPanelProps) {
                 </button>
               </div>
 
-              {/* Viewport with scrollbars */}
-              <div className="flex-1 overflow-auto flex items-center justify-start p-4 scrollbar-thin">
-                <div 
-                  className="transition-transform duration-200 ease-out origin-top-left flex justify-center items-center w-full min-w-max"
-                  style={{ transform: `scale(${zoom / 100})` }}
+              {/* Scrollable viewport — zoom via CSS transform on inner wrapper */}
+              <div
+                className="overflow-auto p-6 pt-14"
+                style={{ minHeight: '500px' }}
+              >
+                {/* Inner wrapper: scales from top-center so diagram grows downward/sideways */}
+                <div
+                  className="transition-transform duration-200 ease-out"
+                  style={{
+                    transform: `scale(${zoom / 100})`,
+                    transformOrigin: 'top center',
+                    // Reserve enough space so the scrollable parent can scroll when zoomed in
+                    width: `${100 / (zoom / 100)}%`,
+                    paddingBottom: `calc(${zoom / 100} * 1rem)`,
+                  }}
                 >
-                  <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}-${zoom}`}>
+                  <pre className="mermaid text-center w-full" key={`${theme}-${sanitizedFlowCode}`}>
                     {sanitizedFlowCode}
                   </pre>
                 </div>
