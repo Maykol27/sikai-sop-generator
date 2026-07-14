@@ -4,7 +4,7 @@
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   email TEXT NOT NULL,
-  credits INTEGER DEFAULT 0 NOT NULL,
+  credits INTEGER DEFAULT 2 NOT NULL,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
@@ -26,7 +26,7 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, credits)
-  VALUES (new.id, new.email, 0);
+  VALUES (new.id, new.email, 2);
   RETURN new;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
